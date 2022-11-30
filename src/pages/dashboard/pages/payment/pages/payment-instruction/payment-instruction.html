@@ -1,0 +1,29 @@
+<div id="payment-instruction-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<div style="height: 100%;">
+				<!-- <instruction-atm-ktb v-if="views.ATMKTB"/>
+				<instruction-atm-kbank v-else-if="views.ATMKBank"/>
+				<instruction-atm-scb v-else-if="views.ATMSCB"/>
+				<instruction-atm-kma v-else-if="views.ATMKMA"/>
+				<instruction-atm-kiat v-else-if="views.ATMKIAT"/>
+				<instruction-atm-tmb v-else-if="views.ATMTMB"/>
+				<instruction-atm-tnb v-else-if="views.ATMTNB"/>
+				<instruction-atm-bbl v-else-if="views.ATMBBL"/>
+				<instruction-atm-gsb v-else-if="views.ATMGSB"/>
+				<instruction-atm-mizuho v-else-if="views.ATMMIZUHO"/>
+				<instruction-atm-icbc v-else-if="views.ATMICBC"/>
+				<instruction-atm-default v-else-if="views.ATMDEFAULT"/> -->
+				<instruction-atm v-if="views.ATM" />
+				<instruction-counter-cash v-else-if="views.BANK_COUNTER_CASH"/>
+				<instruction-counter-cheque v-else-if="views.BANK_COUNTER_CHEQUE"/>
+				<instruction-wechat v-else-if="views.WECHAT"/>
+				<instruction-thai-qr v-else-if="views.THAIQR"/>
+				<instruction-internet-banking v-else-if="views.INTBANKING"/>
+				<instruction-push-noti v-else-if="views.PUSH_NOTI"/>
+				<instruction-scan-qr v-else-if="views.SCAN_QR"/>
+				<instruction-promptpay v-else-if="views.PROMPTPAY" />
+			</div>
+		</template>
+    </cpn-dsb-page-content-container>
+</div>

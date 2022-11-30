@@ -1,0 +1,35 @@
+<div id="_coupon-code-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <div class="coupon-wrong-text">
+                <div class="coupon-wrong-detail">
+                    <div class="coupon-wrong-img">
+                        <img :src="require('@/assets/images/icons/sorry.svg')" style="max-height: 230px;" alt="Note"
+                            width="auto" />
+                    </div>
+                    <div class="cpn-text-h6 mb-3 align-center" name="label-coupon-wrong">
+                        <h1>{{ text.sorry_text }}</h1>
+                    </div>
+                    <div class="flex-grow-1 d-flex flex-row align-center" name="div-coupon-wrong-text">
+                        <span class="cpn-content-subtitle">{{ errorMessage }}</span>
+                    </div>
+                    <hr name="line-h">
+                    <div class="cpn-text-h6 mb-3 align-center" name="label-referance-coupon-wrong">{{ text.referance_id
+                        }} {{ referanceId }}
+                    </div>
+                    <div class="flex-grow-1 d-flex flex-row align-center" name="div-coupon-wrong-text">
+                        <span class="cpn-content-subtitle">{{ text.referance_detail_text }}</span>
+                    </div>
+                </div>
+            </div>
+            <div name="contain-btn-bottom">
+                <div class="confirm-btn-container">
+                    <v-btn @click="submit_tryagain()" class="confirm-btn" :height="48" color="primary" elevation="0"
+                        block rounded>
+                        <div class="text-uppercase cpn-content-subtitle text-white">{{ text.confirm_btn }}</div>
+                    </v-btn>
+                </div>
+            </div>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

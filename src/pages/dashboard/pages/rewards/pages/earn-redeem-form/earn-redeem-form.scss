@@ -1,0 +1,182 @@
+@import "../../../../../../styles/vars.scss";
+
+#_rewards-earn-redeem-form-page {
+    $chip-background: 100px;
+
+    .rewards-form-top-alert {
+        background-color: #E7B5BB !important;
+        height: 40px;
+        padding-top: 7px;
+        padding-left: 20px;
+    }
+
+    .form-control {
+        &.total-amount-input {
+            border-radius: 35px !important;
+        }
+    }
+
+    .redeem-input-box {
+        border-radius: 35px;
+        border: 1px solid #b2b2b2;
+
+        &.box-error {
+            border: 1px solid #ea4b60 !important;
+        }
+    }
+
+    .col-redeem-input-discount-title {
+        &.enabled {
+            padding-top: 42px;
+            padding-left: 42px;
+        }
+
+        &.disabled {
+            padding-bottom: 26px;
+            padding-top: 22px;
+            padding-left: 32px;
+            margin-left: 12px;
+            margin-top: 12px;
+            background-color: #e7e7e7;
+            border-top-left-radius: 35px;
+        }
+    }
+
+    .col-redeem-input-discount-input {
+        &.enabled {
+            padding-top: 26px;
+            padding-right: 36px;
+            padding-bottom: 0px;
+
+            input:focus {
+                outline: none;
+            }
+        }
+
+        &.disabled {
+            padding-top: 26px;
+            padding-right: 26px;
+            margin-right: 12px;
+            margin-top: 12px;
+            background-color: #e7e7e7;
+            border-top-right-radius: 35px;
+        }
+    }
+
+    .col-redeem-input-point-title {
+        &.enabled {
+            padding-top: 26px;
+            padding-left: 42px;
+        }
+
+        &.disabled {
+            padding-top: 26px;
+            padding-bottom: 22px;
+            padding-left: 32px;
+            margin-left: 12px;
+            margin-bottom: 12px;
+            background-color: #e7e7e7;
+            border-bottom-left-radius: 35px;
+        }
+    }
+
+    .col-redeem-input-point-input {
+        &.enabled {
+            padding-top: 0px;
+            padding-right: 36px;
+            padding-bottom: 26px;
+
+            input:focus {
+                outline: none;
+            }
+        }
+
+        &.disabled {
+            padding-top: 26px;
+            padding-right: 26px;
+            margin-right: 12px;
+            margin-bottom: 12px;
+            background-color: #e7e7e7;
+            border-bottom-right-radius: 35px;
+        }
+    }
+
+    table {
+
+        &.redeem-ex-table {
+
+            td {
+
+                &.col-redeem-ex-vertical-separater-line {
+                    width: 1px;
+                    background-color: #ebebeb;
+                }
+            }
+        }
+    }
+
+    .text-36 {
+        font-size: 36px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.36px;
+    }
+
+    .text-27 {
+        font-size: 27px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.27px;
+    }
+
+    .text-18 {
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.18px;
+    }
+
+    .text-15 {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+    }
+
+    .text-12 {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.12px;
+    }
+
+    .text-color-gray {
+        color: #a3a3a3;
+    }
+
+    .text-color-dark-gray {
+        color: #b2b2b2;
+    }
+
+    .text-black {
+        color: #000000;
+    }
+
+    .text-red {
+        color: #ea4b60;
+    }
+
+    /* Hide arrow in input type number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Hide arrow in input type number */
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+}

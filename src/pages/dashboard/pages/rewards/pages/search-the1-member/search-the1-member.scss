@@ -1,0 +1,65 @@
+@import "../../../../../../styles/vars.scss";
+
+#_rewards-search-the1-member-page {
+    $chip-background: 100px;
+
+    .search-member-panel-list-container {
+        margin-top: 20px;
+
+        .search-member-panel-list {
+            z-index: 0 !important;
+
+            .search-member-panel {
+
+                .v-expansion-panel-content__wrap {
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                }
+            }
+        }
+    }
+
+    .section-title {
+        font-size: 15px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+        text-align: left;
+        color: #000000;
+        padding-left: 16px;
+        border-left: 4px solid $color-primary;
+
+        .section-subtitle {
+            font-size: 10.8px;
+            font-weight: normal;
+            letter-spacing: 0.11px;
+        }
+    }
+
+    .button-section {
+        position: absolute !important;
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+    }
+
+    .disable-events {
+        pointer-events: none
+    }
+
+    /* Hide arrow in input type number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Hide arrow in input type number */
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+}

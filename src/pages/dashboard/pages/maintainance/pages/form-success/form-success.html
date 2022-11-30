@@ -1,0 +1,19 @@
+<div id="_form-success-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<cpn-dsb-action-acknowledge>
+				<template v-slot:title>
+					<div class="cpn-text-h5 text-white font-weight-bold mb-0">SUCCESSFULLY</div>
+				</template>
+				<template v-slot:content>
+					<div class="text-white text-center cpn-content-default mt-3">{{ $t("pages.maintainance_repair_form_success.success_message") }}</div>
+				
+					<v-btn color="primary" @click="backToRepairPose" class="mt-6" :height="48" rounded>
+						<span class="cpn-text-subtitle-1 text-uppercase text-white px-4">{{ $t("pages.maintainance_repair_form_success.tracking_status") }}</span>
+					</v-btn>
+				</template>
+			</cpn-dsb-action-acknowledge>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

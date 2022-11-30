@@ -1,0 +1,61 @@
+@import "../../../../../../styles/vars.scss";
+
+#_customer-reward-transaction-history {
+    .cpm-dbs-content-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: $footer-height;
+        overflow-y: auto;
+        padding-bottom: 80px !important;
+    }
+
+    .download-history-container-divider {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: $footer-height + 79;
+    }
+
+    .download-history-container {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: $footer-height;
+    }
+
+    .row-tabs {
+        .col {
+            justify-content: center;
+
+            &:first-child {
+                justify-content: start;
+            }
+
+            &:last-child {
+                justify-content: end;
+            }
+        }
+    }
+
+    .type-tab-label {
+        font-size: 15px;
+        font-weight: bold;
+        color: #000000;
+    }
+
+    .v-tab--active {
+        .type-tab-label {
+            color: $color-primary;
+        }
+    }
+
+    .date-range {
+        color: white;
+    }
+
+    .v-window-item.cumulative-tab-item {
+        position: relative;
+    }
+}

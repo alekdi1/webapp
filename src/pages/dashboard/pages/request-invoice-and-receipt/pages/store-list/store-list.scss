@@ -1,0 +1,22 @@
+@import "../../../../../../styles/vars.scss";
+
+#_store-list-page {
+    #search-branch {
+        background: $color-secondary;
+    }
+
+    .request-store-container {
+
+        .request-store-card {
+            border-radius: 24px !important;
+            padding: 0px 16px;
+            &::before {
+                background: transparent !important;
+            }
+        }
+
+        .avatar-col {
+            width: 56px;
+        }
+    }
+}

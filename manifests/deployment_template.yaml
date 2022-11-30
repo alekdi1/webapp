@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '${application_name}'
+  namespace: '${namespace}'
+  labels:
+    app: '${application_name}'
+spec:
+  replicas: ${pod_replica}
+  selector:
+    matchLabels:
+      app: '${application_name}'
+  template:
+    metadata:
+      labels:
+        app: '${application_name}'
+    spec:
+      imagePullSecrets:
+      - name: docregkeycentral
+      containers:
+      - name: '${application_name}'
+        image: '${image_name}'
+        # resources:
+        #   requests:
+        #     memory: ${request_ram}
+        #     cpu: ${request_cpu}
+        #   limits:
+        #     memory: ${limit_ram}
+        #     cpu: ${limit_cpu}
+        #readinessProbe:
+        #  tcpSocket:
+        #    port: ${server_port}
+        #livenessProbe:
+        #  httpGet:
+        #    path: /api/system/hc
+        #    port: ${server_port}
+        #  timeoutSeconds: 80
+        #readinessProbe:
+        #  httpGet:
+        #    path: /api/system/hc
+        #    port: ${server_port}
+        #  timeoutSeconds: 80
+        volumeMounts:
+        - name: env-config-vol
+          mountPath: /usr/share/nginx/html/env.js
+          subPath: env.js
+        - name: nginx-config-vol
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        - name: tz-config
+          mountPath: /etc/localtime
+        - name: upload
+          mountPath: /usr/share/nginx/html/upload
+      volumes:
+      - name: env-config-vol
+        configMap:
+          name: ${application_name}-env-config
+      - name: nginx-config-vol
+        configMap:
+          name: ${application_name}-nginx-config
+      - name: tz-config
+        hostPath:
+          path: /etc/localtime
+      - name: upload
+        persistentVolumeClaim:
+            claimName: serve-claim

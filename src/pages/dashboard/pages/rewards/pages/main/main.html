@@ -1,0 +1,93 @@
+<div id="_rewards-main-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<v-divider class="mb-3"/>
+				<table class="w100">
+					<tr>
+						<td class="col-rate">
+							<div class="rate">
+								<div class="rate-icon">
+									<v-img :src="require('@/assets/images/rewards-earn-rate.svg')"/>
+								</div>
+								<div class="rate-label">
+									{{ text.earn_rate }}
+								</div>
+							</div>
+							<div class="rate-description">
+								{{ earnRateText }}
+							</div>
+						</td>
+						<td class="col-vertical-separater-line"></td>
+						<td class="col-rate">
+							<div class="rate">
+								<div class="rate-icon">
+									<v-img :src="require('@/assets/images/rewards-redeem-rate.svg')"/>
+								</div>
+								<div class="rate-label">
+									{{ text.redeem_rate }}
+								</div>
+							</div>
+							<div class="rate-description">
+								{{ redeemRateText }}
+							</div>
+						</td>
+					</tr>
+				</table>
+				<v-divider class="mb-3"/>
+				<div class="cpn-content-subtitle mb-6">{{ text.select_menu }}</div>
+				
+				<section>
+					<div v-if="userPermissions.managePoint" class="option-item-container manage-menu d-flex flex-column align-center mb-10" @click="goToCreateTransaction()" v-ripple>
+						<div class="icon-container mt-4 mb-2">
+							<v-img class="mx-auto" :src="require('@/assets/images/rewards-main-menu.svg')" width="39px" height="50px"/>
+						</div>
+						<div class="title-container mb-3">
+							<div class="cpn-text-body-2">{{ text.main_menu }}</div>
+						</div>
+					</div>
+					<!-- <table class="w100">
+						<tr>
+							<template v-for="(menu, idx) in menus">
+								<td v-if="menu.type === 'menu'" :key="idx" class="col-menu">
+									<div class="option-item-container-mini mb-10" @click="goTo(menu.route)" v-ripple>
+										<div class="icon-container mt-6 mb-4">
+											<v-img class="mx-auto" :src="menu.icon" width="30px" height="30px"/>
+										</div>
+										<div class="title-container">
+											<div class="cpn-content-subtitle mb-1">{{ menu.label1 }}</div>
+											<div class="cpn-content-subtitle">{{ menu.label2 }}</div>
+										</div>
+									</div>
+								</td>
+								<td v-else-if="menu.type === 'empty'" :key="idx" class="col-menu"></td>
+								<td v-else-if="menu.type === 'separater'" :key="idx" class="col-separater"></td>
+							</template>
+						</tr>
+					</table> -->
+
+					<v-row class="mini-menu-row">
+						<v-col
+							:key="'menu-col-' + idx"
+							class="menu-column"
+							:cols="4"
+							v-for="(menu, idx) in menus"
+							:class="{ 'left-menu': idx % 3 === 0, 'center-menu': idx % 3 === 1, 'right-menu': idx % 3 === 2 }"
+						>
+							<div class="option-item-container-mini mb-10" @click="goTo(menu.route)" v-ripple>
+								<div class="icon-container mt-6 mb-4">
+									<v-img class="mx-auto" :src="menu.icon" width="30px" height="30px"/>
+								</div>
+								<div class="title-container">
+									<div class="cpn-text-body-2">{{ menu.label1 }}</div>
+									<div class="cpn-text-body-2">{{ menu.label2 }}</div>
+								</div>
+							</div>
+						</v-col>
+					</v-row>
+				</section>
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

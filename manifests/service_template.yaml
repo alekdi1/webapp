@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: '${application_name}-service'
+  namespace: '${namespace}'
+spec:
+  ports:
+  - name: default
+    port: ${server_port}
+    protocol: TCP
+    targetPort: ${server_port}
+  selector:
+    app: '${application_name}'
+  type: ClusterIP

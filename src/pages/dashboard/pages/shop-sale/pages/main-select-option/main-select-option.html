@@ -1,0 +1,30 @@
+<div id="_shop-sale-main-select-option-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<v-divider class="mb-3"/>
+				<div class="cpn-content-subtitle mb-6">{{ text.select_option }}</div>
+				
+				<section>
+					<div class="option-item-container d-flex flex-column align-center mb-10" @click="goToCreateForm()" v-ripple>
+						<div class="icon-container mt-4 mb-2">
+							<v-img class="mx-auto" :src="require('@/assets/images/shop-sale-create.svg')" width="58px" height="48px"/>
+						</div>
+						<div class="title-container mb-3">
+							<div class="cpn-content-subtitle">{{ text.sales_create }}</div>
+						</div>
+					</div>
+					<div class="option-item-container d-flex flex-column align-center mb-10" @click="goToHistory()" v-ripple>
+						<div class="icon-container mt-4 mb-2">
+							<v-img class="mx-auto" :src="require('@/assets/images/dashboard-shop-sale.svg')" width="50px" height="54px"/>
+						</div>
+						<div class="title-container mb-3">
+							<div class="cpn-content-subtitle">{{ text.sales_history }}</div>
+						</div>
+					</div>
+				</section>
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

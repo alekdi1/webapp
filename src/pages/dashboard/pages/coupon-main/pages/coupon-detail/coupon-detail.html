@@ -1,0 +1,170 @@
+<div id="_coupon-detail-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <div v-if="isUsedSuccess" class="head-coupon-detail">
+                <cpn-dsb-action-acknowledge>
+                    <template v-slot:title>
+                        <div class="cpn-text-h5 text-white font-weight-bold mb-0">SUCCESSFULLY</div>
+                    </template>
+                    <template v-slot:content>
+                        <div class="text-white text-center cpn-content-default mt-3">ทำการใช้คูปองสำเร็จแล้ว</div>
+                        <v-btn color="primary" @click="backToMainSelectOptionPage" class="mt-6" :height="48" rounded>
+                            <span class="cpn-text-subtitle-1 text-uppercase text-white px-4">กลับสู่หน้ากรอกโค๊ด</span>
+                        </v-btn>
+                    </template>
+                </cpn-dsb-action-acknowledge>
+            </div>
+            <div v-else class="head-coupon-detail">
+                <div id="coupon-detail" v-if="isShowDetail">
+                    <v-container class="cpm-dbs-content-container" style="height: 100%;">
+                        <div class="cpn-text-h6 mb-3">{{ text.label_coupon_text }}</div>
+                        <div>
+                            <hr>
+                            <div id="detail-coupon">
+                                <div class="cpn-content-subtitle" name="cpn-content-title">
+                                    <div class="border-icon">
+                                        <v-icon color="#b39656">done</v-icon>
+                                    </div>
+                                    <span class="cpn-content-subtitle" name="cpn-content-span">{{
+                                        text.coupon_can_use }}</span>
+                                </div>
+                                <div class="detail-coupon-centent">
+                                    <div style="width: 50%;">
+                                        <v-img class="promotion-image" v-bind:src="getImage(coupon.imgUrl)"
+                                            name="display-coupon-img" />
+                                    </div>
+                                    <div class="title-content-coupon">
+                                        <div class="cpn-content-title">{{ coupon.title }}</div>
+                                        <div v-if="isShowtransaction" class="coupon-detail-img">
+                                            <img :src="require('@/assets/images/icons/used.svg')"
+                                                style="max-height: 200px; transform: rotate(25deg);" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cpn-content-title">คูปองของคุณ {{ coupon.couponOwner }}</div>
+                                <div class="flex-grow-1 d-flex flex-row align-center" name="div-subtitle">
+                                    <v-icon color="#b39656">access_time</v-icon>
+                                    <span class="cpn-content-subtitle" name="div-subtitle-span">{{
+                                        coupon.displayTextDate
+                                        }}</span>
+                                </div>
+                                <div class="flex-grow-1 d-flex flex-row align-center" name="div-subtitle">
+                                    <v-icon color="#b39656">location_on</v-icon>
+                                    <span class="cpn-content-subtitle" name="div-subtitle-span">ที่ร้าน {{ couponName }}
+                                        {{ couponBranchName }}</span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div v-if="!isShowtransaction" id="coupon-discription" v-html="coupon.toc">
+                            </div>
+                            <div v-if="isShowtransaction" id="transaction-coupon">
+                                <div class="cpn-content-title">Transaction ID: {{ confirmUsedCoupon.transactionInfo.id
+                                    }}
+                                </div>
+                                <div class="flex-grow-1 d-flex flex-row align-center" name="div-subtitle">
+                                    <v-icon color="#b39656">access_time</v-icon>
+                                    <span class="cpn-content-subtitle" name="div-subtitle-span">รับสิทธิ์ วันที่ {{
+                                        confirmUsedCoupon.transactionInfo.redeemedDate }}</span>
+                                </div>
+                                <div class="flex-grow-1 d-flex flex-row align-center" name="div-subtitle">
+                                    <v-icon color="#b39656">location_on</v-icon>
+                                    <span class="cpn-content-subtitle" name="div-subtitle-span">ที่ร้าน {{
+                                        confirmUsedCoupon.transactionInfo.usedAtShop }}</span>
+                                </div>
+                            </div>
+                            <div v-if="isShowtransaction" style="padding-top: 15px;">
+                                <div class="section-title">
+                                    <div style="padding-bottom: 5px;">{{ text.labelreceipt }}</div>
+                                </div>
+                                <div class="section-title-detail">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control borderless"
+                                                :placeholder="text.placeholder_receipt" style="background: #ebebeb;"
+                                                v-model="form.receipt_no" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="confirm-btn-container" v-if="isShowtransaction" style="padding-top:13px;">
+                                <v-btn @click="confirmReceipt()" :loading="loadingconfirmReceipt" class="confirm-btn"
+                                    :height="48" :disabled="isConfirmed" color="primary" elevation="0" block rounded>
+                                    <div class="text-uppercase cpn-content-subtitle text-white">{{ isConfirmed ?
+                                        text.isused_coupon_text : text.btn_confirm_text }}</div>
+                                </v-btn>
+                            </div>
+                        </div>
+                    </v-container>
+                </div>
+                <div v-if="!isShowtransaction && isShowDetail" name="contain-btn-bottom-2">
+                    <div class="confirm-btn-container" >
+                        <v-btn @click="submitDetail()" :loading="loadingsubmitDetail" class="confirm-btn"
+                            :height="48" color="primary" elevation="0" block rounded>
+                            <div class="text-uppercase cpn-content-subtitle text-white">{{ text.continue_text }}
+                            </div>
+                        </v-btn>
+                    </div>
+                </div>
+                <div id="coupon-confirm" v-if="isShowConfirm" style="height: 100%;">
+                    <v-container class="cpm-dbs-content-container" style="height: auto">
+                        <div class="cpn-text-h6 mb-3">{{ text.label_coupon_text }}</div>
+                        <div>
+                            <hr>
+                            <div style=" padding-top: 15px;">
+                                <div class="cpn-content-title">{{ couponName }}</div>
+                                <div class="flex-grow-1 d-flex flex-row align-center"
+                                    style="padding: 15px 0px 15px 0px;">
+                                    <span class="cpn-content-subtitle">{{ couponBranchName }}</span>
+                                </div>
+                                <div class="cpn-content-subtitle" style="padding-bottom: 15px;">
+                                    <v-icon class="mr-2">calendar_view_month</v-icon>
+                                    <span class="cpn-content-subtitle">วันที่ทำการ {{ coupon.displayTextDate }}</span>
+                                </div>
+                            </div>
+                            <div style="padding-top: 15px;">
+                                <div class="section-title">
+                                    <div style="padding-bottom: 5px;">{{ text.labelcoupon }}</div>
+                                </div>
+                                <div class="section-title-detail">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control borderless" disabled="true"
+                                                :placeholder="text.placeholder_coupon_code" v-model="form.coupon_code"
+                                                style="background: #ebebeb;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 15px;">
+                                <div class="section-title">
+                                    <div style="padding-bottom: 5px;">{{ text.labeltotalamount }}</div>
+                                </div>
+                                <div class="section-title-detail">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="number" class="form-control borderless"
+                                                :placeholder="text.placeholder_totalamount" min="0"
+                                                v-model="form.total_amount" style="background: #ebebeb;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </v-container>
+                    <div name="contain-btn-bottom-1">
+                        <div class="confirm-btn-container" v-if="isShowConfirm">
+                            <v-btn @click="submitConfirmAoupon()" :loading="loadingsubmitConfirmAoupon"
+                                :disabled="form.total_amount <= 0" class="confirm-btn" :height="48" color="primary"
+                                elevation="0" block rounded>
+                                <div class="text-uppercase cpn-content-subtitle text-white">{{
+                                    text.confirm_user_thecoupon
+                                    }}
+                                </div>
+                            </v-btn>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

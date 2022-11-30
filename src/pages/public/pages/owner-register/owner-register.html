@@ -1,0 +1,142 @@
+<div id="owner-register-page">
+    <cpn-public-page-content-container>
+        <template v-slot:center-column>
+            <v-container>
+                <div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="loading">
+                    <cpn-loading />
+                </div>
+                <div v-else>
+                    <submit-pop-up :overlay="showSubmitPopUp" @add="addEmployee" />
+                    <div class="new-user-form-container">
+                        <div class="new-user-topic-container my-3 d-flex flex-row align-center">
+                            <div class="topic-rectangle"></div>
+                            <div>
+                                <span class="page-content-title pl-3">สร้างชื่อผู้ใช้ใหม่ของคุณ</span>
+                            </div>
+                        </div>
+                        <div class="new-user-form-group">
+                            <form class="mt-4">
+                                <div class="form-group">
+                                    <label for="username-input">
+                                        <span>ใส่ชื่อผู้ใช้</span>
+                                    </label>
+                                    <div class="register-username-input">
+                                        <input id="username-input" type="text" class="form-control" v-on:keypress="isLetter($event)" placeholder="ชื่อผู้ใช้ เช่น อีเมล เบอร์โทรศัพท์" v-model="userForm.username" :disabled="userForm.submitted" autocomplete="off" />
+                                    </div>
+                                    <div class="cpn-text-body-2 mt-2 ml-2 text-error"
+                                        v-if=" (userForm.validated && userForm.errors.emptyName) || userForm.errors.isvalidUsername">
+                                        {{ userForm.errors.emptyName || userForm.errors.isvalidUsername }}
+                                    </div>
+                                    <cpn-note-text class="my-3">
+                                        <div class="text-gray">
+                                            {{ $t('username_hint') }}
+                                        </div>
+                                    </cpn-note-text>
+                                </div>
+                                <div class="form-group mt-4">
+                                    <label for="password-input">
+                                        <span>รหัสผ่าน</span>
+                                    </label>
+                                    <div class="register-password-input">
+                                        <input id="password-input" type="password" class="form-control"
+                                            :placeholder="userForm.submitted ? 'XXXXXX' : 'รหัสผ่าน'"
+                                            v-model="userForm.password" :disabled="userForm.submitted" />
+                                    </div>
+                                    <div class="cpn-text-body-2 mt-2 ml-2 text-error"
+                                        v-if="userForm.validated && (userForm.errors.pLength || userForm.errors.character || userForm.errors.mismatch)">
+                                        {{ userForm.errors.pLength || userForm.errors.character || userForm.errors.mismatch }}
+                                    </div>
+                                </div>
+                                <div class="form-group mt-4">
+                                    <label for="re-password-input">
+                                        <span>ยืนยันรหัสผ่าน</span>
+                                    </label>
+                                    <div class="register-username-input">
+                                        <input id="re-password-input" type="password" class="form-control"
+                                            :placeholder="userForm.submitted ? 'XXXXXX' : 'รหัสผ่าน'"
+                                            v-model="userForm.repassword" :disabled="userForm.submitted" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <cpn-note-text class="my-3">
+                            <div class="text-gray">
+                                {{ $t('pwd_hint') }}
+                            </div>
+                        </cpn-note-text>
+                        <div class="confirm-btn-container mt-5">
+                            <v-btn @click="register()" :height="48" min-width="100%" color="primary" elevation="0"
+                                :disabled="userForm.submitDisabled" rounded>
+                                <span class="cpn-content-default text-uppercase text-white">ยืนยัน</span>
+                            </v-btn>
+                        </div>
+                    </div>
+                    <div class="employee-container" v-if="showEmployeeSection">
+                        <v-divider class="my-5" />
+                        <div class="employee-form-container">
+                            <div class="employee-topic-container">
+                                <div>
+                                    <span class="page-content-title pl-3">เพิ่มพนักงานใหม่ของคุณ</span>
+                                    <div>คุณสามารถเพิ่มพนักงานของคุณได้ตำแหน่งละ 1 คนเท่านั้น</div>
+                                </div>
+                            </div>
+                            <form class="mt-4">
+                                <div class="form-group mt-4" v-for="(positionForm, idx) in formList"
+                                    :key="'employee-position-' + idx">
+                                    <label :for="'employee-position-input-' + positionForm.title">
+                                        <div
+                                            class="employee-position-title-container d-flex flex-row align-center mb-3">
+                                            <div class="employee-icon-container">
+                                                <v-img :src="positionForm.icon" width=40 height=40 contain />
+                                            </div>
+                                            <span class="ml-3 font-weight-bold">{{ positionForm.title }}</span>
+                                        </div>
+                                        <div>กรอกอีเมลหรือเบอร์โทรศัพท์พนักงานของคุณ</div>
+                                    </label>
+                                    <div class="register-username-input">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" placeholder="XXXXXX"
+                                                v-model="positionForm.emailOrPhone" :disabled="positionForm.submitted"
+                                                :id="'employee-position-input-' + positionForm.title"
+                                                style="padding-right: 84px !important;" />
+                                            <div class="form-apppend"
+                                                style="width: auto !important; right: 0 !important;">
+                                                <v-btn @click="employeeRegister(positionForm)" rounded color="primary"
+                                                    height="100%" width="80" :disabled="positionForm.submitDisabled"
+                                                    :loading="positionForm.loading" elevation="0">
+                                                    <span class="cpn-text-subtitle-1 text-uppercase text-white">{{
+                                                        $t("ok") }}</span>
+                                                </v-btn>
+                                            </div>
+                                        </div>
+                                        <div class="cpn-text-body-2 mt-2 ml-2 text-error"
+                                            v-if="positionForm.validated && positionForm.errors.text">
+                                            {{ positionForm.errors.text }}
+                                        </div>
+                                        <div class="submitted-employee-container my-3" v-if="positionForm.submitted">
+                                            <div>Link เพื่อเข้ามาสร้างชื่อผูใช้และรหัสผ่านของพนักงาน</div>
+                                            <div
+                                                class="submitted-employee-url-container d-flex flex-row justify-center align-center my-2">
+                                                <a :href="positionForm.url" target="_blank">{{ positionForm.url }}</a>
+                                                <div class="button-container ml-auto">
+                                                    <v-btn @click="copyToClipboard(positionForm.url)" color="primary"
+                                                        height="40" width="80" elevation="0" outlined rounded>
+                                                        <span class="text-uppercase">Copy</span>
+                                                    </v-btn>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <v-divider class="my-5" />
+                    <div class="copy-right-container">
+                        <div class="d-flex justify-center my-5">{{ $t('footer.copyright') }}</div>
+                    </div>
+                </div>
+            </v-container>
+        </template>
+    </cpn-public-page-content-container>
+</div>

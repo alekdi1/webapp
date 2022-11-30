@@ -1,0 +1,21 @@
+<div id="_request-result-page">
+
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<cpn-dsb-action-acknowledge>
+				<template v-slot:title>
+					<div class="cpn-text-h4 font-weight-bold text-white mt-8 mb-5">SUCCESSFULLY</div>
+				</template>
+				<template v-slot:content>
+					<div class="success-text-container cpn-text-h6 font-weight-regular text-white">
+						<div class="text-center">{{ isReceipt ? text.label_recp_success_info : text.label_inv_success_info }}</div>
+						<div class="text-center font-small mt-5">{{ text.label_send_email }}</div>
+					</div>
+					<v-btn color="primary" @click="goToRequestBranchList" min-width="50%" rounded height="40" class="my-10 back-btn">
+						<span class="text-uppercase text-white cpn-content-default">{{ text.back_to_main }}</span>
+					</v-btn>
+				</template>
+			</cpn-dsb-action-acknowledge>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

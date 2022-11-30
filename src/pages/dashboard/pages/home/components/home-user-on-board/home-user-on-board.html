@@ -1,0 +1,34 @@
+<div id="_home-user-on-board-page">
+	<v-overlay name="continueOnBoard" :value="overlay && isOnboard" @click.native="continueOnBoard">
+		<div class="user-on-board-step-wrapper">
+			<div class="user-on-board-step-container">
+				<div class="on-board-image-wrapper d-flex fill-height align-center justify-center">
+					<div class="on-board-image-container">
+						<v-img class="on-board-image" :src="currentOnBoardImage.image">
+							<template v-slot:placeholder>
+								<v-row class="fill-height ma-0" align="center" justify="center" >
+									<v-progress-circular indeterminate color="primary" />
+								</v-row>
+							</template>
+						</v-img>
+						<div class="ending-button-wrapper" v-if="isLastImage">
+							<div class="ending-button-container">
+								<div class="finish-button-container mb-5">
+									<v-btn class="finish-button" @click="finishOnboard">
+										<div class="text-uppercase cpn-content-default text-white">{{ text.on_board_finish }}</div>
+									</v-btn>
+								</div>
+			
+								<div class="replay-button-container">
+									<v-btn class="replay-button" @click="replayOnboard">
+										<div class="text-uppercase cpn-content-default text-white">{{ text.on_board_replay }}</div>
+									</v-btn>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</v-overlay>
+</div>

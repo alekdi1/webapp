@@ -1,0 +1,103 @@
+#_shopping-center-info-page {
+
+    .cpm-dbs-content-container {
+        min-height: 100%;
+    }
+
+    .loading-container {
+        width: 100%;
+        height: calc(100% - 40px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .error-container {
+        width: 100%;
+        height: calc(100% - 40px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .error-message {
+            color: var(--v-error-base);
+            font-size: 16px;
+        }
+    }
+
+    .info-container {
+        margin-top: 20px;
+
+        .branch-name {
+            font-size: 20px;
+            color: #000000;
+        }
+    }
+
+    .custom-tabs {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        .tab-item {
+            .tab-label {
+                text-align: center;
+                font-size: 16px;
+                font-weight: bold;
+                color: #0c0c0c;
+            }
+            margin-bottom: 1px;
+            border-bottom: 1px solid #f4f4f4;
+
+            &.active {
+                .tab-label {
+                    color: var(--v-primary-base);
+                }
+                margin-bottom: 0;
+                border-bottom: 2px solid var(--v-primary-base);
+            }
+        }
+    }
+
+    .general-info {
+        table.info-list {
+            width: 100%;
+
+            td {
+                vertical-align: top;
+                &.info-label-col {
+                    width: 40%;
+
+                    .info-label {
+                        font-weight: bold;
+                        font-size: 16px;
+                        color: #000000;
+                    }
+                }
+
+                .info-value, .info-label {
+                    padding-top: 12px;
+                    padding-bottom: 12px;
+                }
+            }
+        }
+    }
+
+    .regulations-section {
+
+        .regulation-item {
+            .regulation-item-title {
+                font-size: 16px;
+                font-weight: bold;
+                color: #000000;
+            }
+            .regulation-item-content {
+                font-size: 16px;
+                color: #000000;
+            }
+        }
+
+        .download-label {
+            font-size: 11px;
+            color: #000000;
+        }
+    }
+}

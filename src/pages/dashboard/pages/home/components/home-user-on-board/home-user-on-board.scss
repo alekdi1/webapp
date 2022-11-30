@@ -1,0 +1,57 @@
+@import "./../../../../../../styles/vars.scss";
+
+#_home-user-on-board-page {
+    .v-overlay {
+        z-index: $footer-z-idx + 15 !important;
+    }
+
+    .user-on-board-step-wrapper {
+        width: 100vw;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+
+    .user-on-board-step-container {
+        width: 1366px;
+        height: 100vh;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    // Calculated by production payment image size 5464 x 3816 -> 1366 x 834
+    .on-board-image-wrapper {
+        min-height: 834px;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .on-board-image-container {
+        width: 1370px;
+    }
+
+    .on-board-image {
+        width: 1370px !important;
+    }
+
+    .continue-button-wrapper, .ending-button-wrapper {
+        position: relative;
+    }
+
+    .continue-button-container, .ending-button-container {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin-bottom: 440px;
+        text-align: center;
+    }
+
+    .continue-button, .finish-button, .replay-button {
+        width: 350px;
+        height: 70px;
+        opacity: 0.7;
+    }
+}

@@ -1,0 +1,66 @@
+@import "../../../../styles/vars.scss";
+
+#_payment-history-page {
+    .cpm-dbs-content-container {
+        height: 100%;
+    }
+    #search-payment-branch {
+        background: $color-secondary;
+    }
+
+    .v-timeline:before{
+        background-color: var(--v-primary-lighten1);
+        left: calc(10px - 1px) !important;
+    }
+
+    .v-timeline {
+        padding-top: 0px !important;
+    }
+
+    .v-timeline-item:last-child {
+        padding-bottom: 0px;
+    }
+
+    .v-timeline-item__body {
+        max-width: 100%;
+    }
+
+    .v-timeline-item__divider {
+        min-width: 20px;
+    }
+
+    .v-timeline-item__dot--small {
+        height: 12px !important;
+        width: 12px !important;
+        z-index: 0 !important;
+    }
+
+    .invoice-timeline-container {
+        padding-bottom: $footer-height;
+        .invoice-card-container {
+            border-radius: 48px !important;
+            .invoice-item {
+                border-radius: 48px !important;
+                &::before {
+                    background: transparent !important;
+                }
+                .datetime-container {
+                    min-width: 120px !important;
+                }
+            }
+
+            .calendar-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .invoice-price {
+                font-size: 24px;
+            }
+        }
+    }
+
+    .selected-invoice-card {
+        background-color: $color-primary-light2;
+    }
+}

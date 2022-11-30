@@ -1,0 +1,31 @@
+@import "../../../../styles/vars.scss";
+
+#_promotion-page {
+    #search-promotion-branch {
+        background: $color-secondary;
+    }
+
+    .promotion-title-container {
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    .promotion-image-container {
+        position: relative;
+        .promotion-image {
+            border-radius: 48px;
+        }
+
+        .v-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin-top: 16px;
+            margin-right: 16px;
+        }
+
+        .v-image__image--contain {
+            border-radius: 48px;
+        }
+    }
+}

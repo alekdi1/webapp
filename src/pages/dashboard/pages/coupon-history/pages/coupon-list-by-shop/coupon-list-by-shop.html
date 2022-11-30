@@ -1,0 +1,113 @@
+<div id="_shop-sale-history-list-page">
+    <div class="embed" v-if="pdfBase64">
+        <embed :src="pdfBase64" type="application/pdf" frameBorder="0" scrolling="auto" v-click-outside="hidePreview"></embed>
+    </div>
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{text.title}}</div>
+				<v-row class="row-tabs" style="position: -webkit-sticky; position: sticky;">
+					<v-col v-for="(tab, idx) in tabState.tabs" :key="'tab-col-' + idx + '-' + tab.value" fixed>
+						<v-btn :disabled="loading" @click="selectTab(tab)" rounded class="tab-btn" :height="28"
+							:text="!tab.active" :color="tab.active ? 'primary' : 'white'">
+							<span :class="tab.active ? ['text-white'] : ['text-primary-dark']" class="px-2">{{ tab.label
+								}}</span>
+						</v-btn>
+					</v-col>
+					<v-col fixed>
+						<v-card :disabled="loading" class="pa-y px-2 d-flex " :height="28"
+							:color="tabState.customItem.active ? 'primary' : 'white'"
+							:flat="!tabState.customItem.active" @click="showCustomDateRange"
+							style="border-radius: 20px !important;">
+							<div class="d-flex w100">
+								<div class="flex-grow-1 d-flex align-center justify-center">
+									<span class="date-range text-white" v-if="tabState.customItem.active"
+										v-html="tabState.htmlTabDateRange" />
+								</div>
+								<div class="d-flex align-center flex-shrink-0">
+									<img :src="require('@/assets/images/icons/calendar-white.svg')" alt="Calendar Icon"
+										:height="20" v-if="tabState.customItem.active" />
+									<img :src="require('@/assets/images/icons/calendar.svg')" alt="Calendar Icon"
+										:height="20" v-else />
+								</div>
+							</div>
+
+						</v-card>
+					</v-col>
+				</v-row>
+				<v-divider class="mb-4 mt-4 mb-line" />
+				<v-row class="d-flex active fill-width">
+					<v-container class="cpm-dbs-content-container">
+						<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+							<cpn-loading />
+						</div>
+						<div v-else>
+							<template v-if="displayStoreList.length > 0" height="50">
+								<div v-for="(store, idx) in displayStoreList" :key="'maintainance-store-' + idx"
+									class="maintainance-store-container">
+									<v-card class="maintainance-store-card elevation-0 py-5 "
+										style="padding-top: 0px !important;padding-bottom: 0px !important;" v-ripple>
+										<div class="maintainance-store-item d-flex flex-row align-center">
+											<div class="info-col">
+												<div style="padding-bottom: 3px;">
+													<div class="cpn-content-subtitle ml-3">{{text.your_coupon}} : {{
+														store.couponOwner }}</div>
+												</div>
+												<div style="padding-bottom: 3px;">
+													<div class="cpn-content-title ml-3">{{text.transaction_id_prefix}} :
+														{{store.transactionId}}</div>
+												</div>
+												<div style="padding-bottom: 3px;">
+													<div class="cpn-content-subtitle ml-3">
+														<v-icon color="#b39656">access_time</v-icon>
+														{{text.used_at_time}} {{displayDate(store.datetimeUsed)}}
+													</div>
+												</div>
+												<div style="padding-bottom: 3px;">
+													<div class="cpn-content-subtitle ml-3">
+														<v-icon color="#b39656">location_on</v-icon>
+														{{text.used_at_shop}} {{ store.shopName }} {{
+														branchDesc(store.branchCode) }}
+													</div>
+												</div>
+												<div style="padding-bottom: 3px;">
+													<div class="cpn-content-subtitle ml-3">
+														<v-icon color="#b39656">attach_money</v-icon>
+														{{text.used_at_minimumExpense}} {{
+														cashFormat(store.minimumExpense) }} {{ text.currency }}
+													</div>
+												</div>
+											</div>
+										</div>
+										<v-divider class="mb-4 mt-4 mb-line" />
+									</v-card>
+								</div>
+							</template>
+</div>
+</v-container>
+</v-row>
+<v-row class="row-tabs">
+    <v-col>
+        <div class="add-emp-btn-container">
+            <v-btn :disabled="isLoadingexel" :loading="isLoadingexel" rounded block color="primary" :height="48" @click="exportCouponHistory" style="align-items: center;">
+                <span class="text-uppercase">{{ text.button_t }}</span>
+            </v-btn>
+        </div>
+    </v-col>
+</v-row>
+</v-container>
+</template>
+</cpn-dsb-page-content-container>
+<v-dialog content-class="cpn-custom-date-picker" ref="date-range-picker-dialog" v-model="tabState.showDatePicker" :return-value.sync="tabState.dates" width="360">
+    <v-date-picker :max="tabState.maxDate" range v-model="tabState.dates" :locale="lang" :selected-items-text="tabState.displayPickerDateRang">
+        <v-btn rounded color="primary" @click="confirmSelectDates" :height="48" :disabled="tabState.dates.length === 0">
+            <span class="px-6">
+					{{ $t("ok") }}
+				</span>
+        </v-btn>
+        <v-btn width="48" height="48" fab color="primary-dark" @click="cancelSelectDate" class="close-date-picker-btn">
+            <v-icon color="white">close</v-icon>
+        </v-btn>
+    </v-date-picker>
+</v-dialog>
+</div>

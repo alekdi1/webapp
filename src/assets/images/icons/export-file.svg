@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="19.994" height="21.009" viewBox="0 0 19.994 21.009">
+    <defs>
+        <style>
+            .cls-1{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:.881px}
+        </style>
+    </defs>
+    <g id="Vector_Smart_Object" transform="translate(.441 .442)">
+        <g id="Group_4" transform="translate(-42.378 -163.398)">
+            <path id="Path_5" d="M54.819 165.606h-8.442l-4 3.933v13.111a.882.882 0 0 0 .889.874h11.553a.881.881 0 0 0 .889-.874v-16.17a.881.881 0 0 0-.889-.874z" class="cls-1"/>
+            <path id="Path_6" d="M57.041 182.213l3.555-.437c.487-.056.946-.395.889-.874l-2.222-16.607a1.031 1.031 0 0 0-1.333-.874l-8.887.874" class="cls-1"/>
+            <path id="Rectangle-Copy-12" d="M46.377 165.606v3.059a.881.881 0 0 1-.889.874h-3.11" class="cls-1"/>
+        </g>
+    </g>
+</svg>

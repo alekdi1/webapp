@@ -1,0 +1,103 @@
+@import "../../../../../../styles/vars.scss";
+
+#_rewards-redeem-otp-page {
+    $chip-background: 100px;
+
+    input:focus {
+        outline: none;
+    }
+
+    .otp-input {
+        width: 46px;
+        height: 50px;
+        padding: 5px;
+        margin: 0 10px;
+        text-align: center;
+    }
+
+    .otp-input-bottom {
+        width: 46px;
+        height: 4px;
+        margin: 0 10px;
+        border: none;
+        border: 1px solid $color-primary;
+        background-color: transparent;
+
+        &.active {
+            border: none !important;
+            background-color: $color-primary !important;
+        }
+
+        &.invalid {
+            border: none !important;
+            background-color: #ea4b60 !important;
+        }
+    }
+
+    .otp-input::-webkit-inner-spin-button,
+    .otp-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .button-section {
+        position: absolute !important;
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+    }
+
+    .text-36 {
+        font-size: 36px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.36px;
+    }
+
+    .text-18 {
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.18px;
+    }
+
+    .text-15 {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+    }
+
+    .text-12 {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.12px;
+    }
+
+    .text-color-gray {
+        color: #b3b3b3;
+    }
+
+    .text-color-primary {
+        color: $color-primary;
+    }
+
+    .text-color-red {
+        color: #ea4b60;
+    }
+
+    /* Hide arrow in input type number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Hide arrow in input type number */
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+}

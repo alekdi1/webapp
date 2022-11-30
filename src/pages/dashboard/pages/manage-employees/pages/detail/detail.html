@@ -1,0 +1,78 @@
+<div id="_emp-detail-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+
+				<!-- title, action -->
+				<div class="d-flex">
+					<div class="flex-grow-1 page-content-title mb-2">{{ text.title_manage_user }}</div>
+					<div class="flex-shrink-0">
+						<v-btn text color="primary" class="edit-permission-btn" @click="editEmp" v-if="user.id !=  emp.id">
+							<fa-icon type="far" name="edit" color="primary" :size="20"/>
+							<div class="btn-text pl-2">{{ text.edit_permission }}</div>
+						</v-btn>
+					</div>
+				</div>
+
+				<section v-if="emp">
+					<div class="d-flex justify-center">
+						<cpn-user-avatar :user="emp" :size="64" color="error"/>
+					</div>
+					<div class="user-fullname mt-4">{{ emp.fullName }}</div>
+					<div class="user-role">{{ displayRole }}</div>
+
+					<table class="w100 user-info-table">
+						<tr>
+							<td>
+								<div class="user-detail-label">{{ $t("email") }}</div>
+							</td>
+							<td>
+								<div class="user-info-value">{{ emp.email }}</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="user-detail-label">{{ $t("phone_number") }}</div>
+							</td>
+							<td>
+								<div class="user-info-value">{{ phone }}</div>
+							</td>
+						</tr>
+					</table>
+
+					<v-divider class="my-6" color="#e1e1e1"/>
+
+					<div class="pb-4">
+						<div class="section-title">{{ text.data_accesses }}</div>
+
+						<template v-for="(p, idx) in empPermissions">
+							<div class="permission-item mt-4" :key="'permission-item-' + idx">
+								<div class="d-flex align-center mb-3">
+									<div class="permission-icon">
+										<img :src="p.icon" width="32" height="auto" />
+									</div>
+									<div class="flex-grow-1 permission-name pl-3">
+										{{ p.name }}
+									</div>
+									<div class="check-icon d-flex align-center">
+										<fa-icon name="check" type="far" color="primary"/>
+									</div>
+								</div>
+
+								<permission-store-list :stores="p.storeList"/>
+							</div>
+							<v-divider class="my-6" :key="'divider-' + idx" />
+						</template>
+
+</div>
+
+<div class="my-4">
+    <v-btn block rounded color="primary" :height="48" @click="copyUserToForm" v-if="user.id !=  emp.id">
+        <span class="text-uppercase">{{ t("copy_emp_permission_setting") }}</span>
+    </v-btn>
+</div>
+</section>
+</v-container>
+</template>
+</cpn-dsb-page-content-container>
+</div>

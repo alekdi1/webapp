@@ -1,0 +1,44 @@
+<div id="_business-insights-page">
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-3">{{ text.title }}</div>
+				<div class="form-group">
+					<div class="input-group">
+						<label class="form-prepend" for="search-branch">
+							<fa-icon :size="18" name="search" type="far" color="primary-dark"/>
+						</label>
+						<input id="search-business-insight-branch" type="text" class="form-control borderless" :placeholder="text.search_branch">
+					</div>
+				</div>
+				<div class="business-insight-list-container pt-10">
+					<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+						<cpn-loading />
+					</div>
+					<div v-else-if="emptyBusinessInsight" class="text-center">
+						<div class="my-12">{{ $t("data_not_found") }}</div>
+					</div>
+					<div v-else v-for="(item, idx) in businessInsights" :key="'business-insight-item-' + idx" class="business-insight-container mb-5">
+						<div class="business-insight-image-container">
+							<div>
+								<v-img class="business-insight-image" :src="getImage(item.image)" width="100%" max-height="200"/>
+							</div>
+						</div>
+						<div class="business-insight-content-container mx-5">
+							<div class="business-insight-title-container mt-6">
+								<a @click="gotoBusinessInsightDetail(item.id)" class="cpn-content-default text-primary-dark font-weight-bold">{{ item.title }}</a>
+							</div>
+							<div class="business-insight-date-range mt-1">
+								<div class="cpn-content-subtitle">{{ displayDate(item.startDate) }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</v-container>
+		</template>
+
+		<template v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user"/>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

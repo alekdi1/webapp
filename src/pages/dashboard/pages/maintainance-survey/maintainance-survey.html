@@ -1,0 +1,99 @@
+<div id="_maintainance-survey-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container survey-container">
+				<div class="page-content-title mb-10">{{ text.title }}</div>
+				<div class="survey-start-container" v-if="isStarting">
+					<div class="survey-card-container d-flex flex-column align-center mx-5 pa-10">
+						<div class="question-title-container mb-10">
+							<div class="page-content-title">{{ text.start_assessment_title }}</div>
+						</div>
+						<div class="img-container mb-10">
+							<v-img :src="require('@/assets/images/icons/survey-beginning-default.svg')" width="175" height="175"/>
+						</div>
+						<div class="survey-note-container">
+							{{ text.start_assessment_note }}
+						</div>
+					</div>
+
+					<v-btn @click="isStarting = false" color="primary-dark" rounded height="48" width="90%" class="ma-5">
+						<div class="text-white">{{ text.start_assessment }}</div>
+					</v-btn>
+				</div>
+				<div class="survey-question-container" v-else>
+					<div class="survey-card-container d-flex flex-column align-center mx-5 pa-10">
+						<div class="question-title-container mb-5">
+							<div class="page-content-title">{{ surveyQuestion.question }}</div>
+						</div>
+						<div v-if="isDescriptionQuestion" class="description-container mx-3">
+							<v-textarea v-model="description" counter="120" maxlength="120" :label="text.comment_note" rounded solo outlined flat/>
+						</div>
+						<div v-else-if="isLast" class="description-container mx-3">
+							<div class="close-repair-pose-container d-flex flex-row align-center flex-grow-1 my-5">
+								<v-btn @click="toggleIsClosed(true)" icon>
+									<cpn-check-icon :checked="isClosed" />
+								</v-btn>
+								<div class="ml-2">{{ text.close_maintainance }}</div>
+							</div>
+							<div class="reopen-repair-pose-container d-flex flex-row align-center flex-grow-1 my-5">
+								<v-btn @click="toggleIsClosed(false)" icon>
+									<cpn-check-icon :checked="!isClosed" />
+								</v-btn>
+								<div>{{ text.re_maintainance }}</div>
+							</div>
+						</div>
+						<div v-else class="rate-container d-flex flex-column align-center justify-center">
+							<div class="img-container">
+								<v-img :src="rateImages" width="200" height="200"/>
+							</div>
+							<div class="rate-caption-container">
+								<div class="page-content-title">{{ rateCaption }}</div>
+							</div>
+							<div class="cpn-content-subtitle">{{ text.select_sastify_level }}</div>
+							<div class="rate-btn-container">
+								<div class="rate-btn-group">
+									<v-btn-toggle v-model="selectedRate" tile group>
+										<v-btn v-for="(itm, idx) in rateButtons" :key="'rated-btn-' + idx" :value="itm" depressed>
+											<div v-if="isSelectedRate(itm)">
+												<v-img :src="itm.activeImg" />
+											</div>
+											<div v-else>
+												<v-img :src="itm.deactiveImg" />
+											</div>
+										</v-btn>
+									</v-btn-toggle>
+								</div>
+							</div>
+						</div>
+						<div class="btn-container-wrapper">
+							<div class="btn-container d-flex justify-center align-center">
+								<v-btn @click="back" width="40%" height="60" elevation="0" color="rgb(0, 0, 0, 0)" :disabled="isFirst" class="back-btn">
+									<v-icon color="primary">arrow_back_ios</v-icon>
+									<div class="cpn-content-subtitle text-white">{{ text.back }}</div>
+								</v-btn>
+								<v-divider color="white" vertical/>
+								<v-btn @click="next" width="40%" height="60" elevation="0" color="rgb(0, 0, 0, 0)" :disabled="!selectedRate || isLast || (selectedRate.value === 0 && !isDescriptionQuestion)" class="next-btn">
+									<div class="cpn-content-subtitle text-white" v-if="!isLast">{{ text.continue }}</div>
+									<v-icon color="primary" v-if="!isLast">arrow_forward_ios</v-icon>
+								</v-btn>
+							</div>
+						</div>
+					</div>
+	
+					<div class="tracking-dot-container mt-5 d-flex flex-row justify-center">
+						<v-btn v-for="(itm, idx) in trackingDots" :key="'tracking-dot-' + idx" elevation="0" disabled x-small>
+							<div v-if="displayActiveDot(idx)" class="tracking-dot-active"></div>
+							<div v-else class="tracking-dot"></div>
+						</v-btn>
+					</div>
+	
+					<div v-if="isLast" class="submit-btn-container">
+						<v-btn @click="submitSurvey" color="primary-dark" rounded height="48" width="90%" class="ma-5">
+							<div class="text-uppercase text-white">{{ text.submit }}</div>
+						</v-btn>
+					</div>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,55 @@
+<div id="_store-list-page">
+
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-3">{{ text.title }}</div>
+				<div class="form-group">
+					<div class="input-group">
+						<label class="form-prepend" for="search-branch">
+							<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+						</label>
+						<input v-model="search" id="search-branch" type="text" class="form-control borderless"
+							:placeholder="text.search_branch" :disabled="isLoading">
+					</div>
+				</div>
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+					<cpn-loading />
+				</div>
+				<!-- ------------- Store List ---------------- -->
+				<div class="request-store-list-container mt-10 mx-2" v-else>
+					<template v-if="displayStoreList.length > 0">
+						<div v-for="(store, index) in displayStoreList" :key="'request-store-' + index"
+							class="request-store-container">
+							<v-card class="request-store-card elevation-0 py-5" @click="selectedStore(store)" v-ripple>
+								<div class="request-store-item d-flex flex-row">
+									<div class="avatar-col">
+										<v-avatar :color="index % 2 === 0 ? 'error' : '#0e192c'" size="56">
+											<span class="text-white headline">{{ storeChar(store.shop.displayIdAsName)
+												}}</span>
+										</v-avatar>
+									</div>
+									<div class="">
+										<div>
+											<div class="cpn-content-title ml-3">{{ store.shop.displayIdAsName }}</div>
+										</div>
+										<div>
+											<!-- <div class="cpn-content-subtitle ml-3">{{
+												displayMasterBranch(store.branch.id) }}</div> -->
+											<div class="cpn-content-subtitle ml-3">{{
+												displayMasterBranch(store.branch_new.id) }}</div>
+											<!-- <div class="cpn-content-subtitle ml-3">{{ store.branch.displayName }}</div> -->
+										</div>
+									</div>
+								</div>
+							</v-card>
+						</div>
+					</template>
+					<div v-else class="d-flex justify-center align-center" style="height: 100px;">
+						<span>ไม่พบข้อมูลสาขา</span>
+					</div>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

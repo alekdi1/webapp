@@ -1,0 +1,187 @@
+def AUTOMATED_TEST_RESULT = "SUCCESS"
+def ERROR_MESSAGE = ""
+
+pipeline {
+
+    environment {
+        env = "${params.environment}"
+        image_repository_url = "https://gitlabdev.centralpattana.co.th"
+        image_repository_tag = "${params.system_name}"
+        image_name = "gitlabdev.centralpattana.co.th" + "/tenant/cpnserve/webapp/" + "${env.application_name}-${env.env}" + ":${BUILD_NUMBER}"
+        application_name = "${params.application_name}"
+        system_name = "${params.system_name}"
+        kubernetes_server_url = "https://10.9.98.28:6443"
+        namespace = "${params.system_name}-${env}"
+        ingress_host = "serve-${env}.centralpattana.co.th"
+        server_port = "8100"
+        SKIP_QUALITY_GATE = "${params.skip_quality_gate}"
+        SKIP_AUTOMATED_TEST = "${params.skip_automated_test}"
+    }
+
+    agent { label '10.9.98.28' }
+
+    stages {
+
+        stage('Build source code') {
+            agent {
+                  docker {
+                    registryUrl 'https://gitlabdev.centralpattana.co.th'
+                    image 'gitlabdev.centralpattana.co.th/baseimages/nodejs:lts-alpine'
+                    args '-u root'
+                    reuseNode true
+                    alwaysPull false
+                    registryCredentialsId 'f684ee49-7e5b-468d-ba7b-8b66524785e0'
+                }
+            }
+            steps {
+                    sh "npm install"
+                    sh "NODE_ENV=production VUE_APP_APP_VERSION=1.9.1 VUE_APP_AGREEMENT_URL=https://www.centralpattana.co.th/th/sustainability/corporate-governance/privacy-policy npm run build-prod"
+            }
+        }
+
+        stage('Code scan') {
+            when { expression { return "${env.SKIP_QUALITY_GATE}" != 'Y'} }
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('sonarscan') {
+                   sh "${scannerHome}/bin/sonar-scanner " +
+                        "-Dsonar.qualitygate.wait " +
+                        "-Dsonar.projectKey=${env.system_name}-${env.application_name} " +
+                        "-Dsonar.projectName=${env.system_name}-${env.application_name} " +
+                        "-Dsonar.language=ts " +
+                        "-Dsonar.sourceEncoding=UTF-8 " +
+                        "-Dsonar.sources=. " +
+                        '-Dsonar.exclusions="node_modules/**, k8s/**, .git/**, .vscode/**, .mvn/**"'
+                }
+            }
+        }
+
+        stage("Quality Gate") {
+            when { expression { return "${env.SKIP_QUALITY_GATE}" != 'Y'} }
+            steps {
+                script {
+                    def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                    if (qg.status != 'OK') {
+                        echo "See report from URL: https://sourcescan.centralpattana.co.th/dashboard?id=${env.system_name}-${env.application_name}"
+                        currentBuild.result = "FAILURE"
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                    echo "See report from URL: https://sourcescan.centralpattana.co.th/dashboard?id=${env.system_name}-${env.application_name}"
+                }
+            }
+        }
+
+        stage('Build application image') {
+            steps {
+                    script {
+                        docker.withRegistry("${env.image_repository_url}", "f684ee49-7e5b-468d-ba7b-8b66524785e0") {
+                            container_image = docker.build("${env.image_name}", "-f docker/Dockerfile .")
+                        }
+                    }
+            }
+        }
+
+        stage('Push application image') {
+            steps {
+                    script {
+                        docker.withRegistry("${env.image_repository_url}", "f684ee49-7e5b-468d-ba7b-8b66524785e0") {
+                            container_image.push()
+                        }
+                    }
+            }
+        }
+
+        stage('Generate Manifest') {
+            steps {
+                    script {
+                        load "cicd/config/pod-sizing-${env.env}.groovy"
+                        sh 'envsubst < manifests/deployment_template.yaml > manifests/deployment.yaml'
+                        sh 'envsubst < manifests/service_template.yaml > manifests/service.yaml'
+                        sh 'envsubst < manifests/istio_ingress/istio_ingress_template.yaml > manifests/istio_ingress/istio_ingress.yaml'
+                    }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh """
+                    kubectl create configmap -n ${env.namespace} ${env.application_name}-env-config --from-file=env.js=config/env.${env.env}.js --dry-run -o yaml | kubectl apply -f -
+                    kubectl create configmap -n ${env.namespace} ${env.application_name}-nginx-config --from-file=default.conf=nginx/nginx.${env.env}.conf --dry-run -o yaml | kubectl apply -f -
+                    kubectl apply -n ${env.namespace} -f manifests/deployment.yaml
+                    kubectl apply -n ${env.namespace} -f manifests/service.yaml
+                    kubectl apply -n ${env.namespace} -f manifests/istio_ingress/istio_ingress.yaml
+                    kubectl rollout status deployment ${env.application_name} -n ${env.namespace}
+                    """
+                }
+            }
+        }
+
+        stage('Automate test') {
+            when { expression { return "${env.SKIP_AUTOMATED_TEST}" != 'Y'} }
+            agent {
+                  docker {
+                    registryUrl 'https://gitlabdev.centralpattana.co.th'
+                    image 'gitlabdev.centralpattana.co.th/baseimages/debian/php-cypress:latest'
+                    args '-u root'
+                    reuseNode true
+                    alwaysPull false
+                    registryCredentialsId 'f684ee49-7e5b-468d-ba7b-8b66524785e0'
+                }
+            }
+            steps {
+                script {
+                    try {
+                        sh "npx cypress install"
+                        sh "npx cypress run --config-file cypress/cypress.${env.env}.json"
+                        archiveArtifacts artifacts: 'cypress/videos/*.mp4'
+                        archiveArtifacts artifacts: 'cypress/reports/*.html'
+                    }
+                    catch (err) {
+                        archiveArtifacts artifacts: 'cypress/videos/*.mp4'
+                        archiveArtifacts artifacts: 'cypress/reports/*.html'
+                        archiveArtifacts artifacts: 'cypress/screenshots/**/*.png'
+                        AUTOMATED_TEST_RESULT = "FAILURE"
+                        ERROR_MESSAGE = err.getMessage()
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { 
+                            currentBuild.result = "FAILURE"
+                            echo ERROR_MESSAGE
+                            error "ERROR STAGE: ${STAGE_NAME} MESSAGE: " + ERROR_MESSAGE
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Rollout application when automated failure') {
+            when { expression { return AUTOMATED_TEST_RESULT != 'SUCCESS'} }
+            steps {
+                    script {
+                        sh """
+                        kubectl rollout undo deployment ${env.application_name} -n ${env.namespace}
+                        kubectl rollout status deployment ${env.application_name} -n ${env.namespace}
+                        """
+                    }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh "docker rmi ${env.image_name}" 
+                }      
+            }
+        }
+
+    }
+
+    post {
+        always {
+            emailext attachmentsPattern: "cypress/videos/*.mp4", body: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}", subject: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}", to: 'siphanupong@centralpattana.co.th, ngvira@centralpattana.co.th'
+            cleanWs()
+        }
+    }
+
+}

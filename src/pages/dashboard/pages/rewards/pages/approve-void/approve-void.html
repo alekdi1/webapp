@@ -1,0 +1,53 @@
+<div id="_approve-void">
+	<cpn-dsb-page-content-container v-if="hasPermission">
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container" ref="dbs-approve-void-container" id="dbs-approve-void-container">
+				<div v-scroll:#dbs-approve-void-container="onContentScroll">
+
+					<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				
+					<v-tabs @change="onTypeChange" class="mt-4" v-model="tabType" fixed-tabs :slider-size="4">
+						<v-tab>
+							<span class="type-tab-label text-capitalize">{{ text.tab1 }}</span>
+						</v-tab>
+						<v-tab>
+							<span class="type-tab-label text-capitalize">{{ text.tab2 }}</span>
+						</v-tab>
+						<v-tabs-slider />
+					</v-tabs>
+
+					<v-tabs-items v-model="tabType" >
+						<v-tab-item :value="0">
+							<div v-if="loading" style="width: 100%; height: 120px; margin-bottom: 64px;" class="d-flex align-center justify-center">
+								<cpn-loading />
+							</div>
+							<template v-else-if="isEmpty">
+								<div class="text-center mt-12">
+									<div>{{ text.data_not_found }}</div>
+								</div>
+							</template>
+							<template v-else v-for="(item, i) in approveAvoidItems">
+								<cpn-the1-transaction-item :key="'cpn-the1-approve-avoid-item-' + i" :item="item" type="approveVoid" :user="user" :config="config" />
+								<v-divider :key="'v-divider-approve-avoid-' + i"/>
+							</template>
+						</v-tab-item>
+						<v-tab-item :value="1">
+							<div v-if="loading" style="width: 100%; height: 120px; margin-bottom: 64px;" class="d-flex align-center justify-center">
+								<cpn-loading />
+							</div>
+							<template v-else-if="isEmpty">
+								<div class="text-center mt-12">
+									<div>{{ text.data_not_found }}</div>
+								</div>
+							</template>
+							<template v-else v-for="(item, i) in approveAvoidItems">
+								<cpn-the1-transaction-item :key="'cpn-the1-approve-avoid-item-' + i" :item="item" type="approveVoid" />
+								<v-divider :key="'v-divider-approve-avoid-' + i"/>
+							</template>
+						</v-tab-item>
+					</v-tabs-items>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

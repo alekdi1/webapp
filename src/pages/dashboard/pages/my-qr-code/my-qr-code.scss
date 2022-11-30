@@ -1,0 +1,19 @@
+@import "../../../../styles/vars.scss";
+
+#_my-qr-code-page {
+    #search-payment-branch {
+        background: $color-secondary;
+    }
+
+    .title-container {
+        border-left: 5px solid black;
+        padding-bottom: 15px;
+        padding-left: 20px;
+        margin-left: 10px;
+    }
+
+    .qr-information-container {
+        width: 350px;
+        text-align: center;
+    }
+}

@@ -1,0 +1,30 @@
+@import "../../../../styles/vars.scss";
+
+#_annoucement-detail-page {
+    .content-date-container {
+        .content-date {
+            color: #666666;
+        }
+    }
+
+    .content-title-container {
+        width: 450px;
+
+        .title-rectangle {
+            width: 7px;
+            height: 70px;
+            background-color: $color-primary;
+        }
+    }
+
+    .content-detail-container {
+        color: #0c0c0c;
+        img {
+            max-width: 100% !important;
+        }
+    }
+
+    .ex1 {
+        margin-top: -45px;
+      }
+}

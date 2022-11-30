@@ -1,0 +1,204 @@
+<div id="_payment-invoice-list-page" class="dashboard-page-content" ref="_payment-invoice-list-page">
+	<cpn-dsb-page-content-container @onLeftColumnScrollEnd="onLeftColumnScrollEnd">
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<cpn-user-on-board-payment-modal :isOnBoard="isFirstVisit" v-if="isFirstVisit" />
+				<div class="page-content-title mb-2">{{ text.title }}</div>
+
+				<div class="payment-invoice-list">
+					<div class="d-flex">
+						<div class="flex-grow-1">
+							<v-menu v-model="showMenu" offset-y rounded="xl" max-height="80vh" :z-index="999999">
+								<template v-slot:activator="{}">
+									<div class="form-group" ref="search-form-group">
+										<div class="input-group">
+											<label class="form-prepend" for="search-payment-branch">
+												<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+											</label>
+											<input autocomplete="off" :disabled="loading || isNoInvoice"
+												@focus="onSearchFocus" :readonly="loading" v-model="search"
+												@input="onSearchInput($event)" id="search-payment-branch" type="text"
+												class="form-control borderless" :placeholder="text.search_branch">
+											<div class="form-apppend">
+												<v-btn :disabled="loading" @click="clearSearch" icon :size="20"
+													v-if="search">
+													<v-icon>cancel</v-icon>
+												</v-btn>
+											</div>
+										</div>
+										<div class="text-error" v-if="errorMessage">{{ errorMessage }}</div>
+									</div>
+								</template>
+								<v-list :disabled="loading">
+									<v-list-item v-for="(item, index) in displayInvoiceBranches" :key="index"
+										@click="selectBranch(item)">
+										<v-list-item-title>{{ item.displayName }}</v-list-item-title>
+										<v-list-item-icon v-if="isSelected(item)">
+											<fa-icon name="check" color="primary" type="far" />
+										</v-list-item-icon>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</div>
+						<div class="d-flex sort-btn-container align-center pl-3">
+							<v-btn :disabled="loading || isNoInvoice" icon color="primary" @click="showSortDialog">
+								<fa-icon :size="20" name="sort-alt" type="fas" color="primary" />
+							</v-btn>
+						</div>
+					</div>
+
+					<!-- -----------selected branches ----------- -->
+					<div class="selected-branch-list">
+						<v-chip :disabled="loading" v-for="(b, idx) in selectedBranches" :key="'selected-branch-' + idx"
+							class="ma-2 selected-branch-item" color="secondary" outlined close
+							@click:close="removeSelectedBranch(b)">
+							<span class="text-primary-dark">{{ b.displayName }}</span>
+						</v-chip>
+					</div>
+
+					<!-- ----------- selected all ----------- -->
+					<v-card class="px-3 py-2 d-inline-block" flat @click="toggleSelectAll()" :disabled="loading"
+						v-if="!isNoInvoice">
+						<div class="d-flex align-center">
+							<template v-if="isSelectedAll">
+								<cpn-check-icon :checked="true" />
+								<span class="cpn-content-subtitle pl-2">{{ text.select_all }}</span>
+								<span class="px-2">({{ selectedInvoicesCount }})</span>
+							</template>
+							<template v-else>
+								<cpn-check-icon :checked="false" />
+								<span class="cpn-content-subtitle pl-2">{{ text.select_all }}</span>
+							</template>
+						</div>
+					</v-card>
+
+					<v-divider class="my-4" />
+
+					<!-- ----------- invoice list ----------- -->
+					<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="loading">
+						<cpn-loading />
+					</div>
+					<div class="loading d-flex justify-center align-center px-8" style="height: 160px;"
+						v-else-if="isNoInvoice">
+						<span class="error-text">{{ text.no_invoice_text }}</span>
+					</div>
+					<div class="invoice-list" v-else>
+						<v-card :data-id="invoice.uniqueId" :disabled="loading" @click="toggleSelectInvoice(invoice)"
+							class="invoice-item" :class="{ selected: currentInvoiceId === invoice.uniqueId }" flat
+							v-ripple v-for="(invoice, idx) in displayInvoiceList"
+							:key="'invoice-' + invoice.uniqueId + '-' + idx">
+							<table class="w100">
+								<tr>
+									<td class="check-col">
+										<div class="d-flex">
+											<v-btn icon>
+												<cpn-check-icon :checked="isInvoiceSelected(invoice)" />
+											</v-btn>
+										</div>
+									</td>
+									<td>
+										<div class="d-flex flex-column">
+											<div class="cpn-content-title">{{ invoice.shopName || text.no_shop_name }}
+											</div>
+											<div class="cpn-content-subtitle">{{ displayMasterBranch(invoice.branchCode)
+												}}</div>
+											<div class="invoice-price mt-1">
+												<span class="price" :class="{ overdue: invoice.isOverDue }">{{
+													invoice.totalInvoicePrice }}</span>
+												<span class="price-currency">{{ text.baht }}</span>
+											</div>
+											<div class="d-flex mt-1">
+												<div class="flex-grow-1 d-flex flex-row align-center">
+													<v-icon class="mr-2">calendar_view_month</v-icon>
+													<span class="cpn-content-subtitle">{{ text.duedate }}</span>
+												</div>
+												<div class="flex-shrink-0">
+													<span class="cpn-content-subtitle due-date"
+														:class="{ overdue: invoice.isOverDue }">{{
+														invoice.displayDueDate }}</span>
+												</div>
+											</div>
+											<!-- <div class="cpn-content-subtitle mt-1 invoice-no">{{ text._invoice}}:&nbsp;{{ invoice.id }}</div> -->
+											<div class="cpn-content-subtitle mt-1 invoice-no">
+												{{invoice.invoiceDesc}}:&nbsp;{{ invoice.id }}</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</v-card>
+					</div>
+				</div>
+			</v-container>
+		</template>
+
+		<template v-slot:column-right>
+			<v-container class="cpm-dbs-content-container">
+				<cpn-payment-invoice-detail :invoices="selectedInvoiceItems" v-if="currentInvoice" />
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+
+	<v-dialog :attach="$refs['_payment-invoice-list-page']" content-class="invoice-sort-dialog"
+		v-model="sortDialog.show" persistent max-width="480" ref="invoice-sort-dialog">
+		<v-card flat class="py-10 px-6 dialog-card">
+			<div class="d-flex">
+				<div class="cpn-text-h6 flex-grow-1">{{ text.sort_by }}</div>
+			</div>
+
+			<section style="max-height: 480px;overflow-y: auto;margin-left: -8px;">
+				<v-list rounded>
+					<v-list-item-group v-model="sortDialog.sortBy" color="primary">
+						<v-list-item v-for="(item, i) in sortDialog.sortList" :key="i" :value="item.value"
+							@click="sortItemClick(item.value)">
+							<v-list-item-content>
+								<v-list-item-title>
+									<span>{{ item.label }}</span>
+								</v-list-item-title>
+							</v-list-item-content>
+							<v-list-item-icon v-if="sortDialog.sortBy === item.value">
+								<fa-icon name="check" color="primary" type="far" />
+							</v-list-item-icon>
+						</v-list-item>
+					</v-list-item-group>
+				</v-list>
+			</section>
+
+			<div class="d-flex justify-center mt-4">
+				<v-btn :height="48" rounded color="primary" @click="sortDialog.show = false">
+					<span class="text-uppercase text-white px-6">{{ $t("close") }}</span>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+	<div id="confirm-check-modal" v-if="isShowModal">
+		<v-overlay>
+			<div>
+				<v-card :width=400 :height=320 class="d-flex flex-column justify-center align-center rounded-xl pa-10"
+					color="white">
+					<div class="cpn-text-h5 font-weight-bold text-primary-dark mb-3">
+						แจ้งเตือน
+					</div>
+					<div class="cpn-content-default text-center">
+						หากคุณต้องลบใบแจ้งหนี้นี้<br>
+						ส่วนลดที่ถูกเลือกไว้จะถูกลบด้วย<br>
+						คุณต้องการลบหรือไม่<br>
+					</div>
+					<div style="display: flex;padding-top:20px;">
+						<div style=" width: 100%; padding: 0px 30px 0px 30px;">
+							<v-btn color="dark" @click="confirmModal"
+								style="border-radius: 20px;background-color: #b39656;width: 120px;">
+								ตกลง
+							</v-btn>
+						</div>
+						<div style="width: 100%;padding: 0px 30px 0px 30px;">
+							<v-btn color="dark" @click="closeModal()"
+								style="border-radius: 20px;background-color: #b39656;width: 120px;">
+								ยกเลิก
+							</v-btn>
+						</div>
+					</div>
+				</v-card>
+			</div>
+		</v-overlay>
+	</div>
+</div>

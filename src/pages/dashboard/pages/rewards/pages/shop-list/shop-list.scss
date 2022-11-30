@@ -1,0 +1,99 @@
+@import "../../../../../../styles/vars.scss";
+
+#_rewards-shop-list-page {
+    $chip-background: 100px;
+
+    #search-shop-list {
+        background: $color-secondary;
+    }
+
+    .interest-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+
+        .interest-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 16px;
+        }
+
+        .interest-label {
+            margin-top: 4px;
+        }
+    }
+
+    .contact-us-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+
+        .contact-us-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 16px;
+        }
+
+        .contact-us-label {
+            margin-top: 4px;
+        }
+    }
+
+    .text-25 {
+        font-size: 25px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.25px;
+    }
+
+    .text-20 {
+        font-size: 20px;
+        font-weight: normal;
+        line-height: 25px;
+        letter-spacing: 0.2px;
+    }
+
+    .text-15 {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 20px;
+        letter-spacing: 0.15px;
+    }
+
+    .text-18 {
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.18px;
+    }
+
+    .text-15 {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+    }
+
+    .text-12 {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.12px;
+    }
+
+    .text-color-gray {
+        color: #a3a3a3;
+    }
+
+    .text-color-dark-gray {
+        color: #b2b2b2;
+    }
+
+    .text-black {
+        color: #000000;
+    }
+
+    .text-red {
+        color: #ea4b60;
+    }
+}

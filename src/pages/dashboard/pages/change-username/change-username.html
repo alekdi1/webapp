@@ -1,0 +1,85 @@
+<div id="_change-username-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<cpn-dsb-action-acknowledge v-if="isChangePasswordSuccess">
+				<template v-slot:title>
+					<div class="status-title mb-0">{{ acknowledge.title }}</div>
+				</template>
+				<template v-slot:content>
+					<div class="d-flex align-center flex-column">
+						<div class="acknowledge-subtitle text-white text-center mt-3">เปลี่ยนชื่อผู้ใช้เรียบร้อยเเล้ว<br>กรุณาเข้าสู่ระบบอีกครั้ง</div>
+
+						<v-btn color="primary" @click="login" class="mt-6" :height="48" rounded>
+							<span class="text-uppercase px-4">{{ $t("ok") }}</span>
+						</v-btn>
+					</div>
+				</template>
+			</cpn-dsb-action-acknowledge>
+			<v-container class="cpm-dbs-content-container" v-else>
+				<div class="page-content-title mb-2">{{ text.change_username }}</div>
+
+				<form class="mt-10">
+
+					<div class="form-group mb-4" :class="{ 'form-error': form.validated && form.errors.oldUsername }">
+						<label :for="'old-username-input-' + form.oldUsername.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.input_old_username }}</span>
+						</label>
+						<div class="old-username-input">
+							<input :id="'old-username-input-' + form.oldUsername.id" type="text" class="form-control mt-0"
+								:placeholder="text.old_username" v-model="form.oldUsername.value" :disabled="loading">
+						</div>
+						<!-- <div class="input-error-message mt-2" v-if="form.validated && form.errors.oldUsername">
+							{{ form.errors.oldUsername }}
+						</div> -->
+					</div>
+
+					<div class="form-group mb-4" :class="{ 'form-error': form.validated && form.errors.newUsername }">
+						<label :for="'new-username-input-' + form.newUsername.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.label_input_new_username }}</span>
+						</label>
+						<div class="new-username-input">
+							<input :id="'new-username-input-' + form.newUsername.id" type="text" class="form-control mt-0" :placeholder="text.new_username" v-model="form.newUsername.value" :disabled="loading" @keypress="isLetter($event)" >
+							<!-- <input :id="'new-username-input-' + form.newUsername.id" type="text" class="form-control mt-0" :placeholder="text.new_username" v-model="form.newUsername.value" :disabled="loading" @keypress="isLetter($event)" @paste.prevent> -->
+						</div>
+						<!-- <div class="input-error-message mt-2" v-if="form.validated && form.errors.newUsername">
+							{{ form.errors.newUsername }}
+						</div> -->
+					</div>
+
+					<div class="form-group mb-4" :class="{ 'form-error': form.validated && form.errors.configmNewUsername }">
+						<label :for="'confirm-new-username-input-' + form.configmNewUsername.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.confirm_new_username }}</span>
+						</label>
+						<div class="confirm-new-username-input">
+							<input :id="'confirm-new-username-input-' + form.configmNewUsername.id" type="text" class="form-control mt-0" :placeholder="text.new_username" v-model="form.configmNewUsername.value" :disabled="loading" @keypress="isLetter($event)" >
+							<!-- <input :id="'confirm-new-username-input-' + form.configmNewUsername.id" type="text" class="form-control mt-0" :placeholder="text.new_username" v-model="form.configmNewUsername.value" :disabled="loading" @keypress="isLetter($event)" @paste.prevent> -->
+						</div>
+						<!-- <div class="input-error-message mt-2" v-if="form.validated && form.errors.configmNewUsername">
+							{{ form.errors.configmNewUsername }}
+						</div> -->
+					</div>
+
+					<cpn-note-text class="my-3">
+						<div class="text-gray">
+							{{ $t('username_hint') }}
+						</div>
+					</cpn-note-text>
+				</form>
+			</v-container>
+
+			<div class="confirm-change-username-btn" v-if="!isChangePasswordSuccess">
+				<v-btn rounded block color="primary" :height="48" :loading="loading" :disabled="loading" @click="confirmChangeUsername">
+					<span class="text-uppercase text-white">{{ $t("ok") }}</span>
+				</v-btn>
+			</div>
+
+			<div class="error-notification" v-if="form.errorMessage">
+				<v-avatar color="#ea4b60" :size="24">
+					<v-icon color="white" :size="16">priority_high</v-icon>
+				</v-avatar>
+				<div class="error-message pl-4">{{ form.errorMessage }}</div>
+			</div>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

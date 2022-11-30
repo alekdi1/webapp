@@ -1,0 +1,55 @@
+@import "../../../../../../styles/vars.scss";
+#answer-question-detail-page {
+    .cmp-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #b39656;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #000000;
+        padding-left: 12px;
+        border-left: 4px solid $color-primary;
+
+        &.no-border {
+            padding-left: 16px;
+            border-left: unset !important;
+        }
+    }
+
+    .section-value {
+        padding-left: 16px;
+        font-size: 15px;
+        color: #000000;
+        margin-top: 6px;
+    }
+
+    .img-list {
+        .img-upload {
+            border-radius: 25%;
+        }
+    }
+
+    .message-list {
+        .message-item {
+            .text-message {
+                font-size: 15px;
+                color: #000000;
+            }
+
+            .message-date {
+                font-size: 15px;
+                color: #000000;
+            }
+        }
+    }
+
+    .loading-container, .error-container {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

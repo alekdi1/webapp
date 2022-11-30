@@ -1,0 +1,63 @@
+<div id="_customer-reward-transaction-download-history">
+	<cpn-dsb-page-content-container>
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-6">{{ text.page_title }}</div>
+
+				<v-tabs @change="onTabChange" class="mb-6" v-model="tabState.typeTab" fixed-tabs :slider-size="4">
+					<v-tab :disabled="loading">
+						<span class="type-tab-label">{{ text.tab1 }}</span>
+					</v-tab>
+					<v-tab :disabled="loading">
+						<span class="type-tab-label">{{ text.tab2 }}</span>
+					</v-tab>
+					<v-tabs-slider />
+				</v-tabs>
+
+				<v-tabs-items v-model="tabState.typeTab">
+					<v-tab-item :value="0">
+                        <div class="cpn-text-subtitle-1 mb-3">{{ text.select_option }}</div>
+                        <div class="email-container form-group mb-8">
+                            <label for="input-email">
+                                <span class="cpn-text-h6 font-weight-bold">{{ text.email }}</span>
+                            </label>
+                            <div class="email-input">
+                                <input autocomplete="off" id="input-email" type="text" class="form-control"
+                                    placeholder="yourname@email.com" v-model="email" :disabled="loading" />
+                            </div>
+							<div class="form-error-message text-error" v-if="isInvalidEmail" v-html="errors.email"></div>
+                        </div>
+                        <v-divider class="mb-6"/>
+						<div style="width: 100%; height: 120px; margin-bottom: 64px;" class="d-flex align-center justify-center" v-if="loading">
+							<cpn-loading />
+						</div>
+						<div v-for="(itm, idx) in historyItems" :key="'request-earn-redeem-itm-' + idx" class="mb-6" v-else>
+							<div class="cpn-text-h6 mb-3">
+								{{ displayYear(itm.year) }}
+								<span v-if="idx === 0" class="cpn-text-subtitle-2">{{ text.select_hint }}</span>
+							</div>
+							<div class="d-flex request-month-btn-container">
+								<div v-for="(mItm, mIdx) in itm.months" :key="'request-month-' + mItm.month + '-' + mIdx" class="pr-3 pb-3">
+									<cpn-req-month-btn @click="toggleSelectedMonth(mItm)"
+										:selected="mItm.selected"
+										:date="getDateFromYearAndMonth(itm.year, mItm.month)" />
+								</div>
+							</div>
+						</div>
+					</v-tab-item>
+					<v-tab-item :value="1">
+						<div class="d-flex align-center justify-center" style="width: 100%; height: 200px;">
+							<span>{{ text.data_not_found }}</span>
+						</div>
+                    </v-tab-item>
+				</v-tabs-items>
+
+                <section class="bottom-container">
+                    <v-btn :disabled="loading" :loading="loading" @click="submitDownloadForm" block :height="48" rounded color="primary">
+						<span class="text-capitalize">{{ text.ok }}</span>
+					</v-btn>
+				</section>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

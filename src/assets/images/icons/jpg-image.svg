@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">
+    <defs>
+        <clipPath id="nkte1nd4za">
+            <path fill="none" d="M0 0H32V40H0z"/>
+        </clipPath>
+    </defs>
+    <g>
+        <g>
+            <g>
+                <g clip-path="url(#nkte1nd4za)" transform="translate(-6185 -963) translate(6185 963)">
+                    <path fill="#070606" d="M31.79 11.546v-7.93A3.636 3.636 0 0 0 28.132 0H11.859a4.231 4.231 0 0 0-2.977 1.219L.872 9.138A2.931 2.931 0 0 0 0 11.219v25.165A3.637 3.637 0 0 0 3.658 40h24.474a3.636 3.636 0 0 0 3.658-3.616V20.742M10.115 2.02v5.793A2.2 2.2 0 0 1 7.9 10H2.043zm20.23 20.5v13.864a2.2 2.2 0 0 1-2.213 2.188H3.658a2.2 2.2 0 0 1-2.212-2.188V11.429H7.9a3.636 3.636 0 0 0 3.66-3.616V1.429h16.572a2.2 2.2 0 0 1 2.213 2.187v9.7"/>
+                    <path fill="#a98432" d="M0 0H5.444V5.545H0z" transform="translate(20.541 5.583)"/>
+                </g>
+            </g>
+        </g>
+        <text font-family="CPN-Bold, CPN" font-size="10.79px" font-weight="700" letter-spacing="0.01em" transform="translate(-6185 -963) translate(6188.725 989.649)">
+            <tspan x="0" y="0">.JPG</tspan>
+        </text>
+    </g>
+</svg>

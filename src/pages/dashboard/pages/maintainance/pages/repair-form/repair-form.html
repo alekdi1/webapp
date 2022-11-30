@@ -1,0 +1,145 @@
+<div id="_repair-form-page">
+
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-5">แจ้งซ่อม</div>
+
+				<!-- ------------------ Topic ------------------ -->
+				<section class="form-section mb-6">
+					<div class="section-title mb-4">ระบุปัญหาการแจ้งซ่อม</div>
+					<!-- <div class="topic-container form-group mt-5">
+						<div class="topic-input">
+							<input :id="'input-maintainance-topic-' + form.topic.id" type="text" class="form-control"
+								placeholder="กรุณาระบุปัญหาการแจ้งซ่อมของคุณ"  v-model="form.topic.value" :disabled="form.loading" />
+						</div>
+						<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.topic">{{ form.errors.topic }}</div>
+					</div> -->
+					<!-- <div class="cpn-text-body-2 my-3">หรือเลือกจากรายการแจ้งซ่อมแนะนำ</div> -->
+					<div class="suggestion-list">
+						<v-chip :disabled="form.loading" @click="form.selectTopic(t)"
+							:color="form.isTopicSelected(t) ? 'primary' : ''" class="my-2 mr-2"
+							v-for="(t, idx) in form.topics" :key="'topic-' + idx">
+							{{ t.name }}
+						</v-chip>
+					</div>
+					<cpn-note-text class="my-3">รายละเอียดเพิ่มเติมกรณีที่มีค่าใช้จ่ายในการซ่อม</cpn-note-text>
+				</section>
+
+				<!-- -------------- More detail ------------------ -->
+				<section class="form-section mb-6">
+					<div class="section-title">ระบุรายละเอียดเพิ่มเติม</div>
+					<div class="more-detail-container form-group my-5">
+						<div class="more-detail-input">
+							<v-textarea :counter="form.maxInfo" :maxlength="form.maxInfo"
+								label="เพื่อให้ช่างเข้าใจปัญหาและเตรียมอุปกรณ์ได้เหมาะสม"
+								:id="'input-maintainance-more-detail-' + form.moreDetail.id"
+								v-model="form.moreDetail.value" :disabled="form.loading" rounded solo outlined flat />
+						</div>
+					</div>
+				</section>
+
+				<!-- -------------- Upload image ----------------- -->
+				<section class="form-section mb-6">
+					<div class="section-title">อัพโหลดรูปภาพประกอบ</div>
+					<v-row class="image-form-list">
+						<v-col cols="4" v-for="(img, idx) in form.imgs" :key="idx">
+							<div class="pa-4">
+								<v-card :disabled="form.loading" class="img-item d-flex justify-center align-center">
+									<template v-if="(img.file && img.fileDataUrl) || img.value">
+										<v-img height="100%" width="100%" :src="img.fileDataUrl || img.value" />
+										<v-btn @click="form.remove(img.id)" color="error" x-small fab
+											class="remove-img-btn">
+											<v-icon>clear</v-icon>
+										</v-btn>
+									</template>
+									<v-card :disabled="form.loading" v-else :for="'img-browser-' + img.id" tag="label"
+										class="d-flex justify-center align-center" flat :height="36" :width="36">
+										<v-icon>local_see</v-icon>
+										<input :disabled="form.loading" type="file" v-show="false"
+											:id="'img-browser-' + img.id" @input="form.onFileChange($event, img.id)"
+											accept="image/x-png,image/jpeg" />
+									</v-card>
+								</v-card>
+							</div>
+						</v-col>
+					</v-row>
+				</section>
+
+				<!-- -------------- Select Date ----------------- -->
+				<section class="form-section mb-6">
+					<div class="section-title mb-4">ระบุวันที่ให้ช่างเข้าซ่อม</div>
+					<div class="date-container form-group mt-5">
+						<div class="date-input">
+							<v-menu>
+								<template v-slot:activator="{ on, attrs }">
+									<div class="form-group" v-on="on">
+										<div class="input-group">
+											<label class="form-prepend" for="input-maintainance-date">
+												<v-icon color="primary">event</v-icon>
+											</label>
+											<input v-model="form.displayDate" id="input-maintainance-date" type="text"
+												class="form-control" placeholder="กรุณาระบุวันที่ให้ช่างเข้าซ่อม"
+												:disabled="form.loading">
+										</div>
+									</div>
+								</template>
+								<v-date-picker :min="form.minDate" v-model="form.selectedDate"
+									@change="form.selectDate()" color="primary" no-title />
+							</v-menu>
+						</div>
+						<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.date">{{
+							form.errors.date }}</div>
+					</div>
+				</section>
+
+				<!-- -------------- Select Time ------------------ -->
+				<section class="form-section mb-6">
+					<div class="section-title mb-4">เลือกเวลาให้ช่างเข้าซ่อม</div>
+					<div class="time-container form-group mt-5">
+						<v-row class="time-form-list">
+							<v-col cols="6" v-for="(time, idx) in form.times" :key="idx">
+								<v-btn @click="form.selectTimeRange(time)"
+									:class="time.label === form.time ? 'selected-time-btn' : ''" outlined rounded block
+									elevation="0" :disabled="form.disabledTimeRange(time)">
+									<span class="text-uppercase">{{ time.label }}</span>
+								</v-btn>
+							</v-col>
+						</v-row>
+					</div>
+				</section>
+
+				<v-divider />
+
+				<!-- -------------- Contact Back ------------------ -->
+				<section class="form-section my-6">
+					<div class="section-title mb-4">ระบุข้อมูลผู้แจ้งซ่อมในการติดต่อกลับ</div>
+					<div class="contact-container form-group mt-5">
+						<div class="name-input">
+							<input autocomplete="off" type="text" class="form-control"
+								:id="'input-maintainance-name-' + form.contactName.id" v-model="form.contactName.value"
+								placeholder="ชื่อ-นามสกุล" :disabled="form.loading" />
+						</div>
+						<div class="cpn-text-body-2 mt-2 ml-2 text-error"
+							v-if="form.validated && form.errors.contactName">{{ form.errors.contactName }}</div>
+						<div class="phon-input mt-5">
+							<input autocomplete="off" maxlength="10" type="text" class="form-control"
+								:id="'input-maintainance-phone-' + form.phone.id" v-model="form.phone.value"
+								placeholder="หมายเลขโทรศัพท์" :disabled="form.loading" />
+						</div>
+						<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.phone">{{
+							form.errors.phone }}</div>
+					</div>
+				</section>
+
+				<section class="form-section mb-6">
+					<v-btn :disabled="form.submitDisabled || form.loading" :loading="form.loading"
+						@click="submitMaintainanceForm" block :height="48" rounded color="primary">
+						<span class="text-uppercase">ส่งข้อมูลแจ้งซ่อม</span>
+					</v-btn>
+				</section>
+
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

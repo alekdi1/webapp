@@ -1,0 +1,162 @@
+@media (max-width: $min-screen-width) {
+    .page-container {
+        min-width: 100% !important;
+        width: 100% !important;
+        box-shadow: unset !important;
+    }
+
+    .cpn-dashboard-footer {
+        width: $min-screen-width !important;
+    }
+
+    #main-page-container {
+        width: $min-screen-width - $dashboard-menu-width !important;
+        min-width: $min-screen-width - $dashboard-menu-width !important;
+        max-width: $min-screen-width - $dashboard-menu-width !important;
+    }
+
+    .page-content-container {
+        .page-content-column {
+            &.column-left {
+                width: calc(100% - #{ $dashboard-right-col-width }) !important;
+                max-width: calc(100% - #{ $dashboard-right-col-width }) !important;
+            }
+        }
+    }
+
+    .footer-col {
+        &.middle-col {
+            width: calc(100% - #{ $dashboard-right-col-width +  $dashboard-menu-width}) !important;
+        }
+    }
+
+    #side-navigation {
+        .app-title {
+            font-size: calc(#{px_to_rem(24px)} - 2px) !important;
+        }
+
+        .user-name {
+            font-size: calc(#{px_to_rem(18px)} - 2px) !important;
+        }
+
+        .user-role {
+            font-size: calc(1rem - 2px) !important;
+        }
+
+        .menu-list {
+            .menu-group-label {
+                font-size: calc(#{px_to_rem(18px)} - 2px) !important;
+            }
+
+            .menu-label {
+                font-size: calc(1rem - 2px) !important;
+            }
+        }
+    }
+
+    // -------------- font --------------
+
+    .page-content-title {
+        font-size: calc(#{px_to_rem(18px)} - 2px) !important;
+    }
+    
+    .cpn-content-title {
+        font-size: calc(#{px_to_rem(20px)} - 2px) !important;
+    }
+    
+    .cpn-content-default {
+        font-size: calc(#{px_to_rem(18px)} - 2px) !important;
+    }
+    
+    .cpn-content-subtitle {
+        font-size: calc(#{px_to_rem(16px)} - 2px) !important;
+    }
+    
+    .cpn-content-subtitle2 {
+        font-size: calc(#{px_to_rem(14px)} - 2px) !important;
+    }
+    
+    .cpn-text-h1 {
+        font-size: calc(6rem - 2px) !important;
+    }
+
+    .cpn-text-h2 {
+        font-size: calc(3.75rem - 2px) !important;
+    }
+
+    .cpn-text-h3 {
+        font-size: calc(3.125rem - 2px) !important;
+    }
+
+    .cpn-text-h4 {
+        font-size: calc(2.125rem - 2px) !important;
+    }
+
+    .cpn-text-h5 {
+        font-size: calc(2rem - 2px) !important;
+    }
+
+    .cpn-text-h6 {
+        font-size: calc(1.25rem - 2px) !important;
+    }
+
+    .cpn-text-subtitle-1 {
+        font-size: calc(1rem - 2px) !important;
+    }
+
+    .cpn-text-subtitle-2 {
+        font-size: calc(0.875rem - 2px) !important;
+    }
+
+    .cpn-text-body-1 {
+        font-size: calc(1rem - 2px) !important;
+    }
+
+    .cpn-text-body-2 {
+        // font-size: calc(0.875rem - 2px) !important;
+        font-size: 16px !important;
+    }
+
+    .cpn-text-button {
+        font-size: calc(2.25rem - 2px) !important;
+    }
+
+    .cpn-text-caption {
+        font-size: calc(1.25rem - 2px) !important;
+    }
+
+    .cpn-text-overline {
+        font-size: calc(0.75rem - 2px) !important;
+    }
+    
+    .cpn-form-label {
+        font-size: calc(1rem - 2px) !important;
+    }
+
+    .news-group-container {
+        a {
+            font-size: calc(1rem - 2px) !important;
+        }
+    }
+
+    .news-content-detail-container {
+        .desc-content {
+            font-size: calc(1rem - 2px) !important;
+        }
+    }
+
+
+    #home-page {
+        .menu-card-container {
+            .menu-column {
+                .menu-item {
+                    .menu-card {
+                        * {
+                            font-size: calc(1rem - 2px) !important;
+                        }
+                    }
+                }
+            }
+        }   
+    }
+}

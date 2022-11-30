@@ -1,0 +1,134 @@
+#_customer-reward-transaction-cancellation-form {
+
+    .cpm-dbs-content-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        overflow-y: auto;
+        position: relative;
+
+    }
+
+    .normal-value {
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.5;
+        letter-spacing: 0.12px;
+        text-align: left;
+        color: #040404;
+    }
+
+    .transaction-id {
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.5;
+        letter-spacing: 0.12px;
+        text-align: right;
+        color: #010101;
+    }
+
+    .user-name {
+        font-size: 15px;
+        font-weight: bold;
+        color: #030303;
+    }
+
+    .the-1-number {
+        font-size: 12px;
+        color: #010101;
+    }
+
+    .date-time {
+        font-size: 12px;
+        color: #010101;
+    }
+
+    .label-total-price {
+        font-size: 12px;
+        font-weight: bold;
+        color: #000000;
+    }
+
+    .price-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #000000;
+    }
+
+    .req-cancel-user {
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.2;
+        letter-spacing: 0.12px;
+        text-align: left;
+        color: #000000;
+    }
+
+    .req-cancel-user-label {
+        font-size: 12px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.2;
+        letter-spacing: 0.12px;
+        text-align: left;
+        color: #000000;
+    }
+
+    .reason-for-void-label {
+        font-size: 18px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1;
+        letter-spacing: 0.18px;
+        text-align: left;
+        color: #030303;
+    }
+
+    .text-count {
+        font-size: 12px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.5;
+        letter-spacing: 0.12px;
+        text-align: left;
+        color: #a3a3a3;
+    }
+}
+
+.confirm-void-the1-transaction-dialog {
+    border-radius: 24px;
+    overflow: visible;
+    .v-card {
+        border-radius: 24px;
+        padding-left: 48px;
+        padding-right: 48px;
+        padding-top: 24px;
+        padding-bottom: 48px;
+        position: relative;
+
+        .dialog-text {
+            margin-top: 40px;
+            margin-bottom: 24px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #030303;
+        }
+
+        .close-btn {
+            width: 48px !important;
+            height: 48px !important;
+            position: absolute;
+            bottom: -24px;
+        }
+    }
+}

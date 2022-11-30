@@ -1,0 +1,340 @@
+<div id="login-page" ref="loginPage">
+	<!-- <div class="splash-screen" v-if="splashLoading" @click="hideSplasgScreen()">
+		<img src="https://i.imgur.com/T3QKwno.jpg" />
+	</div> -->
+	<cpn-auth-conrainer>
+		<template slot="auth-content">
+			<!-- <cpn-auth-company-text /> -->
+			<div class="d-flex justify-center align-center mb-10 mt-10" height="450">
+				<img class="mt-12" :src="require('@/assets/images/cpn-logo-new.png')" cover :width="200"
+					height="auto" />
+			</div>
+
+			<form>
+				<div class="username-container form-group my-3">
+					<div class="username-input my-3">
+						<input @keydown="checkSubmitForm($event)" id="username" type="text" class="form-control"
+							:placeholder="text.username" v-model="loginForm.username" :disabled="isLoging">
+					</div>
+					<div class="d-flex flex-row-reverse">
+						<router-link class="button text-primary-dark rn-link" :to="toForgotUsername" :tabindex="-1">
+							{{ text.forgot_username }}?
+						</router-link>
+					</div>
+				</div>
+				<div class="password-container form-group my-3">
+					<div class="password-input my-3">
+						<input @keydown="checkSubmitForm($event)" id="password" type="password" class="form-control"
+							:placeholder="text.password" v-model="loginForm.password" :disabled="isLoging"
+							autocomplete="on">
+					</div>
+					<div class="d-flex flex-row-reverse">
+						<router-link class="button text-primary-dark rn-link" :to="toForgotPwd" :tabindex="-1">
+							{{ text.forgot_password }}?
+						</router-link>
+					</div>
+				</div>
+				<div class="login-btn-container my-3">
+					<v-btn @click="login()" min-width="100%" height="48" elevation="0" color="primary"
+						:disabled="!allFillIn || isLoging" :loading="isLoging" rounded>
+						<span class="text-white cpn-content-default text-uppercase">{{ text.login }}</span>
+					</v-btn>
+				</div>
+			</form>
+			<div v-if="validateFail" class="handle-validate-fail"></div>
+			<div class="d-flex flex-column align-center login-card-footer mb-10">
+				<v-btn @click="howTo.show = true" text class="how-to-cpn-btn mb-2" height="60">
+					<div class="text-primary-dark text-decoration-underline btn-text text-uppercase">{{ text.how_to_cpn
+						}}<br>{{ text.how_to_cpn2 }}?</div>
+				</v-btn>
+				<v-btn text @click="switchLang()" class="button text-primary-dark">
+					<span class="cpn-text-body-1 text-uppercase">{{ text.change_lang }}</span>
+				</v-btn>
+			</div>
+		</template>
+	</cpn-auth-conrainer>
+
+	<v-dialog max-width="98%" :width="500" v-model="howTo.show" content-class="how-to-cpn-dialog"
+		:attach="$refs['loginPage']">
+		<v-card class="dialog-card py-8 px-8">
+			<div class="rent-area-container">
+				<div class="how-to-title-container text-center">
+					<div class="how-to-title">สนใจเช่าพื้นที่ภายในศูนย์การค้า</div>
+				</div>
+				<div class="text-center mt-6">
+					<div>สามารถกรอกรายละเอียด<a :href="contactCenterUrl" target="_blank"
+							class="text-decoration-underline">ที่นี่</a></div>
+					<div>หรือติดต่อ <a :href="'tel:' + callCenterPhone" class="text-decoration-underline">{{
+							callCenterPhone }}</a></div>
+					<div class="d-flex justify-center mt-4">
+						<v-btn @click="howTo.show = false" color="primary" rounded :height="48">
+							<span class="px-6 text-uppercase">{{ $t("close") }}</span>
+
+						</v-btn>
+					</div>
+				</div>
+			</div>
+
+		</v-card>
+	</v-dialog>
+
+	<!-- รหัสผ่านจะหมดอายุ x วัน -->
+	<v-dialog max-width="100%" v-model="passwordexpireclosing" width="400" content-class="user-profile-form-dialog">
+		<v-card class="user-profile-form-card dialog-card py-8 px-8">
+			<div class="rent-area-container">
+				<div class="how-to-title-container text-center">
+					<strong>
+						<div class="how-to-title">{{ $t("passwordexpireclosing.passwordexpireclosing0") }}</div>
+					</strong>
+				</div>
+				<div class="text-center mt-6">
+					<div>{{ $t("passwordexpireclosing.passwordexpireclosing1") }} {{ numberofdayleft }} {{
+						$t("passwordexpireclosing.passwordexpireclosing2") }}</div>
+					<div>{{ $t("passwordexpireclosing.passwordexpireclosing3") }}</div>
+					<div class="text-center mt-4">
+						<v-btn color="primary" @click="Gotonewpassword" rounded height="48" width="205">
+							<span class="px-6 text-uppercase">{{ $t("passwordexpireclosing.passwordexpireclosing4")
+								}}</span>
+						</v-btn>
+						<v-btn @click="gotodashboard" class="btn-outline my-3" color="secondary-lighten1" rounded
+							height="48" width="205">
+							<span class="px-6 text-uppercase">{{ $t("passwordexpireclosing.passwordexpireclosing5")
+								}}</span>
+						</v-btn>
+					</div>
+				</div>
+			</div>
+			<div class="w100 d-flex justify-center">
+				<v-btn @click="passwordexpireclosing = false" fab color="primary-dark" :size="64" id="close-btn"
+					:disabled="profileForm.loading">
+					<v-icon color="white" :size="28">close</v-icon>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+
+
+	<!-- password ex -->
+	<v-dialog max-width="100%" v-model="passwordexpire" width="450" content-class="user-profile-form-dialog">
+		<v-card class="user-profile-form-card dialog-card py-8 px-8">
+			<div class="rent-area-container">
+				<div class="how-to-title-container text-center">
+					<strong>
+						<div class="how-to-title">{{$t("passwordexpire.passwordexpire0")}}</div>
+					</strong>
+				</div>
+				<div class="text-center mt-6">
+					<div>{{$t("passwordexpire.passwordexpire1")}}</div>
+
+					<div class="text-center my-3">
+						<v-btn @click="Gotonewpassword" color="primary" rounded height="48" width="235">
+							<span class="px-6 text-uppercase">{{$t("passwordexpire.passwordexpire2")}}</span>
+						</v-btn>
+					</div>
+				</div>
+			</div>
+			<div class="w100 d-flex justify-center">
+				<v-btn @click="passwordexpire = false" fab color="primary-dark" :size="64" id="close-btn"
+					:disabled="profileForm.loading">
+					<v-icon color="white" :size="28">close</v-icon>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+
+	<!-- password ผิดxครัง -->
+	<v-dialog max-width="100%" v-model="passxcount" width="450" content-class="user-profile-form-dialog">
+		<v-card class="user-profile-form-card dialog-card py-8 px-8">
+			<div class="rent-area-container">
+				<div class="how-to-title-container text-center">
+					<strong>
+						<div class="how-to-title">{{$t("passxcount.passxcount0")}} <br>{{$t("passxcount.passxcount1")}}
+							{{ wrongPasswordCount
+							}} {{$t("passxcount.passxcount2")}}
+						</div>
+					</strong>
+				</div>
+				<div class="text-center mt-6">
+					<div> {{$t("passxcount.passxcount3")}}</div>
+
+					<div class="text-center mt-4">
+						<v-btn color="primary" @click="passxcount = false" rounded height="48" width="285">
+							<span class="px-6 text-uppercase">{{$t("passxcount.passxcount4")}}</span>
+						</v-btn>
+						<v-btn class="btn-outline my-3" @click="returnToforgot_password" color="secondary-lighten1"
+							rounded height="48" width="285">
+							<span class="px-6 text-uppercase">{{$t("passxcount.passxcount5")}}</span>
+						</v-btn>
+					</div>
+				</div>
+			</div>
+			<div class="w100 d-flex justify-center">
+				<v-btn @click="passxcount = false" fab color="primary-dark" :size="64" id="close-btn"
+					:disabled="profileForm.loading">
+					<v-icon color="white" :size="28">close</v-icon>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+
+	<!-- password lock -->
+	<v-dialog max-width="100%" v-model="passlock" width="400" content-class="user-profile-form-dialog">
+		<v-card class="user-profile-form-card dialog-card py-8 px-8">
+			<div class="rent-area-container">
+				<div class="how-to-title-container text-center">
+					<strong>
+						<div class="how-to-title">{{ $t("passlock.passwordlock0") }}</div>
+					</strong>
+				</div>
+				<div class="text-center mt-6">
+					<div>{{ $t("passlock.passwordlock1") }}</div>
+					<div>{{ $t("passlock.passwordlock2") }}</div>
+					<div>{{ $t("passlock.passwordlock3") }}</div>
+
+
+					<div class="text-center my-3		">
+						<v-btn color="primary" @click="returnToforgot_password" rounded height="48" width="205">
+							<span class="px-6 text-uppercase">{{ $t("passlock.passwordlock4") }}</span>
+						</v-btn>
+
+					</div>
+				</div>
+			</div>
+			<div class="w100 d-flex justify-center">
+				<v-btn @click="passlock = false" fab color="primary-dark" :size="64" id="close-btn"
+					:disabled="profileForm.loading">
+					<v-icon color="white" :size="28" @click="passlock = false">close</v-icon>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+
+
+
+
+	<v-dialog persistent max-width="98%" :width="isShowConsent?640:400" v-model="consentDialog.show"
+		content-class="login-consent-dialog">
+		<v-card class="dialog-card py-8 px-8">
+
+			<div class="consent-content mt-6" v-if="isShowConsent">
+				<table class="w100 consent-table">
+					<tr>
+						<td class="check-col">
+							<v-btn class="mt-9" width="32" height="32" icon
+								@click="consentDialog.checkedConsent = !consentDialog.checkedConsent">
+								<fa-icon :size="28" v-if="consentDialog.checkedConsent" name="check-circle" type="fas"
+									color="primary" />
+								<fa-icon :size="28" v-else name="circle" type="fal" color="primary" />
+							</v-btn>
+						</td>
+						<td>
+							<div class="consent-html-container" v-html="consentDialog.consentHtml" />
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="consent-tnc mt-2" v-if="isShowTermAndCondition">
+				<div class="text-center mb-4" v-if="!isShowConsent">
+					<span class="term-dialog-title">{{ $t("terms") }}</span>
+				</div>
+
+				<table class="w100 consent-table">
+					<tr>
+						<td class="check-col">
+							<v-btn width="32" height="32" icon
+								@click="consentDialog.checkedTermAndCondition = !consentDialog.checkedTermAndCondition">
+								<fa-icon :size="28" v-if="consentDialog.checkedTermAndCondition" name="check-circle"
+									type="fas" color="primary" />
+								<fa-icon :size="28" v-else name="circle" type="fal" color="primary" />
+							</v-btn>
+						</td>
+
+						<td class="col-center">
+							<div class="d-flex align-center justify-start">
+								<div>{{ $t("agree") }}</div>
+								<router-link :to="tncLink" class="ml-2 " target="_blank">{{ $t("terms") }}</router-link>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="mt-6">
+				<div class="d-flex justify-center">
+					<v-btn @click="confirmConsentDialog" :loading="consentDialog.loading"
+						:disabled="!consentDialog.checkedTermAndCondition || consentDialog.loading" :height="48"
+						class="confirm-consent-btn" rounded color="primary" :width="180">
+						<span class="text-white text-uppercase">{{ $t("ok") }}</span>
+					</v-btn>
+				</div>
+				<div class="d-flex justify-center mt-4" style="position: relative;">
+					<v-btn fab @click="consentDialog.show = false" color="primary-dark" :size="56"
+						class="dialog-close-btn">
+						<v-icon :size="32" color="white">close</v-icon>
+					</v-btn>
+				</div>
+			</div>
+
+		</v-card>
+	</v-dialog>
+
+	<!-- profile form -->
+	<!-- <v-dialog persistent v-model="profileFormtest" max-width="480" content-class="user-profile-form-dialog">
+		<v-card class="user-profile-form-card">
+
+			<div class="cpn-content-title">{{ profileForm.text.title }}</div>
+			<div class="form-container mb-8 mt-6">
+				<div class="firstname-container form-group mb-4">
+					<label :for="'input-profile-firstname-' + profileForm.id">
+						<span class="cpn-text-subtitle-1 font-weight-bold">{{ profileForm.text.firstname }}</span>
+					</label>
+					<div class="firstname-input">
+						<input autocomplete="off" :id="'input-profile-firstname-' + profileForm.id" type="text" class="form-control"
+							:placeholder="profileForm.text.phl_firstname" v-model="profileForm.firstname" :disabled="profileForm.loading" />
+					</div>
+					<div class="form-error-message text-error" v-if="profileForm.validate && profileForm.errors.firstname" v-html="profileForm.errors.firstname"/>
+				</div>
+				<div class="lastname-container form-group mb-4">
+					<label :for="'input-profile-lastname-' + profileForm.id">
+						<span class="cpn-text-subtitle-1 font-weight-bold">{{ profileForm.text.lastname }}</span>
+					</label>
+					<div class="lastname-input">
+						<input autocomplete="off" :id="'input-profile-lastname-' + profileForm.id" type="text" class="form-control"
+							:placeholder="profileForm.text.phl_lastname" v-model="profileForm.lastname" :disabled="profileForm.loading" />
+					</div>
+					<div class="form-error-message text-error" v-if="profileForm.validate && profileForm.errors.lastname" v-html="profileForm.errors.lastname"/>
+				</div>
+				<div class="email-container form-group mb-4">
+					<label :for="'input-profile-email-' + profileForm.id">
+						<span class="cpn-text-subtitle-1 font-weight-bold">{{ profileForm.text.email }}</span>
+					</label>
+					<div class="email-input">
+						<input autocomplete="off" :id="'input-profile-email-' + profileForm.id" type="text" class="form-control"
+							:placeholder="profileForm.text.phl_email" v-model="profileForm.email" :disabled="profileForm.loading" />
+					</div>
+					<div class="form-error-message text-error" v-if="profileForm.validate && profileForm.errors.email" v-html="profileForm.errors.email"/>
+				</div>
+				<div class="phone-container form-group mb-6">
+					<label :for="'input-profile-phone-' + profileForm.id">
+						<span class="cpn-text-subtitle-1 font-weight-bold">{{ profileForm.text.phone }}</span>
+					</label>
+					<div class="phone-input">
+						<input maxlength="10" autocomplete="off" :id="'input-profile-phone-' + profileForm.id" type="text" class="form-control"
+							:placeholder="profileForm.text.phl_phone" v-model="profileForm.phone" :disabled="profileForm.loading" />
+					</div>
+					<div class="form-error-message text-error" v-if="profileForm.validate && profileForm.errors.phone" v-html="profileForm.errors.phone"/>
+				</div>
+			</div>
+			<v-btn @click="submitProfile" rounded :height="48" block color="primary" :loading="profileForm.loading" :disabled="profileForm.loading || (profileForm.validate && !profileForm.allValidated)">
+				<span class="text-white text-uppercase">{{ profileForm.text.sent_date }}</span>
+			</v-btn>
+			<div class="w100 d-flex justify-center">
+				<v-btn @click="calcelProfile" fab color="primary-dark" :size="64" id="close-btn" :disabled="profileForm.loading">
+					<v-icon color="white" :size="28">close</v-icon>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog> -->
+
+</div>

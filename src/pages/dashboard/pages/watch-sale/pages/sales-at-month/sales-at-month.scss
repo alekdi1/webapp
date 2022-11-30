@@ -1,0 +1,382 @@
+@import "../../../../../../styles/vars.scss";
+
+#_shop-sale-sales-form-page {
+    $chip-background: 100px;
+
+    .section-title {
+        font-size: 15px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+        text-align: left;
+        color: #000000;
+        padding-left: 16px;
+        border-left: 4px solid $color-primary;
+
+        .section-subtitle {
+            font-size: 10.8px;
+            font-weight: normal;
+            letter-spacing: 0.11px;
+        }
+    }
+
+    .add-pos-button {
+        border-radius: 17px;
+        background-color: $color-primary;
+        color: white;
+        cursor: pointer;
+        width: 100%;
+        height: 34px;
+        font-family: $default-font !important;
+        font-size: 11px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.11px;
+        padding-left: 16px;
+        padding-top: 5px;
+
+        &.disabled {
+            background-color: #aaaaaa;
+            cursor: default;
+        }
+    }
+
+    .col-no-sales-image {
+        width: 40px;
+    }
+
+    .no-sales-image-uncheck {
+        width: 28px;
+        height: 28px;
+        border-radius: 14px;
+        border: 1px solid $color-primary;
+    }
+
+    .col-no-sales-text {
+        width: 55px;
+        text-align: left;
+        font-family: $default-font !important;
+        font-size: 10.8px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.11px;
+    }
+
+    table.form-table {
+
+        $brd: 1px solid #bbb;
+
+        th {
+            &.col-action {
+                width: 40px;
+            }
+
+            &.col-title {
+                width: 100px;
+            }
+
+            &.col-amount {
+                padding-left: 12px;
+                padding-right: 20px;
+            }
+
+            &.col-invoice {
+                width: 100px;
+                border-left: $brd;
+                padding-left: 8px;
+                padding-right: 12px;
+            }
+        }
+
+        td {
+
+            &.col-action {
+                width: 40px;
+                height: 60px;
+            }
+
+            &.col-title {
+                width: 70px;
+                height: 60px;
+                font-family: $default-font !important;
+                font-size: 12px;
+                font-weight: normal;
+                line-height: 18px;
+                letter-spacing: 0.12px;
+                padding-left: 10px;
+            }
+
+            &.col-amount {
+                height: 60px;
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            &.col-invoice {
+                width: 100px;
+                height: 60px;
+                border-left: $brd;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            &.col-hr {
+                padding-left: 30px;
+            }
+
+            &.col-total-title {
+                padding-right: 24px;
+                height: 50px;
+            }
+
+            &.col-total-amount {
+                padding-right: 24px;
+                height: 50px;
+            }
+
+            &.col-total-invoice {
+                width: 98px;
+                border-left: 1px solid #bbb;
+                padding-left: 8px;
+                padding-right: 24px;
+                height: 50px;
+            }
+        }
+    }
+
+    .sales-amount-title,
+    .sales-invoice-title {
+        font-family: $default-font !important;
+        font-size: 10.8px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.11px;
+        text-align: right;
+    }
+
+    .channel-total-title {
+        font-family: $default-font !important;
+        font-size: 12px;
+        font-weight: bold;
+        line-height: 18px;
+        letter-spacing: 0.12px;
+        text-align: left;
+        padding-left: 30px;
+    }
+
+    .channel-total-price,
+    .channel-total-invoice {
+        font-family: $default-font !important;
+        font-size: 15px;
+        font-weight: bold;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+        text-align: right;
+    }
+
+    .section-sales-amount-title {
+        font-size: 15px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+        text-align: left;
+        color: #000000;
+    }
+
+    .section-subtitle-extra-line {
+        font-size: 10.8px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1;
+        letter-spacing: 0.11px;
+        text-align: left;
+        color: #000000;
+        padding-left: 20px;
+    }
+
+    .upload-container {
+        border-radius: 39px;
+        border: 1px dotted #b2b2b2 !important;
+
+        &.upload-container-validate-error {
+            border: 2px solid #b5485c !important;
+        }
+    }
+
+    .col-file-type {
+        width: 60px;
+    }
+
+    .col-file-name {
+        font-family: $default-font !important;
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.12px;
+
+        .file-name-view {
+            width: 100%;
+
+            .file-name-text {
+                display: inline-block;
+                word-break: break-all;
+                width: 80%;
+                text-align: left;
+            }
+
+            .file-upload-text {
+                display: inline-block;
+                word-break: break-all;
+                width: 19%;
+                text-align: right;
+            }
+        }
+    }
+
+    .col-file-action {
+        width: 36px;
+        padding-top: 19px;
+    }
+
+    .upload-progress-frame {
+        height: 8px;
+        border-radius: 4px;
+        border: 1px solid #dbdbdb;
+        padding: 2px;
+    }
+
+    .upload-progress {
+        height: 2px;
+        border-radius: 1px;
+    }
+
+    .upload-progress-loading {
+        background-color: #dbdbdb;
+    }
+
+    .upload-progress-success {
+        background-color: $color-primary;
+    }
+
+    .upload-progress-failed {
+        background-color: #e46d78;
+    }
+
+    .created-by-container,
+    .updated-by-container {
+        padding-left: 20px;
+    }
+
+    /* Hide arrow in input type number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Hide arrow in input type number */
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    .file-list-table {
+        table-layout: fixed;
+    }
+}
+
+.shop-sale-date-picker {
+
+    .v-date-picker-table {
+        button:not(.v-btn--active) {
+            .v-btn__content:not(:last-child) {
+                background: $color-primary;
+                height: 100% !important;
+                width: 100% !important;
+                border-radius: inherit !important;
+
+                color: white;
+            }
+        }
+    }
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 25px;
+}
+  
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+  
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+  
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 20px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+}
+  
+input:checked + .slider {
+  background-color: #b39656;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #b39656;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+a {
+    img {
+        height: 30px;
+        width: 30px;
+    }
+    span{
+        color:#b39656;
+    }
+}
+.isDisabled {
+    color: currentColor !important;
+    opacity: 0.5;
+    text-decoration: none;
+    pointer-events: none;
+}

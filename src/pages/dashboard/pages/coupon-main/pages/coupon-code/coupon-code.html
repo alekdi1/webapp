@@ -1,0 +1,35 @@
+<div id="_coupon-code-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <div class="div-coupon-text">
+                <div class="div-coupon-detail">
+                    <div class="div-coupon-img">
+                        <img :src="require('@/assets/images/icons/coupon.svg')" class="coupon-img" alt="Note"
+                            width="auto" />
+                    </div>
+                    <div class="cpn-text-h6 mb-3 align-center" name="label-coupon">{{ text.label_insert_coupon_code }}
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control borderless"
+                                        :placeholder="text.placeholder_coupon_code" v-model="coupon_code"
+                                        style="background: #ebebeb; text-align: center;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div name="contain-btn-bottom">
+                <div class="confirm-btn-container">
+                    <v-btn @click="submitJoin()" :loading="isLoading" class="confirm-btn" :disabled="coupon_code.length == 0" :height="48"
+                        color="primary" elevation="0" block rounded>
+                        <div class="text-uppercase cpn-content-subtitle text-white">{{ text.confirm_btn }}</div>
+                    </v-btn>
+                </div>
+            </div>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

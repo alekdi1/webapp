@@ -1,0 +1,42 @@
+<div id="_rewards-earn-redeem-error-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="text-18 font-weight-bold mb-10">{{ title }}</div>
+                <!-- Member -->
+                <section v-if="member" class="mb-6">
+                    <table class="w100 member-table">
+                        <tbody>
+                            <tr>
+                                <td class="col-member-image">
+                                    <v-img :src="require('@/assets/images/icons/user.svg')" width="26" height="34"/>
+                                </td>
+                                <td class="col-member-data">
+                                    <div class="text-15 font-weight-bold mb-1">{{ member.displayName }}</div>
+                                    <div class="text-12 mb-1">{{ text.the_1 }}: <b>{{ member.cardNo }}</b></div>
+                                    <div class="text-12">{{ text.the_1_point }}: <b>{{ displayPointBalance }}</b></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <v-divider class="mb-6"/>
+                <!-- Content -->
+                <section>
+                    <div class="earn-redeem-error-content d-flex flex-column align-center">
+                        <v-img :src="require(`@/assets/images/icons/${errorImage}`)" :width="145" :height="133" contain/>
+                        <div class="text-18 font-weight-bold mt-3">{{ text.sorry }}</div>
+                        <div class="text-18 font-weight-bold">{{ errorMessage1 }}</div>
+                        <div v-if="errorMessage2" class="text-18 font-weight-bold">{{ errorMessage2 }}</div>
+                    </div>
+                </section>
+                <!-- Back to Main Page -->
+                <section class="form-section button-section mt-6 mb-6">
+					<v-btn :disabled="loading" :loading="loading" @click="backToMainPage" block :height="48" rounded color="primary">
+                        <span class="text-capitalize">{{ text.back_to_main }}</span>
+                    </v-btn>
+				</section>
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

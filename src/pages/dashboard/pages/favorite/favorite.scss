@@ -1,0 +1,52 @@
+@import "../../../../styles/vars.scss";
+
+#_favorite-page {
+    .menu-tabs-wrapper {
+        width: 100%;
+        .menu-tabs-container {
+            display: inline;
+            .menu-tab-container {
+                display: inline-block;
+                cursor: pointer;
+                // width: 110px;
+            }
+    
+            .is-active {
+                color: $color-primary;
+                border-bottom: 5px solid $color-primary;
+            }
+        }
+    }
+
+    .post-title-container {
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    .post-image-container {
+        position: relative;
+
+        .post-image {
+            display: block;
+            border-radius: 48px;
+        }
+
+        .v-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin-top: 20px;
+            margin-right: 20px;
+        }
+
+        .v-image__image--contain {
+            border-radius: 48px;
+        }
+    }
+
+    .favorite-icon {
+        &::before {
+            background: transparent !important;
+        }
+    }
+}

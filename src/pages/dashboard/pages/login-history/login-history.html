@@ -1,0 +1,33 @@
+<div id="_login-history-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<v-divider class="mt-5" />
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+					<cpn-loading />
+				</div>
+				<div class="history-list-container mt-10" v-else>
+					<div class="history-list-wrapper mb-5" v-for="(item, idx) in history"
+						:key="'login-history-item-' + idx">
+						<!-- <div class="name-container">
+							<div class="cpn-content-default font-weight-bold">{{ item.firstName }} {{ item.lastName }}
+							</div>
+						</div> -->
+						<div class="position-container">
+							<div class="cpn-content-subtitle2">{{ item.role }}</div>
+						</div>
+						<div class="last-login-container d-flex">
+							<div class="cpn-content-subtitle2">{{ text.latest_login }}</div>
+							<div class="cpn-content-subtitle2 ml-auto">{{ displayLastLoginDateTime(item.lastLogin) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</v-container>
+		</template>
+		<template v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user" />
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

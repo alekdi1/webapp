@@ -1,0 +1,72 @@
+@import "../../../../../../styles/vars.scss";
+
+#_customer-reward-transaction-download-history {
+    .cpm-dbs-content-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: $footer-height;
+        overflow-y: auto;
+        padding-bottom: 70px !important;
+    }
+
+    .request-month-btn-container {
+        overflow-x: auto;
+    }
+
+    .month-select-btn {
+        border-radius: 12px !important;
+    }
+
+    .month-select-btn .check-icon-container {
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 11px !important;
+    }
+
+    .month-select-btn .check-icon-container svg {
+        width: 12px !important;
+        max-height: 12px !important;
+        border-radius: 11px !important;
+    }
+
+    .month-select-btn .month-label {
+        padding-left: 8px !important;
+        padding-right: 10px !important;
+        font-size: 12px !important;
+    }
+
+    .bottom-container {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .row-tabs {
+        .col {
+            justify-content: center;
+
+            &:first-child {
+                justify-content: start;
+            }
+
+            &:last-child {
+                justify-content: end;
+            }
+        }
+    }
+
+    .type-tab-label {
+        font-size: 15px;
+        font-weight: bold;
+        color: #000000;
+    }
+
+    .v-tab--active {
+        .type-tab-label {
+            color: $color-primary;
+        }
+    }
+}

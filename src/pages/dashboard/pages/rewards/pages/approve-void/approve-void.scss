@@ -1,0 +1,28 @@
+@import "../../../../../../styles/vars.scss";
+
+#_approve-void {
+    .cpm-dbs-content-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: $footer-height;
+        overflow-y: auto;
+        padding-bottom: 50px !important;
+    }
+
+    .type-tab-label {
+        font-size: 15px;
+        font-weight: bold;
+        color: #000000;
+    }
+
+    .v-tab--active {
+        .type-tab-label {
+            color: $color-primary;
+        }
+        &:before {
+            background: transparent;
+        }
+    }
+}

@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: ${application_name}-gateway
+  namespace: ${namespace}
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "${ingress_host}"
+  - port:
+      number: 443
+      name: https-443
+      protocol: HTTPS
+    hosts:
+    - "${ingress_host}"
+    tls:
+      mode: SIMPLE
+      credentialName: istio-ingressgateway-certs
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ${application_name}-virtual-service
+  namespace: ${namespace}
+spec:
+  hosts:
+  - "${ingress_host}"
+  gateways:
+  - ${application_name}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: ${server_port}
+        host: ${application_name}-service.${namespace}.svc.cluster.local

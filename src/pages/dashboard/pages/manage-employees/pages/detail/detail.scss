@@ -1,0 +1,71 @@
+#_emp-detail-page {
+    .edit-permission-btn {
+        .btn-text {
+            text-transform: initial !important;
+        }
+    }
+
+    .user-fullname {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        color: #000000;
+    }
+
+    .user-role {
+        font-size: 15px;
+        font-weight: normal;
+        text-align: center;
+        color: #000000;
+    }
+
+    .user-info-table {
+        margin-top: 30px;
+        .user-detail-label {
+            font-size: 15px;
+            font-weight: bold;
+            color: #000000;
+        }
+    
+        .user-info-value {
+            font-size: 15px;
+            font-weight: normal;
+            color: #0c0c0c;
+        }
+    }
+
+
+    .permission-item {
+        .permission-name {
+            font-size: 15px;
+            font-weight: bold;
+            color: #010101;
+        }
+
+        .eligible-stores-label {
+            font-size: 12px;
+            color: #010101;
+        }
+
+        .store-list {
+            margin-top: 16px;
+            .store-item {
+                .store-name {
+                    font-size: 15px;
+                    font-weight: bold;
+                    color: #030303;
+                }
+
+                .store-branch {
+                    font-size: 15px;
+                    color: #000000;
+                }
+
+                &:not(:last-child) {
+                    margin-bottom: 12px;
+                }
+            }
+        }
+    }
+
+}

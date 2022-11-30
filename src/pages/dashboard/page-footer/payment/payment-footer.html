@@ -1,0 +1,184 @@
+<cpn-dsb-footer content-type="column" class="payment-footer show-detail" v-if="!isEmpty && process">
+    <template v-slot:column-middle>
+
+        <v-row no-gutters class="payment-detail-row">
+            <v-col :cols="4" class="d-flex flex-column justify-center align-start px-3" style="position: relative;">
+                <span class="text-white cpn-text-body-2">{{ text.payment_method }}</span>
+                <div v-if="paymentMethod" class="price text-white cpn-text-body-2 mt-1" v-html="displayPaymentMethod" />
+                <span class="price text-white cpn-text-body-2" v-else>-</span>
+                <div class="vt-line"/>
+            </v-col>
+            <v-col :cols="8">
+
+                <div class="d-flex px-4 align-center" style="height: 100%" >
+            
+                    <div class="flex-grow-1 py-1">
+                        <table style="max-width: 100%;width: 100%;" class="payment-detail-table">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="text-white cpn-text-body-2">{{ text.payment_before_fee }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-center">
+                                            <div class="price px-2 text-white cpn-text-body-2">{{ displayTotalPriceBeforeFee }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="col-unit-baht">
+                                        <span class="text-white cpn-text-body-2">{{ text.baht }}</span>
+                                    </td>
+                                </tr>
+        
+                                <tr>
+                                    <td>
+                                        <span class="text-white cpn-text-body-2">{{ text.fee }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-center">
+                                            <div class="price px-2 text-white cpn-text-body-2">{{ displayTotalFee }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="col-unit-baht">
+                                        <span class="text-white cpn-text-body-2">{{ text.baht }}</span>
+                                    </td>
+                                </tr>
+        
+                                <tr>
+                                    <td>
+                                        <span class="text-white cpn-text-body-1">{{ text.total_payment }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-center">
+                                            <div class="price px-2 text-white cpn-text-body-1">{{ displayTotalPrice }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="col-unit-baht">
+                                        <span class="text-white cpn-text-body-1">{{ text.baht }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-center align-center flex-shrink-0 pl-3">
+                        <v-btn @click="showInvoiceListDialog" icon>
+                            <fa-icon :class="{ active: dialog }" class="dialog-icon" name="chevron-circle-up" type="fal" color="white" />
+                        </v-btn>
+                    </div>
+                </div>
+        
+                <v-dialog v-model="dialog" max-width="480" content-class="invoice-list-dialog">
+                    <v-card class="py-8 px-6 dialog-card">
+                        <div class="d-flex">
+                            <div class="cpn-text-h6 flex-grow-1 font-weight-bold">{{ text.all_payment_items }}</div>
+                            <div class="flex-shrink-0 pl-3">
+                                <v-btn icon small @click="dialog = false">
+                                    <v-icon>clear</v-icon>
+                                </v-btn>
+                            </div>
+                        </div>
+                        <v-divider class="my-3"/>
+                        <div class="invoice-list" :style="{ 'max-height': dialogContentHeight + 'px' }" style="overflow-y: auto;">
+                            <div class="invoice-item mb-3" v-for="(invoice, idx) in filteredItems" :key="'invoice-' + idx">
+                                <table class="w100">
+                                    <tr>
+                                        <td class="check-col">
+                                            <div class="d-flex mt-1">
+                                                <cpn-check-icon :checked="true"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <div class="cpn-text-h6 font-weight-bold mb-1">{{ invoice.shopName }}</div>
+                                                <div class="cpn-text-body-2 font-weight-light mb-1">{{ text.branch }}{{ invoice.branch }}</div>
+                                                <div class="invoice-price mt-1 mb-1">
+                                                    <span class="price cpn-text-h5" :class="{ overdue: invoice.isOverDue }">{{ invoice.totalPrice }}</span>
+                                                    <span class="price-currency">{{ text.baht }}</span>
+                                                </div>
+                                                <div class="d-flex mb-1">
+                                                    <div class="flex-grow-1 d-flex flex-row align-center">
+                                                        <v-icon class="mr-2">calendar_view_month</v-icon>
+                                                        <span class="cpn-text-body-2 font-weight-light">{{ text.duedate }}</span>
+                                                    </div>
+                                                    <div class="flex-shrink-0">
+                                                        <span class="cpn-text-body-2 font-weight-light due-date" :class="{ overdue: invoice.isOverDue }">{{ invoice.displayDueDate }}</span>
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </v-card>
+                </v-dialog>
+
+            </v-col>
+        </v-row>
+
+    </template>
+
+    <template v-slot:column-right>
+        <template v-if="!isEmpty" >
+            <div class="d-flex align-center justify-center" style="height: 100%">
+                <v-btn :disabled="totalPrice === 0"  depressed dark color="primary" @click="nextClick" min-width="280" rounded height="36" class="continue-btn" v-if="process === 'invoice_list'">
+                    <span class="btn-text">{{ text.continue }}</span>
+                </v-btn>
+                <v-btn depressed dark color="primary" @click="nextClick" min-width="280" rounded height="36" class="continue-btn" v-else-if="process === 'confirm_payment'">
+                    <span class="btn-text">{{ text.payment }}</span>
+                </v-btn>
+                <v-btn depressed dark :disabled="!canConfirm || fsLoading" color="primary" @click="makePayment" min-width="280" rounded height="36" class="continue-btn" v-else-if="process === 'select_payment_method'">
+                    <span class="btn-text">{{ text.confirm_payment }}</span>
+                </v-btn>
+                <!-- push noti -->
+                <v-btn data-action="confirm-push-noti" :loading="pushNoti.loading" :disabled="!pushNotiPhoneValid || pushNoti.loading" depressed dark color="primary" @click="submitPushNoti" min-width="280" rounded height="36" class="continue-btn" v-else-if="process === 'payment_push_noti'">
+                    <span class="btn-text">{{ text.continue }}</span>
+                </v-btn>
+
+                <!-- promptpay -->
+                <v-btn
+                    data-action="confirm-promptpay"
+                    :loading="!!promptpayState && promptpayState.loading"
+                    :disabled="(!!promptpayState && promptpayState.loading) || !promptpayPhoneValid" 
+                    depressed dark color="primary" @click="submitPromptpayPayment" 
+                    min-width="280" rounded height="36" class="continue-btn" 
+                    v-else-if="process === 'payment_promptpay'">
+                    <span class="btn-text">{{ text.continue }}</span>
+                </v-btn>
+            </div>
+        </template>
+    </template>
+
+    <template v-slot:column-left>
+        <div class="d-flex align-center h100 px-1 justify-center" v-if="invoices.length > 0">
+
+            <!-- download button -->
+            <v-tooltip nudge-top="20" top content-class="footer-tooltip-download-pdf cpn-tooltip payment-footer-tooltip">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on" @click="downloadSelectedInvoicesPDF" :height="40" class="download-export-btn mr-1" small text :loading="exporting === 'pdf'" dark :disabled="exporting !== ''">
+                        <div class="d-flex align-center">
+                            <v-img :src='require("@/assets/images/icons/export-file.svg")' class="mr-2"/>
+                            <span class="text-white btn-text text-left">Download .pdf</span>
+                        </div>
+                    </v-btn>
+                </template>
+                <div class="tooltip-text text-center py-4 px-3" v-html="text.tt_download_pdf" />
+            </v-tooltip>
+
+            <!-- export button -->
+            <v-tooltip nudge-top="20" top content-class="footer-tooltip-download-pdf cpn-tooltip payment-footer-tooltip">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on" @click="exportCSV" :height="40" class="download-export-btn" small text :loading="exporting === 'csv'" dark :disabled="exporting !== ''">
+                        <div class="d-flex align-center">
+                            <v-img :src='require("@/assets/images/icons/export-file.svg")' class="mr-2"/>
+                            <span class="text-white btn-text">Export .csv</span>
+                        </div>
+                    </v-btn>
+                </template>
+                <div class="tooltip-text text-center py-4 px-3" v-html="text.tt_export_file" />
+            </v-tooltip>
+
+        </div>
+    </template>
+</cpn-dsb-footer>
+<cpn-dsb-footer class="payment-footer" v-else />

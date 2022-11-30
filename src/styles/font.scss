@@ -1,0 +1,88 @@
+@import url("https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp");
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-Bold.woff) format("woff"),
+         url(../assets/fonts/CPN-Bold.woff2) format("woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-BoldCondensed.woff) format("woff"),
+         url(../assets/fonts/CPN-BoldCondensed.woff2) format("woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-BoldItalic.woff) format("woff"),
+         url(../assets/fonts/CPN-BoldItalic.woff2) format("woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-Compressed.woff) format("woff"),
+         url(../assets/fonts/CPN-Compressed.woff2) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-Condensed.woff) format("woff"),
+         url(../assets/fonts/CPN-Condensed.woff2) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-ExtraCompressed.woff) format("woff"),
+         url(../assets/fonts/CPN-ExtraCompressed.woff2) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-Italic.woff) format("woff"),
+         url(../assets/fonts/CPN-Italic.woff2) format("woff2");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-Light.woff) format("woff"),
+         url(../assets/fonts/CPN-Light.woff2) format("woff2");
+    font-weight: lighter;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-LightItalic.woff) format("woff"),
+         url(../assets/fonts/CPN-LightItalic.woff2) format("woff2");
+    font-weight: lighter;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'CPN';
+    src: url(../assets/fonts/CPN-Regular.woff) format("woff"),
+         url(../assets/fonts/CPN-Regular.woff2) format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    * {
+        font-family: "CPN", sans-serif;
+    }
+}

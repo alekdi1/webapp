@@ -1,0 +1,13 @@
+@import "../../../../styles/vars.scss";
+#_success-register-page {
+    .submit-container{
+        height: calc(100vh - 120px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .info-content-text {
+            width: 300px;
+        }
+    }
+}

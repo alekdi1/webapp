@@ -1,0 +1,65 @@
+<div id="_rewards-redeem-otp-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="text-18 font-weight-bold mb-10">{{ text.title }}</div>
+                <!-- Member -->
+                <section v-if="member" class="mb-6">
+                    <table class="w100 member-table">
+                        <tbody>
+                            <tr>
+                                <td class="col-member-image">
+                                    <v-img :src="require('@/assets/images/icons/user.svg')" width="26" height="34"/>
+                                </td>
+                                <td class="col-member-data">
+                                    <div class="text-15 font-weight-bold mb-1">{{ member.displayName }}</div>
+                                    <div class="text-12 mb-1">{{ text.the_1 }}: <b>{{ member.cardNo }}</b></div>
+                                    <div class="text-12">{{ text.the_1_point }}: <b>{{ displayPointBalance }}</b></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <v-divider class="mb-6"/>
+                <!-- OTP -->
+                <section class="mt-6 mb-10">
+                    <div class="text-15 font-weight-bold">{{ text.input_otp }}</div>
+                    <div class="text-15 font-weight-bold">{{ text.sms_sent }}</div>
+                    
+                    <div class="d-flex flex-column align-center mt-12">
+                        <cpn-otp-input
+                            ref="otpInput"
+                            input-classes="otp-input text-36"
+                            separator=""
+                            :num-inputs="numInputs"
+                            :should-auto-focus="true"
+                            :is-input-num="true"
+                            input-type="number"
+                            @on-change="handleOnChange"
+                        />
+                    </div>
+                    <div class="d-flex align-center justify-center">
+                        <template v-for="idx in numInputs">
+                            <div :class="['otp-input-bottom', (isActive(idx) ? 'active' : 'inactive'), (isOTPInvalid ? 'invalid' : 'valid')]" :key="'input-buttom-' + idx"></div>
+                        </template>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <div v-if="isOTPInvalid" class="text-12 text-color-red">{{ text.otp_error }}</div>
+                        <div class="text-12 text-color-gray mt-6">{{ text.input_otp_in_3_sec }}</div>
+                        <div class="text-12 text-color-gray mt-1">{{ text.otp_ref_code }} {{ otpRefCode }}</div>
+                        <div class="text-15 font-weight-bold text-color-primary mt-3" @click="resendOTP" style="cursor: pointer;">
+                            {{ text.resend_otp_again }}
+                        </div>
+                    </div>
+                </section>
+                <!-- Confirm -->
+                <section class="form-section button-section mt-6 mb-6">
+					<v-btn :class="{'disable-events': submitDisabled || loading}" :loading="loading" @click="submitOTPForm" block :height="48" rounded :outlined="submitDisabled" color="primary" :ripple="!submitDisabled">
+						<span class="text-capitalize">{{ text.confirm }}</span>
+					</v-btn>
+				</section>
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

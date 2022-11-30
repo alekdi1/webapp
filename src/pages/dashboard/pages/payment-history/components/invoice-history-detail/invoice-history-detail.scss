@@ -1,0 +1,30 @@
+@import "../../../../../../styles/vars.scss";
+
+#payment-invoice-history-detail {
+
+    .invoice-history-detail-container {
+        .detail-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .invoice-common-info-container {
+            .invoice-due-date-container, .invoice-payment-method-container {
+                .due-date-icon, .payment-method-icon {
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 24px;
+                    height: 24px;
+                }
+            }
+        }
+    }
+
+    .download-slip-btn {
+        margin-left: -8px;
+
+        .btn-text {
+            text-decoration: underline;
+        }
+    }
+}

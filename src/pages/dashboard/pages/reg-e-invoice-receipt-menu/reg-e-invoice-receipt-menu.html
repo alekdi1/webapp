@@ -1,0 +1,19 @@
+<div id="reg-e-invoice-receipt-store-list-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-2">{{ text.page_title }}</div>
+			
+				<v-divider class="my-6"/>
+
+				<v-list>
+					<v-list-item class="store-reg-menu-item" @click="selectMenu(menu.id)" v-for="(menu, key) in menus" :key="'menu-' + key">
+						<v-list-item-title>{{ menu.label }}</v-list-item-title>
+					</v-list-item>
+				</v-list>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

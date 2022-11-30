@@ -1,0 +1,64 @@
+<div id="_request-summary-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<div class="request-summary-container mx-5">
+				<div>
+					<div class="font-weight-bold mt-7 mb-5">{{ text.title }}</div>
+				</div>
+				<v-divider />
+				<div class="email-detail-container my-7">
+					<div class="email-detail-title d-flex">
+						<div class="email-title-rectangle mr-5"></div>
+						<div>
+							<div class="cpn-text-h6 font-weight-bold">
+								{{ isReceipt ? text.label_request_recp_list : text.label_request_inv_list }}
+							</div>
+							<div>{{ isReceipt ? text.label_recp_email_exp_info : text.label_inv_email_exp_info }}</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="email-input-group my-3">
+							<input id="email" type="text" :value="requestForm.email" class="form-control borderless"
+								placeholder="user@example.com" disabled>
+						</div>
+					</div>
+				</div>
+				<div v-for="(yItm, yIdx) in requestForm.requestItms" :key="'request-year-itm-' + yIdx"
+					class="request-detail-container">
+					<div class="year-text">{{ displayYear(yItm.year) }}</div>
+					<v-divider />
+					<div class="summary-detail-container">
+						<div v-for="(mItm, mIdx) in yItm.months" :key="'request-month-itm-' + mIdx">
+							<div class="summary-month-container my-4 d-flex">
+								<div class="month-rectangle d-flex flex-row mr-2"></div>
+								<div class="month-text d-flex flex-row">{{ displayMonth(yItm.year, mItm.id)}}</div>
+							</div>
+							<div v-if="isReceipt" v-for="(itm, idx) in mItm.receipts" :key="'request-itm-' + idx" class="info-container">
+								<div class="info-text my-3">
+									<span class="font-weight-bold mr-1">
+										{{ text.recp_no }}:
+									</span>
+									<span>{{ itm.documentNo }}</span>
+								</div>
+							</div>
+							<div v-if="!isReceipt" v-for="(itm, idx) in mItm.invoices" :key="'request-itm-' + idx" class="info-container">
+								<div class="info-text my-3">
+									<span class="font-weight-bold mr-1">
+										{{ text.inv_no }}:
+									</span>
+									<span>{{ itm.id }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="request-summary-continue-btn-container">
+					<v-btn @click="requestInvoiceOrReceipt" min-width="100%" :disabled="isLoading" :loading="isLoading" rounded
+						height="48" class="continue-btn my-10">
+						<span class="text-uppercase text-white cpn-content-default">{{ text.continue }}</span>
+					</v-btn>
+				</div>
+			</div>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

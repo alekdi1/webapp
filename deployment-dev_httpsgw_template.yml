@@ -1,0 +1,49 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: serve-gateway
+  namespace: serveph1
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - serveqasphase1.centralpattana.co.th
+    #tls:
+    #  httpsRedirect: true # sends 301 redirect for http requests
+  - port:
+      number: 443
+      name: https-443
+      protocol: HTTPS
+    hosts:
+    - serveqasphase1.centralpattana.co.th
+    tls:
+      mode: SIMPLE
+      credentialName: istio-ingressgateway-certs # fetches certs from Kubernetes secretistio-ingressgateway-certs
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: serve
+  namespace: serveph1
+spec:
+  hosts:
+  - serveqasphase1.centralpattana.co.th
+  gateways:
+  - serve-gateway
+  http:
+  - name: "nginx-v1-routes"
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: webapp.serveph1.svc.cluster.local
+        port:
+          number: 80
+
+---

@@ -1,0 +1,35 @@
+@import "../../../../styles/vars.scss";
+
+#_news-and-activities-page {
+    #search-news-and-activities-branch {
+        background: $color-secondary;
+    }
+
+    .news-and-activities-title-container {
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    .news-and-activities-image-container {
+        position: relative;
+        .news-and-activities-image {
+            border-radius: 20px;
+
+            .v-image__image--cover{
+                background-size: cover;
+            }
+        }
+
+        .v-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin-top: 16px;
+            margin-right: 16px;
+        }
+
+        .v-image__image--contain {
+            border-radius: 20px;
+        }
+    }
+}

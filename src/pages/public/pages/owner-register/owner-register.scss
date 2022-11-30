@@ -1,0 +1,29 @@
+@import "../../../../styles/vars.scss";
+
+#owner-register-page {
+    height: calc(100vh - 100px);
+
+    .page-content-title {
+        border-left: 5px solid $color-primary;
+    }
+
+    .register-form-container {
+        padding-bottom: 0 !important;
+        margin: 80px;
+    }
+
+    .owner-register-footer {
+        padding-bottom: 0 !important;
+        height: 80px;
+    }
+
+    .footer-divider {
+        width: 1px;
+        height: 40px;
+        background-color: white;
+    }
+
+    .error-message{
+        white-space: pre;
+    }
+}

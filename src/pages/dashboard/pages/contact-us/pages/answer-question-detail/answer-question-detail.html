@@ -1,0 +1,86 @@
+<div id="answer-question-detail-page">
+
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container loading-container" v-if="loading">
+				<cpn-loading />
+			</v-container>
+			<v-container class="cpm-dbs-content-container error-container" v-else-if="errorMessage || !contact">
+				<div class="text-error cpn-text-h5" v-if="errorMessage">{{ errorMessage }}</div>
+				<div class="text-error cpn-text-h5" v-else-if="!contact">No contact data</div>
+			</v-container>
+			<v-container class="cpm-dbs-content-container" v-else>
+				<div class="page-content-title mb-2">{{ title }}</div>
+				<div class="branch-detail mt-6">
+					<div class="cmp-name">
+						{{ branchName }}
+					</div>
+					<!-- <div class="display-branch cpn-text-body-1">{{ branchName }}</div> -->
+				</div>
+
+				<v-divider class="my-6"/>
+
+				<div class="cpn-text-h6 mb-6">{{ text.title_suggestions }}</div>
+
+				<section class="mb-6">
+					<div class="section-title">{{ text.section_title_specify_the_topic }}</div>
+					<div class="section-value" v-html="contact.title"/>
+				</section>
+
+				<section class="mb-6">
+					<div class="section-title">{{ text.section_title_add_more_detail }}</div>
+					<div class="section-value" v-html="contact.description"/>
+				</section>
+
+				<section class="mb-6">
+					<div class="section-title">{{ text.section_title_upload_imgs }}</div>
+					<v-row class="mt-2 img-list">
+						<v-col cols="4" v-for="(img, idx) in images" :key="'img-' + idx">
+							<v-card class="img-upload" @click="showPreviewImage(img)"  :height="120" :width="120" >
+								<v-img height="100%"  width="100%" :src="img"/>
+							</v-card>
+						</v-col>
+					</v-row>
+					
+				</section>
+
+				<section class="mb-6">
+					<div class="mb-3">
+						<div class="section-title">{{ text.section_title_contact_name }}</div>
+						<div class="section-value" v-html="contact.createdBy.fullName"/>
+					</div>
+
+					<div class="mb-3">
+						<div class="section-title no-border">{{ text.phone }}</div>
+						<div class="section-value">{{ contact.contactPhone || "-" }}</div>
+					</div>
+
+					<div class="mb-3">
+						<div class="section-title no-border">{{ text.email }}</div>
+						<div class="section-value">{{ contact.contactEmail || "-" }}</div>
+					</div>
+				</section>
+
+				<v-divider class="my-6"/>
+
+				<div class="cpn-text-h6 mb-6">ตอบคำถาม</div>
+				<div class="message-list">
+					<div class="message-item">
+						<div class="text-message" v-html="contact.replyMessage" />
+						<div class="image-message mt-6" v-if="replyImage">
+							<v-card class="image-message-item" :height="120" :width="120" style="border-radius: 25%;">
+								<v-img height="100%" width="100%" :src="replyImage" />
+							</v-card>
+						</div>
+						<div class="message-date mt-6">{{ displayContactUserDate(contact.repliedBy.repliedDate) }}</div>
+					</div>
+					<v-divider class="my-3"/>
+				</div>
+			</v-container>
+		</template>
+
+        <template v-slot:column-right>
+			<cpn-dsb-feed-view :title="'โปรโมชัน'" category="promotion"/>
+		</template>
+    </cpn-dsb-page-content-container>
+</div>

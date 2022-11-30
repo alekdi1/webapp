@@ -1,0 +1,94 @@
+<div id="_notification-page" ref="notification-root">
+    <cpn-dsb-page-content-container >
+        <template  v-slot:column-left>
+            <v-container class="cpm-dbs-content-container">
+                <div class="page-content-title mb-3">{{ text.page_title }}</div>  
+            
+                <!-- ========= filter ========= -->
+                <div class="filter-container d-flex flex-row align-center mt-4 mb-3">
+                    <div class="flex-grow-1 d-flex">
+                        <div class="filter-type-title">{{ filteredLabel }}</div>
+                    </div>
+                    <div class="ml-2 flex-shrink-0 d-flex align-center">
+						<v-btn @click="filterDialog = true" :disabled="loading" icon large>
+							<img :src="require('@/assets/images/icons/filter.svg')" :width="28" :height="28"/>
+						</v-btn>
+					</div>
+                </div>
+                <div class="notification-container">
+                    <div class="loading-container d-flex justify-center align-center" v-if="loading">
+                        <cpn-loading />
+                    </div>
+                    <div class="error-container d-flex justify-center align-center" v-else-if="error">
+                        <div class="error-text" v-html="error"/>
+                    </div>
+                    <div class="notification-list" v-else>
+                        <!-- notification item -->
+                        <div @click="notiClick(noti)" v-ripple="{ class: `primary--text` }" class="notification-item" v-for="(noti, idx) in displayNotificationItems" :key="'notification-item-' + idx">
+                            <div class="icon-column flex-shrink-0 pr-3">
+                                <v-badge v-model="noti.isNew" dot color="#ea4b60" :offset-y="10" :offset-x="10">
+                                    <v-avatar color="primary" :size="40">
+                                        <v-img width="100%" height="100%" :src="noti.iconImage" />
+                                    </v-avatar>
+                                </v-badge>
+                            </div>
+                            <div class="d-flex flex-column flex-grow-1 notification-content">   
+                                <div class="d-flex flex-row align-start">
+                                    <div class="notification-title flex-grow-1">{{ noti.title }}</div>
+                                    <div class="flex-shrink-0 notification-date">{{ noti.displayDate }}</div>
+                                </div>
+                                <div class="notification-desc" v-if="noti.desc" v-html="noti.desc" />
+                            </div>
+                        </div>
+                        <!-- / notification item -->
+                    </div>
+                </div>
+            </v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+
+    <v-dialog v-model="filterDialog" width="480" :attach="$refs['notification-root']" content-class="filter-notification-dialog">
+        <v-card class="dialog-card">
+            <div class="title-container py-4">
+                <div class="cpn-text-h6">{{ text.title_select_type }}</div>
+            </div>
+            <div style="width: 100%;display: flex; padding-bottom: 25px;">
+                <div style="width: 50%;display: flex;">
+                    <input type="checkbox" class="checkfilter-notifications" value="1" @click="checkReadNotifications($event)" checked>
+                    <!-- <input type="checkbox" class="checkfilter-notifications" value="1" @click="checkReadNotifications($event)" v-model="filterNotRaed" checked> -->
+                    <div style="padding-top: 4px;">
+                        <span style="padding: 10px;">ข้อความที่ยังไม่ได้อ่าน</span>
+                    </div>
+                </div>
+                <div style="width: 50%;display: flex;">
+                    <input type="checkbox" class="checkfilter-notifications" value="2" @click="checkReadNotifications($event)" checked>
+                    <!-- <input type="checkbox" class="checkfilter-notifications" value="2" @click="checkReadNotifications($event)" v-model="filterRaeded" checked> -->
+                    <div style="padding-top: 4px;">
+                        <span style="padding: 10px;">ข้อความที่อ่านแล้ว</span>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="filter-list-container">
+                <v-list>
+                    <v-list-item @click="selectFilter(item)" v-for="(item, idx) in filterItems" :key="'noti-filter-item-' + idx">
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                <span class="filter-item-label">{{ item.label }}</span>
+                            </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-icon v-if="isFilterSelected(item)">
+                            <fa-icon name="check" type="far" color="primary"/>
+                        </v-list-item-icon>
+                    </v-list-item>
+                </v-list>
+            </div>
+
+            <div class="footer-container mt-4">
+                <v-btn @click="filterDialog = false" color="primary" height="48" rounded>
+                    <span class="text-uppercase px-5">{{ $t("close") }}</span>
+                </v-btn>
+            </div>
+        </v-card>
+    </v-dialog>
+</div>

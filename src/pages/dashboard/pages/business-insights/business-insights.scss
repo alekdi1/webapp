@@ -1,0 +1,22 @@
+@import "../../../../styles/vars.scss";
+
+#_business-insights-page {
+    #search-business-insight-branch {
+        background: $color-secondary;
+    }
+
+    .business-insight-title-container {
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    .business-insight-image-container {
+        .business-insight-image {
+            border-radius: 48px;
+        }
+
+        .v-image__image--contain {
+            border-radius: 48px;
+        }
+    }
+}

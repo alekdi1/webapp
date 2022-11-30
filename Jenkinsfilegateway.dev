@@ -1,0 +1,39 @@
+pipeline {
+    agent { label '10.9.98.28' }
+
+    environment {
+        dockerImage = ''
+    }
+
+    stages {
+        stage('update code') {
+           steps {
+                script {
+                    echo "PWD = ${PWD}"
+                }
+            }
+        }
+
+
+        stage('Deployment') {
+            steps {
+                script {
+                    def inptext = readFile file: "deployment-dev_httpsgw_template.yml"
+                    inptext = inptext.replaceAll("image_version", "dev-${env.BUILD_ID}")
+                    writeFile file: "deployment-dev_httpsgw.yml", text: inptext
+                    //sh 'kubectl create secret generic app --from-file=user.txt --dry-run -o yaml | kubectl apply -f -'
+                    sh 'kubectl apply -f deployment-dev_httpsgw.yml'
+                }
+            }
+        }
+        stage(' Test Funtional') {
+            steps {
+                //build job: 'JMeterRedemption'
+                script {
+                    echo "call Job test funtional"
+                    //sh 'jmeter -n -t D:\CPN\test_load\redemption.jmx -l D:\CPN\test_load\redemption\redemption.jtl -e -o D:\CPN\test_load\redemption'
+                }
+            }
+        }
+    }
+}

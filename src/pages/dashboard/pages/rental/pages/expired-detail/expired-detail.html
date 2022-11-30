@@ -1,0 +1,26 @@
+<div id="_expired-detail-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-10">{{ text.title }}</div>
+				
+				<cpn-rental-store :store="rentalDetail" v-if="rentalDetail"/>
+
+				<v-divider class="my-7" />
+				
+				<cpn-rental-data :data="rentalDetail" :status="status" />
+
+				<v-divider />
+				<v-btn v-if="isExpiredWithRefund" @click="timelineToggle()" rounded block color="primary" height="48" class="mt-4 mb-6">
+					<div class="cpn-text-subtitle-1 text-white">ดูสถานะขอคืนเงินมัดจำ</div>
+				</v-btn>
+			</v-container>
+		</template>
+		<template v-slot:column-right>
+			<v-container class="cpm-dbs-content-container" v-if="showTimeline">
+				<div class="time-line-title-label">ดูสถานะขอคืนเงินมัดจำ</div>
+				<cpn-rental-timeline :data="timelineData" class="mt-6"/>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

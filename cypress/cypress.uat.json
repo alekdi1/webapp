@@ -1,0 +1,13 @@
+{
+    "baseUrl": "https://serve-uat.centralpattana.co.th",
+    "integrationFolder": "cypress/integration/uat",
+    "reporter": "cypress-mochawesome-reporter",
+    "reporterOptions": {
+        "reportDir": "cypress/reports",
+        "screenshotsFolder": "cypress/screenshots",
+        "charts": true,
+        "reportPageTitle": "Test Result.",
+        "embeddedScreenshots": true,
+        "inlineAssets": true
+    }
+}

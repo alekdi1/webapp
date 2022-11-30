@@ -1,0 +1,26 @@
+#_quotation-page {
+    position: relative;
+    .contact-staff-label-container {
+        border-left: 4px solid var(--v-primary-base);
+        padding-left: 8px;
+    }
+
+    .contact-form {
+        button.method-btn {
+            border-radius: 50% !important;
+            padding: 0 !important;
+        }
+    }
+
+    .time-line-title-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #121212;
+    }
+
+    .rental-store-avatar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

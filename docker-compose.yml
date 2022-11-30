@@ -1,0 +1,12 @@
+version: '3'
+services:
+  cpn-serve-ws:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - '8100:8100'
+    container_name: abbon-cpn
+    volumes:
+      - .:/app
+      - /Users/Superball/Private/Abbon/CPN/abbon-cpn/cpn-serve-be/source/public/upload:/usr/share/nginx/html/upload/.

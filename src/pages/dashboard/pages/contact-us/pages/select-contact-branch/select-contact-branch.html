@@ -1,0 +1,61 @@
+<div id="select-contact-branch-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="flex-grow-1 page-content-title mb-2">{{ $t("pages.contact.page_title_contact_us") }}</div>
+				<v-divider class="my-4" />
+				<div v-if="loading" style="text-align: -webkit-center;">
+					<cpn-loading />
+				</div>
+				<div v-else class="contact-option-list">
+					<v-card :color="isSelectedOption(o) ? '#b3965680' : ''" @click="optionClick(o)" flat
+						class="contact-option mb-3" v-for="(o, idx) in branchOptions" :key="'contact-option-' + idx">
+						<div class="d-flex align-center">
+							<div class="contact-icon">
+								<img :src="o.image" width="36" height="auto" />
+							</div>
+							<div class="flex-grow-1 ml-3">
+								<div class="option-label">{{ o.name }}</div>
+							</div>
+						</div>
+					</v-card>
+				</div>
+			</v-container>
+		</template>
+		<template v-slot:column-right>
+			<v-container class="cpm-dbs-content-container h100 select-branch-container" v-if="isSelectBranch">
+				<div class="search-branch">
+					<div class="form-group" ref="search-form-group">
+						<div class="input-group">
+							<label class="form-prepend" for="search-branch-input">
+								<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+							</label>
+							<input autocomplete="off" :disabled="loading" :readonly="loading"
+								v-model="branchForm.search" id="search-branch-input" type="text"
+								class="form-control borderless secondary" :placeholder="$t('search_branch')">
+							<div class="form-apppend">
+								<v-btn :disabled="loading" @click="branchForm.search = ''" icon :size="20"
+									v-if="branchForm.search">
+									<v-icon>cancel</v-icon>
+								</v-btn>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="branch-list-container">
+					<cpn-loading v-if="loading" />
+					<v-list v-else>
+						<v-list-item @click="selectBranch(b)" v-for="(b, idx) in branchForm.branchList"
+							:key="'branch-' + idx">
+							<v-list-item-content>
+								<v-list-item-title>
+									<span class="text-capitalize font-weight-bold" v-html="b.displayName" />
+								</v-list-item-title>
+							</v-list-item-content>
+						</v-list-item>
+					</v-list>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+    <title>CPN API Report</title>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-end my-3">
+            <div style="width: 350px;">
+                <select class="form-control" id="select-url-filter">
+                    <option value="all" selected>All</option>
+                    <option value="https://serveqasphase1.centralpattana.co.th">https://serveqasphase1.centralpattana.co.th</option>
+                    <option value="https://central-cpn.abbon.co.th">https://central-cpn.abbon.co.th</option>
+                    <option value="https://serve.centralpattana.co.th">https://serve.centralpattana.co.th</option>
+                </select>
+            </div>
+            <button id="export-data-btn" class="btn btn-success ml-2" type="button">Export</button>
+        </div>
+        <hr>
+    </div>
+
+    <div class="container">
+        <table id="log-table" class="table">
+            <thead>
+                <tr>
+                    <th>User No.</th>
+                    <th>Timestamp</th>
+                    <th>Page</th>
+                    <th>Process</th>
+                    <th>API Method</th>
+                    <th>API URL</th>
+                </tr>
+            </thead>
+            <tbody id="log-table-body">
+            </tbody>
+        </table>
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    const ITEMS_PER_PAGE = 150
+    let logs = []
+    let filter = "all"
+    let dataTable = null
+
+    $(async () => {
+        const firebaseConfig = {
+            apiKey: "AIzaSyC0nfQT9JdeAycJGQakWhjvG5tQnpM4-Mg",
+            authDomain: "cpn-serve.firebaseapp.com",
+            projectId: "cpn-serve",
+            storageBucket: "cpn-serve.appspot.com",
+            messagingSenderId: "682003587834",
+            appId: "1:682003587834:web:9d5342e10bdd480fc05f43",
+            measurementId: "G-ED8EM4NEL7"
+        };
+        firebase.initializeApp(firebaseConfig)
+
+        $("#export-data-btn").on("click", e => {
+            let logText = ""
+            for (const row of logs) {
+                logText += `${row.userNo}|${moment(row.timestamp, moment.ISO_8601).format("DD-MM-YYYY HH:mm:ss.SSS")}|${row.page}|${row.type}|${row.api.method}|${row.api.url}\n`
+            }
+            const blob = new Blob([logText], { type: "text/plain;charset=utf-8" })
+            downloadDataUrlFile(blob, "report.txt")
+        })
+
+        $("#select-url-filter").on("change", async e => {
+            filter = $("#select-url-filter").val()
+            logs = await getData()
+            renderTableData()
+        })
+
+        logs = await getData()
+        renderTableData()
+    })
+
+    function downloadDataUrlFile(blob, filename) {
+        const URL = window.URL || window.webkitURL
+        const dataUrl = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.setAttribute("href", dataUrl)
+        link.setAttribute("download", filename)
+        link.style.visibility = "hidden"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(dataUrl)
+    }
+
+    async function getData () {
+        function mysortfunction(a, b) {
+            try {
+                const t1 = a.timestamp
+                const t2 = b.timestamp
+    
+                const u1 = a.userNo.toLowerCase()
+                const u2 = b.userNo.toLowerCase()
+    
+                if (t1 < t2) return -1
+                if (t1 > t2) return 1
+                if (u1 < u2) return -1
+                if (u1 > u2) return 1
+                return 0;
+            } catch (e) {
+                return 0
+            }
+        }
+
+        try {
+            if (filter === 'all') {
+                const qs = await firebase.firestore().collection("ApiLogs").orderBy("timestamp", "desc").limit(ITEMS_PER_PAGE).get()
+                return qs.docs.map(doc => doc.data()).sort(mysortfunction)
+            } else {
+                const qs = await firebase.firestore().collection("ApiLogs").where("domain", "==", filter).orderBy("timestamp", "desc").limit(ITEMS_PER_PAGE).get()
+                return qs.docs.map(doc => doc.data()).sort(mysortfunction)
+            }
+        } catch (e) {
+            console.log(e)
+            return []
+        }
+    }
+
+    function renderTableData () {
+        if (dataTable !== null) {
+            dataTable.clear().destroy()
+        }
+        dataTable = $('#log-table').DataTable({
+            data: logs,
+            columnDefs: [
+                {
+                    targets: 0,
+                    render: function ( data, type, row, meta ) {
+                        return row.userNo
+                    }
+                }, 
+                {
+                    targets: 1,
+                    render: function ( data, type, row, meta ) {
+                        return moment(row.timestamp, moment.ISO_8601).format("DD-MM-YYYY HH:mm:ss.SSS")
+                    }
+                }, 
+                {
+                    targets: 2,
+                    render: function ( data, type, row, meta ) {
+                        return row.page
+                    }
+                }, 
+                {
+                    targets: 3,
+                    render: function ( data, type, row, meta ) {
+                        return row.type
+                    }
+                }, 
+                {
+                    targets: 4,
+                    render: function ( data, type, row, meta ) {
+                        return `<span class="badge badge-success">${ row.api.method }</span>`
+                    }
+                }, 
+                {
+                    targets: 5,
+                    render: function ( data, type, row, meta ) {
+                        return row.api.url
+                    }
+                }
+            ],
+            lengthMenu: [ [50, 100, 250, 500, -1], [50, 100, 250, 500, "All"] ],
+            pageLength: 50
+            // createdRow: function(row, data, dataIndex) {
+            //     $(row).find('span.page-badge')
+            //     .off('click')
+            //     .on('click', e => {
+            //         console.log(data)
+            //     })
+            // }
+        })
+    }
+
+</script>
+</body>
+</html>

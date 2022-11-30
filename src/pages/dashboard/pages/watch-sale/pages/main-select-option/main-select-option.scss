@@ -1,0 +1,11 @@
+@import "../../../../../../styles/vars.scss";
+
+#_shop-sale-main-select-option-page {
+    $chip-background: 100px;
+
+    .option-item-container {
+        border-radius: 30px;
+        border: 1px solid $color-primary;
+        cursor: pointer;
+    }
+}

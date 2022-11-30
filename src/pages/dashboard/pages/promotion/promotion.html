@@ -1,0 +1,55 @@
+<div id="_promotion-page">
+	<cpn-dsb-page-content-container>
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-3">{{ text.title }}</div>
+				<div class="form-group">
+					<div class="input-group">
+						<label class="form-prepend" for="search-branch">
+							<fa-icon :size="18" name="search" type="far" color="primary-dark"/>
+						</label>   
+						<input id="search-promotion-branch" v-model="search" type="text" class="form-control borderless" :placeholder="text.search_placeholder" :disabled="isLoading"/>
+						<div class="form-apppend">
+							<v-btn :disabled="isLoading" @click="search = ''" icon :size="20" v-if="search">
+								<v-icon>cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+					<div class="promotion-list-container pt-10">
+						<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+							<cpn-loading />
+						</div>
+						<div v-else-if="emptyPromotion" class="text-center">
+							<div class="my-12">{{ $t("data_not_found") }}</div>
+						</div>
+						<div v-else v-for="(item, idx) in displayItems" :key="'promotion-item-' + idx" class="promotion-container mb-5">
+							<div class="promotion-image-container">
+								<v-img @click="gotoPromotionDetail(item.id)" class="promotion-image" :src="getImage(item.image)" width="100%" max-height="200"/>
+								<div class="fav-btn-container" v-if="!isQRUser">
+									<v-btn v-if="item.isFavorited" @click="deleteFavorite(item)" color="red lighten-1" class="favorite-icon ml-auto" elevation="0" large icon>
+										<v-icon size="36">favorite</v-icon>
+									</v-btn>
+									<v-btn v-else @click="addFavorite(item)" class="favorite-icon ml-auto" elevation="0" large icon>
+										<v-icon size="36">favorite_border</v-icon>
+									</v-btn>
+								</div>
+							</div>
+							<div class="promotion-content-container mx-5">
+								<div class="promotion-title-container mt-6">
+									<a @click="gotoPromotionDetail(item.id)" class="cpn-content-default text-primary-dark font-weight-bold">{{ item.title }}</a>
+								</div>
+								<div class="promotion-date-range mt-1">
+									<div class="cpn-content-subtitle">{{ displayDateRange(item) }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</v-container>
+		</template>
+
+		<template v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user"/>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

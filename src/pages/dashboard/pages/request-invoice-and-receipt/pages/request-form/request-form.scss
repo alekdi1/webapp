@@ -1,0 +1,77 @@
+@import "../../../../../../styles/vars.scss";
+
+#_request-form-page {
+    .request-branch-title {
+        background-color: $color-primary;
+        min-height: 250px;
+    }
+
+    .shop-title-container {
+        width: 450px;
+        word-wrap: break-word;
+    }
+
+    .request-form-content {
+        min-height: 200px;
+        border-top-right-radius: 64px;
+        border-top-left-radius: 64px;
+        margin-top: -86px;
+        z-index: 15;
+        background: white;
+    }
+
+    .v-tab:not(.v-tab--active) {
+        color: black;
+    }
+
+    .v-tab::before {
+        background: transparent !important;
+    }
+
+    .v-tabs-slider-wrapper {
+        height: 4px !important;
+    }
+
+    #email {
+        border: 1px solid #ced4da !important;
+    }
+
+    .continue-btn {
+        background-color: $color-primary;
+    }
+
+    .request-month-btn-container {
+        overflow-x: auto;
+    }
+
+    .v-expansion-panel::before {
+        box-shadow: none !important;
+    }
+
+    .v-expansion-panel::after {
+        border: none !important;
+    }
+    
+    .v-expansion-panel-content__wrap {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 0 !important;
+    }
+
+    
+    .v-expansion-panels {
+        z-index: 0 !important;
+    }
+
+    .v-expansion-panel {
+        margin-top: 0 !important;
+
+        .theme--light, .v-divider {
+            border: none !important;
+        }
+    }
+
+    .v-expansion-panel-header {
+        padding-left: 10px !important;
+    }
+}

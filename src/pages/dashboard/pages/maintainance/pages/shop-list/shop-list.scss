@@ -1,0 +1,13 @@
+@import "../../../../../../styles/vars.scss";
+
+#_shop-list-page {
+    #search-branch {
+        background: $color-secondary;
+    }
+
+    .maintainance-store-card {
+        &::before {
+            background: transparent !important;
+        }
+    }
+}

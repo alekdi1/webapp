@@ -1,0 +1,61 @@
+<div id="_payment-history-page">
+
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-3">{{ text.title }}</div>
+				<div class="form-group">
+					<div class="input-group">
+						<label class="form-prepend" for="search-branch">
+							<fa-icon :size="18" name="search" type="far" color="primary-dark"/>
+						</label>
+						<input id="search-payment-branch" type="text" class="form-control borderless" :placeholder="text.search_branch" v-model="searchBranch" />
+						<div class="form-apppend">
+							<v-btn :disabled="isLoading" @click="searchBranch = ''" icon :size="20" v-if="searchBranch">
+								<v-icon>cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+				</div>
+				<div class="invoice-timeline-container mt-10">
+					<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+						<cpn-loading />
+					</div>
+					<v-timeline v-else dense class="mb-4">
+						<v-slide-x-reverse-transition group hide-on-leave>
+							<v-timeline-item v-for="(item, i) in displayTransactions" :data-id="item.uniqueId" :key="'payment-history-' + item.uniqueId + '-' + i" small fill-dot>
+								<div class="invoice-card-container">
+									<v-card class="invoice-item" @click="expandedInvoiceDetail(item)" :class="{ 'selected-invoice-card': isItemActive(item) }">
+										<div class="d-flex flex-row px-5 py-3 align-center">
+											<div class="pr-5 py-2 datetime-container" align="center">
+												<v-img class="calendar-icon mb-2" :src="require('@/assets/images/dashboard-calendar-outline.svg')" contain></v-img>
+												<div>{{ displayDate(item.paymentDate) }}</div>
+												<div>{{ displayTime(item.paymentDate) }}</div>
+											</div>
+											<v-divider vertical />
+											<div class="pl-5 py-2">
+												<div>{{ text.transaction_no }}<br/><span class="transaction-id">{{ item.refKey || "-" }}</span></div>
+												<span class="invoice-price font-weight-bold">{{ displayAmount(item.billPayment.paymentAmount) }}</span><span class="pl-4">{{ text.baht }}</span>
+											</div>
+											<div class="d-flex align-center justify-end ml-auto" style="width: 56px;">
+												<v-icon :size="56" color="#000000">keyboard_arrow_right</v-icon>
+											</div>
+										</div>
+									</v-card>
+								</div>
+							</v-timeline-item>
+						</v-slide-x-reverse-transition>
+					</v-timeline>
+				</div>
+			</v-container>
+			<div style="opacity: 0;">
+				<cpn-payment-slip :data="slip" v-if="slip" ref="slipView"/>
+			</div>
+		</template>
+		<template v-slot:column-right>
+			<v-container v-if="selectedInvoice">
+				<cpn-payment-invoice-history-detail :selectedInvoiceDetail="selectedInvoice" @downloadCompleted="onSlipData"/>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

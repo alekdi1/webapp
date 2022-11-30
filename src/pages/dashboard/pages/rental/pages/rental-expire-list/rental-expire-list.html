@@ -1,0 +1,69 @@
+<div id="_rental-expire-list-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<cpn-rental-not-found-modal @show="showModalToggle" v-if="showModal" />
+				<div class="page-content-title mb-2">{{ text.title }}</div>
+				<div class="form-group">
+					<div class="input-group">
+						<label class="form-prepend" for="search-branch">
+							<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+						</label>
+						<input id="search-rental-branch" type="text" class="form-control borderless"
+							:placeholder="text.search_branch" v-model="searchBranch" />
+						<div class="form-apppend">
+							<v-btn :disabled="isLoading" @click="searchBranch = ''" icon :size="20" v-if="searchBranch">
+								<v-icon>cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+				</div>
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+					<cpn-loading />
+				</div>
+				<div class="rental-store-list-container mt-10 mx-2" v-else>
+					<template v-if="!isEmptyRentalStore">
+						<div v-for="(store, idx) in displayStoreList" :key="'rental-store-' + idx"
+							class="rental-store-container">
+							<v-card @click="goToExpireDetail(store)" class="rental-store-card elevation-0 py-4"
+								v-ripple>
+								<div class="maintainance-store-item d-flex flex-row">
+									<div class="avatar-col pl-3">
+										<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="56">
+											<span class="text-white headline">{{ storeChar(store.contractName) }}</span>
+										</v-avatar>
+									</div>
+									<div class="info-col flex-grow-1">
+										<div>
+											<div class="cpn-content-title ml-3">{{ store.contractName }}</div>
+										</div>
+										<div>
+											<!-- <div class="cpn-content-subtitle ml-3">{{ store.branchName }}</div> -->
+											<div class="cpn-content-subtitle ml-3">{{ store.branch.displayName }}</div>
+										</div>
+										<div class="date-wrapper ml-3">
+											<v-row class="date-container">
+												<v-col cols="8">
+													<div class="cpn-content-subtitle2 text-gray">{{ text.contractexpired
+														}} </div>
+												</v-col>
+												<v-col v-if="!store.isExpired">
+													<div class="cpn-content-subtitle2 text-gray text-right">{{
+														displayDueDate(store.info.dateTime) }}</div>
+												</v-col>
+											</v-row>
+										</div>
+									</div>
+								</div>
+							</v-card>
+						</div>
+					</template>
+				</div>
+				<v-divider />
+				<cpn-note-text class="my-3">
+					<div class="text-gray">{{ text.description}}</div>
+				</cpn-note-text>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

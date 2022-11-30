@@ -1,0 +1,171 @@
+<div id="_customer-reward-transaction-cancellation-form">
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<cpn-dsb-action-acknowledge v-if="showSuccess">
+				<template v-slot:title>
+					<div class="status-title mb-0">SUCCESSFULLY</div>
+				</template>
+				<template v-slot:content>
+					<div class="d-flex align-center flex-column">
+						<div class="acknowledge-subtitle text-white text-center mt-3" v-html="text.acknowledge_desc"/>
+
+						<v-btn color="primary" @click="bth" class="mt-6" :height="48" rounded>
+							<span class="px-4">{{ text.bth }}</span>
+						</v-btn>
+					</div>
+				</template>
+			</cpn-dsb-action-acknowledge>
+			<v-container class="cpm-dbs-content-container" v-else>
+				<div class="d-flex flex-column" style="flex: 1;">
+					<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+					<v-divider class="my-4"/>
+
+					<table class="w100 mb-2 mt-2">
+						<tr>
+							<td rowspan="2" style="width: 36px;">
+								<div class="avatar">
+									<v-img :src="require('@/assets/images/icons/customer.svg')" :width="25" height="auto"/>
+								</div>
+							</td>
+							<td>
+								<div class="d-flex">
+									<div class="d-flex flex-grow-1">
+										<span class="user-name">{{ customerName }}</span>
+									</div>
+									<div class="d-flex flex-shrink-0">
+										<div class="transaction-id">{{ transactionId }}</div>
+									</div>
+								</div>
+			
+								<div class="d-flex mt-1">
+									<div class="d-flex flex-grow-1">
+										<span class="the-1-number">The 1: </span>
+										<span class="the-1-number font-weight-bold pl-1">{{ the1Number }}</span>
+									</div>
+									<div class="d-flex flex-shrink-0">
+										<div class="date-time">{{ displayDateTime }}</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
+
+					<div class="d-flex mt-1" >
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.spending }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value">{{ displayPaymentPrice }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-1" >
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.dc_point_redeem }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value">{{ displayDiscountFromRedeemPoints }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-2 mb-3">
+						<div class="d-flex flex-grow-1">
+							<span class="label-total-price">{{ text.total_price }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="price-value">{{ totalPrice }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-1" >
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.point_deducted }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value">{{ displayPointUsed }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-1" >
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.point_gain }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value">{{ pointGain }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-1" >
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.recorder }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value">{{ empName }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-1" >
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.record }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value">{{ note }}</span>
+						</div>
+					</div>
+
+					<div class="d-flex mt-1">
+						<div class="d-flex flex-grow-1">
+							<span class="normal-value">{{ text.reason_for_cancellation }}</span>
+						</div>
+
+						<div class="d-flex flex-shrink-0">
+							<span class="normal-value" style="font-weight: bold;">{{ reasonOfCancel }}</span>
+						</div>
+					</div>
+
+
+					<v-divider class="my-4"/>
+
+					<label class="reason-for-void-label" for="reason-for-void-input">ระบุเหตุผลที่ต้องการขอยกเลิก</label>
+					<div class="form-group">
+						<div class="d-flex justify-end">
+							<span class="text-count">{{ reason.length + "/" + maxReasonLength }}</span>
+						</div>
+						<input :disabled="loading" :maxlength="maxReasonLength" v-model="reason" id="reason-for-void-input" type="text" class="form-control mt-0" />
+					</div>
+				</div>
+
+				<div class="button-container w100 pt-3">
+					<v-btn @click="showConfirmDialog" block rounded color="primary" :height="48" >
+						<span class="btn-text">{{ text.confirm }}</span>
+					</v-btn>
+				</div>
+
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+
+	<v-dialog persistent v-model="confirmDialog" :width="340" content-class="confirm-void-the1-transaction-dialog">
+		<v-card>
+			<div class="d-flex flex-column align-center">
+				<div class="dialog-text" v-html="text.confirm_text"/>
+
+				<v-btn @click="confirm" rounded color="primary" :height="48" block :loading="loading" :disabled="loading">
+					<span class="px-4">{{ text.confirm }}</span>
+				</v-btn>
+
+				<v-btn @click="confirmDialog = false" color="primary-dark" fab class="close-btn" :disabled="loading">
+					<v-icon color="white">close</v-icon>
+				</v-btn>
+
+			</div>
+		</v-card>
+	</v-dialog>
+</div>

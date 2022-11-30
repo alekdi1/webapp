@@ -1,0 +1,53 @@
+<div id="_dashboard">
+	<cpn-dsb-page-content-container v-if="hasPermission">
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<v-row class="row-tabs">
+					<v-col v-for="(tab, idx) in tabControl.tabs" :key="'tab-' + tab.value + '-' + idx" class="text-center">
+						<v-btn @click="tabControl.selectTab(tab)" :color="tab.active ? 'primary' : 'white'" :height="28" :width="96" elevation="0" rounded>
+							<span :class="tab.active ? ['text-white'] : ['text-primary-dark']" class="font-weight-bold px-2" >{{ tab.label }}</span>
+						</v-btn>
+					</v-col>
+					<v-col>
+						<v-card @click="showCustomDateRange" :disabled="loading" class="pa-y px-2 d-flex " :height="28" :color="tabControl.customTab.active ? 'primary' : 'white'" :flat="!tabControl.customTab.active" style="border-radius: 16px !important;">
+							<div class="d-flex w100">
+								<div class="flex-grow-1 d-flex align-center justify-center">
+									<span class="date-range text-white" v-if="tabControl.customTab.active" v-html="tabControl.htmlTabDateRange" />
+								</div>
+								<div class="d-flex align-center flex-shrink-0">
+									<img v-if="tabControl.customTab.active" :src="require('@/assets/images/icons/calendar-white.svg')" alt="Calendar Icon" :height="20"/>
+									<img v-else :src="require('@/assets/images/icons/calendar.svg')" alt="Calendar Icon" :height="20"/>
+								</div>
+							</div>
+						</v-card>
+					</v-col>
+				</v-row>
+				<div class="tab-content-container">
+					<reward-content-daily v-if="tabControl.currentTab === 'daily'" />
+					<reward-content-weekly v-else-if="tabControl.currentTab === 'weekly'" />
+					<reward-content-monthly v-else-if="tabControl.currentTab === 'monthly'" />
+					<reward-content-custom v-else-if="tabControl.currentTab === 'custom'" :dateRange="tabControl.dates" :trigger="updatedChart" @update="onUpdatedChart" />
+				</div>
+				<!--  -->
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+	<v-dialog
+		ref="date-range-picker-dialog"
+		content-class="cpn-custom-date-picker"
+		v-model="tabControl.showDatePicker"
+		:return-value.sync="tabControl.dates"
+		width="360">
+		<v-date-picker v-model="tabControl.dates" :max="tabControl.maxDate" :min="tabControl.minDate" :selected-items-text="tabControl.displayPickerDateRange" :locale="lang" range>
+			<v-btn  @click="confirmSelectDates" color="primary" :height="48" :disabled="tabControl.dates.length === 0" rounded>
+				<span class="px-6">
+					{{ $t("ok") }}
+				</span>
+			</v-btn>
+			<v-btn @click="cancelSelectDate" width="48" height="48" color="primary-dark" class="close-date-picker-btn" fab>
+				<v-icon color="white">close</v-icon>
+			</v-btn>
+		</v-date-picker>
+	</v-dialog>
+</div>

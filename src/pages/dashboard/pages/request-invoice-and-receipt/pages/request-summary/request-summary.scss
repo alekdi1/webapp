@@ -1,0 +1,23 @@
+@import "../../../../../../styles/vars.scss";
+
+#_request-summary-page {
+    .email-title-rectangle {
+        width: 5px;
+        height: 70px;
+        background-color: $color-primary;
+    }
+
+    #email {
+        border: 1px solid #ced4da !important;
+    }
+
+    .month-rectangle {
+        width: 5px;
+        height: 20px;
+        background-color: $color-primary;
+    }
+
+    .continue-btn {
+        background-color: $color-primary;
+    }
+}

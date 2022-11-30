@@ -1,0 +1,45 @@
+<div id="_favorite-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-3">{{ text.title }}</div>
+
+				<div class="favorite-post-container">
+					<div class="menu-tabs-wrapper text-center">
+						<div v-for="(tab, tIdx) in menuTabs" :key="'menu-tab-' + tIdx" class="menu-tabs-container">
+							<div @click="selectedTab(tab)" class="menu-tab-container cpn-text-body-1 font-weight-bold text-center px-4" :class="{ 'is-active': tab.active }">
+								{{ tab.label }}
+							</div>
+						</div>
+					</div>
+					<v-divider class="mx-4 mb-5" />
+					<div class="post-list-container mt-2">
+						<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+							<cpn-loading />
+						</div>
+						<div v-else-if="currentPost.length === 0">
+							<div class="text-center">{{ text.not_found }}</div>
+						</div>
+						<div v-else v-for="(item, idx) in currentPost" :key="'post-item-' + idx" class="post-container mb-5">
+							<!-- <div class="post-image-container">
+								<v-img @click="goToPost(item.id)" class="post-image" :src="getImage(item.file)" width="100%" max-height="200"/>
+								<v-btn @click="deleteFavorite(item.id)" color="red lighten-1" class="favorite-icon ml-auto" elevation="0" large icon>
+									<v-icon size="40">favorite</v-icon>
+								</v-btn>
+							</div> -->
+							<div class="post-content-container mx-5">
+								<div class="post-title-container mt-6">
+									<a @click="goToPost(item.id)" class="cpn-content-default text-primary-dark font-weight-bold">{{ item.title }}</a>
+								</div>
+								<div class="post-date-range mt-1">
+									<div class="cpn-content-subtitle">{{ displayDateRange(item.startDate, item.endDate) }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

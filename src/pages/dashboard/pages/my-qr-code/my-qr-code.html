@@ -1,0 +1,86 @@
+<div id="_my-qr-code-page">
+
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<div class="form-group">
+					<div class="input-group">
+						<label class="form-prepend" for="search-branch">
+							<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+						</label>
+						<input id="search-payment-branch" type="text" class="form-control borderless"
+							:placeholder="text.search_branch" v-model="search" :disabled="isLoading"/>
+						<div class="form-apppend">
+							<v-btn :disabled="isLoading" @click="search = ''" icon :size="20" v-if="search">
+								<v-icon>cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+				</div>
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+					<cpn-loading />
+				</div>
+				<div class="qr-store-list-container mt-10 mx-2" v-else>
+					<template v-if="displayStoreList.length > 0">
+						<div v-for="(store, idx) in displayStoreList" :key="'request-store-' + idx"
+							class="request-store-container">
+							<v-card class="request-store-card elevation-0 py-5" @click="setSelectedStore(store)" v-ripple>
+								<div class="request-store-item d-flex flex-row">
+									<div class="avatar-col pl-3">
+										<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="56">
+											<span class="text-white headline">{{ storeChar(store.displayIdAsName) }}</span>
+										</v-avatar>
+									</div>
+									<div class="info-col">
+										<div>
+											<div class="cpn-content-title ml-3">{{ store.displayIdAsName }}</div>
+										</div>
+										<div>
+											<div class="cpn-content-subtitle ml-3">{{ displayMasterBranch(store.branchCode) }}
+											</div>
+										</div>
+									</div>
+								</div>
+							</v-card>
+						</div>
+					</template>
+					<div v-else class="d-flex justify-center align-center" style="height: 100px;">
+						<span>{{ text.data_not_found }}</span>
+					</div>
+				</div>
+			</v-container>
+		</template>
+
+		<template v-slot:column-right>
+			<v-container class="qr-container" v-if="selectedStore">
+				<div id="qrcode">
+					<div class="title-container d-flex">
+						<div class="title-text flex-row">
+							<div class="cpn-text-h5 font-weight-bold">{{ selectedStore.displayIdAsName }}</div>
+							<div class="cpn-content-default">{{ selectedStore.displayBranchName }}</div>
+						</div>
+					</div>
+					<div class="image-container d-flex justify-center align-center">
+						<vue-qrcode :value="qrCodeUrl" :width="350" />
+					</div>
+					<div class="qr-information-wrapper d-flex justify-center align-center">
+						<div class="qr-information-container cpn-content-default">
+							{{ text.detail }}
+						</div>
+					</div>
+				</div>
+				<v-divider class="my-5" />
+				<div class="qr-code-download-btn-container d-flex flex-column align-center">
+					<v-btn :disabled="isDownloading || isLoading" :loading="isDownloading" text class="pa-2"
+						:width="120" height="auto">
+						<div class="qr-code-download d-flex flex-column align-center" @click="downloadQRCode">
+							<v-img :src="require('@/assets/images/icons/file-download.svg')" :width="64" />
+							<div class="mt-2">{{ text.download }}</div>
+						</div>
+					</v-btn>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,75 @@
+$color-primary: var(--v-primary-base);
+
+#payment-result-page {
+    height: 100vh;
+
+    .total-price-text {
+        font-weight: 500;
+    }
+
+    .note-text {
+        opacity: 0.8 !important;
+    }
+
+    .back-btn {
+        background-color: $color-primary;
+    }
+
+    .payment-pending {
+        .info-container {
+            height: calc(100vh - 120px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .info-content-text-wrapper {
+                width: 320px;
+            }
+        }
+
+        .back-btn-container {
+            position: absolute;
+            margin-bottom: 120px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+    
+            .back-btn {
+                background-color: $color-primary;
+            }
+        }
+    }
+
+    .payment-unsuccess {
+        .info-container {
+            height: calc(100vh - 120px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+    
+            .info-content-text {
+                width: 300px;
+            }
+        }
+    
+        .repay-btn-container {
+            position: absolute;
+            margin-bottom: 120px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+    
+            .repay-btn {
+                background-color: $color-primary;
+            }
+        }
+    }
+
+    .loading-container {
+        height: 50vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

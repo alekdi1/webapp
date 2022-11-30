@@ -1,0 +1,64 @@
+<div id="_shop-sale-sales-form-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <v-container class="cpm-dbs-content-container">
+                <div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+                <section style="width: 100%; height: 180px;" class="d-flex justify-center align-center"
+                    v-if="loading && !isInited">
+                    <cpn-loading />
+                </section>
+                <section>
+                    <!-- New ui -->
+                    <v-divider class="my-6" v-if="ary_saleatmonth_thisyear.length > 0" />
+                    <section name="this-year" v-if="ary_saleatmonth_thisyear.length > 0"
+                        style="overflow-y: scroll;padding-bottom: 20px;">
+                        <div class="cpn-text-h6 mb-3">{{lang == "th" ? thisyear : thisyear - 543}}</div>
+                        <div style="display: flex;">
+                            <div v-for="(month, idx) in ary_saleatmonth_thisyear" :key="'this-year-month-' + idx"
+                                class="request-month-btn mr-3">
+                                <cpn-req-month-btn @click="toggleSelectedMonth(month)" :selected="month.selected"
+                                    :date="getDateFromYearAndMonth(month.year, month.monthnumber)" />
+                            </div>
+                        </div>
+                    </section>
+                    <v-divider class="my-6" v-if="ary_saleatmonth_lastyear.length > 0" />
+                    <section name="last-year" v-if="ary_saleatmonth_lastyear.length > 0"
+                        style="overflow-y: scroll;padding-bottom: 20px;">
+                        <div class="cpn-text-h6 mb-3">{{lang == "th" ? lastyear : lastyear - 543}}</div>
+                        <div style="display: flex;">
+                            <div v-for="(month, idx) in ary_saleatmonth_lastyear" :key="'last-year-month-' + idx"
+                                class="request-month-btn mr-3">
+                                <cpn-req-month-btn @click="toggleSelectedMonth(month)" :selected="month.selected"
+                                    :date="getDateFromYearAndMonth(month.year, month.monthnumber)" />
+                            </div>
+                        </div>
+                    </section>
+                    <div class="footer-div-download">
+                        <v-divider class="my-6" />
+                        <div class="cpn-text-h6 mb-3">{{ text.downloaddocumentfile }}</div>
+                        <div class="mb-4 align-center">
+                            <a :class="ischeckedmonth ? ['align-center d-flex'] : ['align-center d-flex isDisabled']"
+                                @click="dowloadpdf">
+                                <img class="svg" :src='require("@/assets/images/icons/export_odering.svg")' />
+                                <span class="px-6 font-weight-bold" style="color:#b39656;">
+                                    Download .pdf
+                                </span>
+                            </a>
+                        </div>
+                        <div class="mb-4 align-center">
+                            <a :class="ischeckedmonth ? ['align-center d-flex'] : ['align-center d-flex isDisabled']"
+                                @click="dowloadcsv">
+                                <img class="svg" :src='require("@/assets/images/icons/export_odering.svg")' />
+                                <span class="px-6 font-weight-bold">
+                                    Export .xlsx
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+
+    <cpn-image-viewer ref="imgView" />
+</div>

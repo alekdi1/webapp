@@ -1,0 +1,109 @@
+<div id="_change-pwd-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<cpn-dsb-action-acknowledge v-if="showChangeSuccess">
+				<template v-slot:title>
+					<div class="status-title mb-0">{{ acknowledge.title }}</div>
+				</template>
+				<template v-slot:content>
+					<div class="d-flex align-center flex-column">
+						<div class="acknowledge-subtitle text-white text-center mt-3">เปลี่ยนรหัสผ่านเรียบร้อยเเล้ว<br>กรุณาเข้าสู่ระบบอีกครั้ง</div>
+
+						<v-btn color="primary" @click="login" class="mt-6" :height="48" rounded>
+							<span class="px-4 text-uppercase">{{ $t("ok") }}</span>
+						</v-btn>
+					</div>
+				</template>
+			</cpn-dsb-action-acknowledge>
+			<v-container  v-else class="cpm-dbs-content-container">
+				<div class="page-content-title mb-2">{{ text.title_change_pwd }}</div>
+
+				<form class="mt-10">
+
+					<div class="form-group mb-4" :class="{ 'form-error': form.validated && form.errors.oldPassword }">
+						<label :for="'old-password-input-' + form.oldPassword.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.input_old_pwd }}</span>
+						</label>
+						<div class="old-password-input">
+							<div class="input-group">
+								<input ref="inputOldPassword" autocomplete="off" :id="'old-password-input-' + form.oldPassword.id" :type="form.oldPassword.show ? 'text' : 'password'" class="form-control mt-0"
+								:placeholder="text.old_pwd" v-model="form.oldPassword.value" :disabled="loading">
+
+								<!-- <div class="form-apppend" v-if="form.oldPassword.value">
+									<v-btn :disabled="loading" @click="form.oldPassword.show = !form.oldPassword.show" icon :size="20" >
+										<v-icon v-if="form.oldPassword.show">visibility_off</v-icon>
+										<v-icon v-else>visibility</v-icon>
+									</v-btn>
+								</div> -->
+							</div>
+						</div>
+						<!-- <div class="input-error-message mt-2" v-if="form.validated && form.errors.oldPassword">
+							{{ form.errors.oldPassword }}
+						</div> -->
+					</div>
+
+					<div class="form-group mb-4" :class="{ 'form-error': form.validated && form.errors.password }">
+						<label :for="'new-password-input-' + form.password.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.label_input_new_pwd }}</span>
+						</label>
+						<div class="new-password-input">
+							<div class="input-group">
+								<input ref="inputNewPassword" autocomplete="off" :id="'new-password-input-' + form.password.id" :type="form.password.show ? 'text' : 'password'" class="form-control mt-0"
+								:placeholder="text.new_pwd" v-model="form.password.value" :disabled="loading">
+
+								<!-- <div class="form-apppend" v-if="form.password.value">
+									<v-btn :disabled="loading" @click="form.password.show = !form.password.show" icon :size="20" >
+										<v-icon v-if="form.password.show">visibility_off</v-icon>
+										<v-icon v-else>visibility</v-icon>
+									</v-btn>
+								</div> -->
+							</div>
+						</div>
+						<!-- <div class="input-error-message mt-2" v-if="form.validated && form.errors.password">
+							{{ form.errors.password }}
+						</div> -->
+					</div>
+
+					<div class="form-group mb-4" :class="{ 'form-error': form.validated && form.errors.confirmPassword }">
+						<label :for="'confirm-new-password-input-' + form.confirmPassword.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.confirm_new_pwd }}</span>
+						</label>
+						<div class="confirm-new-password-input">
+							<div class="input-group">
+								<input ref="inputConfirmNewPassword" autocomplete="off" :id="'confirm-new-password-input-' + form.confirmPassword.id" :type="form.confirmPassword.show ? 'text' : 'password'" class="form-control mt-0"
+								:placeholder="text.new_pwd" v-model="form.confirmPassword.value" :disabled="loading">
+
+								<!-- <div class="form-apppend" v-if="form.confirmPassword.value">
+									<v-btn :disabled="loading" @click="form.confirmPassword.show = !form.confirmPassword.show" icon :size="20" >
+										<v-icon v-if="form.confirmPassword.show">visibility_off</v-icon>
+										<v-icon v-else>visibility</v-icon>
+									</v-btn>
+								</div> -->
+							</div>
+						</div>
+						<!-- <div class="input-error-message mt-2" v-if="form.validated && form.errors.confirmPassword">
+							{{ form.errors.confirmPassword }}
+						</div> -->
+					</div>
+
+					<div class="pwd-hint mt-4">
+						<cpn-note-text>{{ text.pwd_hint }}</cpn-note-text>
+					</div>
+				</form>
+			</v-container>
+			<div class="confirm-change-pwd-btn" v-if="!showChangeSuccess">
+				<v-btn rounded block color="primary" :height="48" :loading="loading" :disabled="loading" @click="confirmChangePwd">
+					<span class="text-white text-uppercase">{{ $t("ok") }}</span>
+				</v-btn>
+			</div>
+
+			<div class="error-notification" v-if="form.errorMessage">
+				<v-avatar color="#ea4b60" :size="24">
+					<v-icon color="white" :size="16">priority_high</v-icon>
+				</v-avatar>
+				<div class="error-message pl-4">{{ form.errorMessage }}</div>
+			</div>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

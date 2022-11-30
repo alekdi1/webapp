@@ -1,0 +1,45 @@
+<div id="annoucement-page">
+    <v-overlay :value="overlay && popup">
+        <div v-if="hasVideoLink && videoUrl">
+            <v-card :max-width=500 class="video-content-container py-10 px-5" color="white">
+                <div class="d-flex flex-column justify-center align-center">
+                    <div class="video-box-container">
+                        <iframe width="400" height="200" :src="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="cpn-text-h6 font-weight-bold text-primary-dark mt-5 mb-3 text-center">{{ title }}</div>
+                    <div class="see-detail-btn-container d-flex flex-column justify-center align-center my-5" v-if="hasFileLink">
+                        <v-btn :href="annoucement_detail_id" color="primary" min-width="70%" elevation="0" rounded height="48">
+                            <span class="text-uppercase text-white cpn-content-default">{{ text.see_detail }}</span>
+                        </v-btn>
+                    </div>
+                    <div class="close-annoucement-btn-container">
+                        <v-btn @click="overlay = false" fab color="primary" elevation="0">
+                            <v-icon>clear</v-icon>
+                        </v-btn>
+                    </div>
+                </div>
+            </v-card>
+        </div>
+        <div v-else>
+            <v-card :width=450 class="d-flex flex-column justify-center align-center rounded-xl pa-10" color="white">
+                <div>
+                    <v-img :src="require('@/assets/images/icons/annoucement.svg')" width="130" contain />
+                </div>
+                <div class="cpn-text-h4 font-weight-bold text-primary-dark mt-5 mb-3">ANNOUCEMENT</div>
+                <div class="cpn-content-default text-center">
+                    {{ title }}
+                </div>
+                <div class="see-detail-btn-container">
+                    <v-btn :href="annoucement_detail_id" color="primary" min-width="100%" elevation="0" rounded height="48">
+                        <span class="text-uppercase text-white cpn-content-default">{{ text.see_detail }}</span>
+                    </v-btn>
+                </div>
+                <div class="close-annoucement-btn-container">
+                    <v-btn @click="overlay = false" fab color="primary" elevation="0">
+                        <v-icon>clear</v-icon>
+                    </v-btn>
+                </div>
+            </v-card>
+        </div>
+    </v-overlay>
+</div>

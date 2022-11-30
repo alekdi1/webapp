@@ -1,0 +1,21 @@
+<div id="_success-register-page">
+	<cpn-public-page-content-container>
+		<template  v-slot:center-column>
+			<div class="submit-container">
+				<div>
+					<div class="text-center">
+						<v-icon color="primary" :size="100">check_circle_outline</v-icon>
+					</div>
+					<div class="cpn-text-h4 font-weight-bold text-primary text-center my-3">SUBMITTED</div>
+					<div class="cpn-text-h6 font-weight-bold text-center">ส่งข้อมูลเรียบร้อย!</div>
+					<div class="info-content-text text-center">เจ้าหน้าที่จะรีบดำเนินการตรวจสอบเอกสารแล้วติดต่อกลับหาคุณโดยเร็วที่สุด</div>
+					<div class="text-center mt-7">
+						<v-btn @click="goToLogin()" color="primary" :height="48" :width="240" elevation="0" rounded>
+							<div class="cpn-content-subtitle text-uppercase text-white">{{ $t("ok") }}</div>
+						</v-btn>
+					</div>
+				</div>
+			</div>
+		</template>
+	</cpn-public-page-content-container>
+</div>

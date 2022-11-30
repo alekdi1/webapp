@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+  namespace: serveph1
+  labels:
+    app: webapp
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8100
+  selector:
+    app: webapp
+    version: v1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-v1
+  namespace: serveph1
+  labels:
+    app: webapp
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: webapp
+        version: v1
+    spec:
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: docregkeycentral
+      containers:
+      - image: gitlabdev.centralpattana.co.th/tenant/cpnserve/webapp:image_version
+        imagePullPolicy: IfNotPresent
+        name: webapp
+        #command: ["nginx"]
+        #args: ["-g", "daemon off;"]
+        ports:
+        - containerPort: 8100
+        volumeMounts:
+        - name: tz-config
+          mountPath: /etc/localtime
+        - name: upload
+          mountPath: /usr/share/nginx/html/upload
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /etc/localtime
+        - name: upload
+          hostPath:
+            path: /home/sharedata/cpnserve/upload
+

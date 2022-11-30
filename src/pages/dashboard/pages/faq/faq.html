@@ -1,0 +1,86 @@
+<div id="_faq-page" ref="faqPage">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+
+				<div class="page-content-title mb-2">{{ text.page_title }}</div>
+
+				<!-- =========== control =========== -->
+				<div class="control-container d-flex w100">
+					<!-- search input -->
+					<div class="form-group flex-grow-1" ref="search-form-group">
+						<div class="input-group">
+							<label class="form-prepend" for="search-faqs">
+								<v-icon :size="24" color="primary-dark">search</v-icon>
+							</label>
+							<input autocomplete="off" :disabled="loading" :readonly="loading" v-model="search"  id="search-faqs" type="text" class="form-control borderless secondary" :placeholder="text.phd_search_faq">
+							<div class="form-apppend">
+								<v-btn :disabled="loading" @click="search = ''" icon :size="20" v-if="search">
+									<v-icon>cancel</v-icon>
+								</v-btn>
+							</div>
+						</div>
+					</div>
+
+					<!-- filter button -->
+					<div class="ml-2 flex-shrink-0 d-flex align-center">
+						<v-btn @click="filterBtnClick" :disabled="loading" icon large>
+							<img :src="require('@/assets/images/icons/filter.svg')" :width="28" :height="28"/>
+						</v-btn>
+					</div>
+				</div>
+
+				<!-- =========== faq list =========== -->
+
+				<div class="faq-list-container">
+					<template>
+						<v-expansion-panels flat accordion class="faq-list">
+							<v-expansion-panel class="faq-item" v-for="(faq, idx) in displayFAQItems" :key="'faq-item-' + idx" >
+								<v-expansion-panel-header class="px-0 py-6">
+									<div v-html="faq.title" class="faq-item-title" />
+								</v-expansion-panel-header>
+								<v-expansion-panel-content>
+									<div class="faq-item-content" v-html="faq.contentHTML"/>
+								</v-expansion-panel-content>
+							</v-expansion-panel>
+						</v-expansion-panels>
+					</template>
+				</div>
+
+			</v-container>
+		</template>
+		<template  v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user" />
+		</template>
+	</cpn-dsb-page-content-container>
+
+	<!-- ============= filter dialog ============= -->
+	<v-dialog :attach="$refs['faqPage']" v-model="filter.show" persistent width="480" content-class="filter-faqs-dialog">
+		<v-card class="dialog-card py-8 px-8">
+			<!-- header -->
+			<div class="dialog-header py-4">
+				<div class="cpn-text-h6">{{ text.title_select_cat }}</div>
+			</div>
+			<div class="category-list" style="overflow-y: auto; max-height: calc(100vh - 240px);">
+				<v-list>
+					<v-list-item :key="'filter-item-' + idx" v-for="(item, idx) in filter.filterOptions" @click="filter.selectCat(item)" class="px-1">
+						<v-list-item-content>
+							<v-list-item-title>
+								<div class="filter-item-name" v-html="item.displayName" />
+							</v-list-item-title>
+						</v-list-item-content>
+						<v-list-item-icon v-if="filter.isSelected(item)">
+							<fa-icon name="check" type="far" color="primary"/>
+						</v-list-item-icon>
+					</v-list-item>
+				</v-list>
+			</div>
+			<div class="d-flex mt-4 justify-center">
+				<v-btn @click="filter.show = false" rounded color="primary" :height="48">
+					<span class="px-6 text-uppercase">{{ $t("close") }}</span>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+</div>

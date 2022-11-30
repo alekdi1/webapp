@@ -1,0 +1,29 @@
+
+<div id="_dashboard-page">
+	<div class="page-container pa-0">
+		<v-app id="dashboard-app">
+
+			<div class="loading-container" v-if="loading">
+				<cpn-loading />
+			</div>
+
+			<template else>
+				<!-- ============= sidebar ============= -->
+				<cpn-dsb-sidemenu />
+		
+				<!-- ============= main content ============= -->
+				<main id="main-page-container">
+					<!-- <transition v-if="!loading">
+						<keep-alive :exclude="exclude">
+							<router-view v-if="user"/>
+						</keep-alive>
+					</transition> -->
+					<router-view v-if="!loading && user"/>
+				</main>
+				<!-- ============= dynamic footer ============= -->
+				<router-view name="footer"/>
+			</template>
+		</v-app>
+	</div>
+	<cpn-fs-loading v-if="fsLoading"/>
+</div>

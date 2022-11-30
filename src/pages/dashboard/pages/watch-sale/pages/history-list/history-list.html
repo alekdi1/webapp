@@ -1,0 +1,184 @@
+<div id="_shop-sale-history-list-page">
+	<div v-if="pdfBase64" class="close-model-embed" @click="closeEmbed"><v-icon color="white" :size="45">close</v-icon></div>
+	<div class="embed" v-if="pdfBase64">
+		<embed
+		:src="pdfBase64"
+		type="application/pdf"
+		frameBorder="0"
+		scrolling="auto"
+		v-click-outside="hidePreview"
+	></embed>
+	</div>
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">เลือกรายการ</div>
+
+				<v-row class="row-tabs">
+					<v-col v-for="(tab, idx) in tabState.tabs" :key="'tab-col-' + idx + '-' + tab.value">
+						<v-btn :disabled="loading" @click="selectTab(tab)" rounded class="tab-btn" :height="28" :text="!tab.active" :color="tab.active ? 'primary' : 'white'">
+							<span :class="tab.active ? ['text-white'] : ['text-primary-dark']" class="px-2">{{ tab.label }}</span>
+						</v-btn>
+					</v-col>
+					<v-col>
+						<v-card :disabled="loading" class="pa-y px-2 d-flex " 
+						:height="28" :color="tabState.customItem.active ? 'primary' : 'white'" 
+						:flat="!tabState.customItem.active" @click="showCustomDateRange" 
+						style="border-radius: 20px !important;">
+							
+							<div class="d-flex w100">
+								<div class="flex-grow-1 d-flex align-center justify-center">
+									<span class="date-range text-white" v-if="tabState.customItem.active" v-html="tabState.htmlTabDateRange" />
+								</div>
+								<div class="d-flex align-center flex-shrink-0">
+									<img :src="require('@/assets/images/icons/calendar-white.svg')" alt="Calendar Icon" :height="20" v-if="tabState.customItem.active"/>
+									<img :src="require('@/assets/images/icons/calendar.svg')" alt="Calendar Icon" :height="20" v-else/>
+								</div>
+							</div>
+							
+						</v-card>
+					</v-col>
+				</v-row>
+				<v-divider class="mb-4 mt-4 mb-line"/>
+				<cpn-note-text class="mt-3">
+					บัญชีของคุณสามารถดูประวัติได้เฉพาะตัวเลือกด้านล่างนี้เท่านั้น
+				</cpn-note-text>
+				<!-- {{reportItems.items}} -->
+				<v-row
+				class="d-flex flex-row mt-4 mb-4 active" 
+				v-for="(item, idx) in ReportFilter()" :key="'report-row-' + idx + '-' + item.value"
+				>
+					<v-card min-width="500px" height="100px" :color="item.active ? '#d9caab' : 'white'" 
+					class="cpn-report-item d-flex justify-space-between align-center">
+						<div class="d-flex pa-2 align-center" style="cursor: pointer;"  @click="selectReport(item)" >
+							<v-btn icon v-if="item.active">
+								<fa-icon name="check-circle" type="fas" color="primary" :size="24" />
+							</v-btn>
+							<v-btn icon v-else>
+								<fa-icon name="circle" type="fas" color="#ebebeb" :size="24" />
+							</v-btn>
+							<div class="store-flag-label font-weight-bold">
+								{{ item.label }}
+							</div>
+
+						</div>
+						<div class="align-center">
+							<a @click="preview(item.value)">
+								<v-img style="height:30px;width:30px;" :src='require("@/assets/images/icons/preview_shopsales.svg")' />
+							</a>
+						</div>
+					</v-card>					
+				</v-row>
+				<!-- <div class="menu-items">
+					<template v-for="(item, idx) in reportItems.items" :key="'Ireport-row-' + idx + '-' + item.value">
+						<template>
+							<div :class="{ active: item.active }" v-ripple class="menu-item" :key="'report-row-' + idx + '-' + item.value" @click="selectReport(item)">
+								<div class="menu-label">
+									{{ item.label }}
+								</div>
+							</div>
+						</template>
+					</template>
+				</div> -->
+				<!-- {{htmlTabDateRange}} -->
+			</v-container>
+        </template>
+		<template v-slot:column-right>
+			<v-container class="download-container">			
+				<div class="box-header">
+					<div class="text-25 font-weight-bold">เอกสารที่ต้องการดาวน์โหลด</div>
+					<div class="text-25">{{ reportmodel.length }} รายการ</div>
+					
+				</div>
+				<v-divider class="mb-5 mt-2 mb-line"/>
+				<div class="download-box box-content">					
+					<div class="flex-row justify-space-between" v-for="(item, idx) in reportmodel" :key="'download-row-' + idx + '-' + item.value" 
+					>
+						<div class="d-row">
+							<div >
+								<div class="d-flex flex-row mb-4 mx-2" >
+									<div style="width: 10%;">
+										<v-btn icon style="cursor: pointer;" @click="removeReport(item)">
+											<fa-icon name="check-circle" type="fas" color="primary" :size="24" />
+										</v-btn>
+									</div>
+									
+									<div style="width: 90%;" class="mt-1">
+										<div class="text-25 font-weight-bold">
+											{{ item.label }}
+										</div>
+										<div class="text-25">
+											สาขา{{ branchName }}
+										</div>
+										<div class="text-25">
+											ห้อง {{ branchRoom }}
+										</div>
+										<div class="d-flex justify-space-between">
+											<div class="d-flex flex-row align-center">
+												<div class="mt-1 mr-2">
+													<img :src="require('@/assets/images/icons/calendar-black.svg')" alt="Calendar Icon" :height="15"/>
+												</div>
+												<div class="">
+													ช่วงเวลา 
+												</div>
+											</div>
+											<div>
+												{{ item.fulldate }}
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="d-row">
+							<v-divider class="mb-3 mt-3 mb-line"/>
+						</div>
+					</div>
+				</div>							
+				
+				<div class="download-box box-footer">
+					<v-divider class="mb-3 mt-3 mb-line"/>
+					<div class="text-25 font-weight-bold mb-3">ดาวน์โหลดเอกสาร</div>
+					<div class="mb-4 mx-6 align-center">
+						<a :class="reportmodel.length ? ['align-center d-flex'] : ['align-center d-flex isDisabled']" @click="download('PDF')">
+							<img class="svg" :src='require("@/assets/images/icons/export_odering.svg")' />
+							<span class="px-6 font-weight-bold" style="color:#b39656;">
+								Download .pdf
+							</span>
+						</a>
+					</div>
+					<div class="mb-4 mx-6 align-center">
+						<a :class="reportmodel.length ? ['align-center d-flex'] : ['align-center d-flex isDisabled']" @click="download('XLSX')">
+							<img class="svg" :src='require("@/assets/images/icons/export_odering.svg")' />
+							<span class="px-6 font-weight-bold">
+								Export .xlsx
+							</span>
+						</a>
+					</div>
+				</div>
+				
+			</v-container>
+		</template>
+		
+
+    </cpn-dsb-page-content-container>
+	<v-dialog
+		content-class="cpn-custom-date-picker"
+		ref="date-range-picker-dialog"
+		v-model="tabState.showDatePicker"
+		:return-value.sync="tabState.dates"
+		width="360"
+	>
+		<v-date-picker :max="tabState.maxDate" range v-model="tabState.dates" :locale="lang" :selected-items-text="tabState.displayPickerDateRang">
+			<v-btn rounded color="primary" @click="confirmSelectDates" :height="48" :disabled="tabState.dates.length === 0">
+				<span class="px-6">
+					{{ $t("ok") }}
+				</span>
+			</v-btn>
+			<v-btn width="48" height="48" fab color="primary-dark" @click="cancelSelectDate" class="close-date-picker-btn">
+				<v-icon color="white">close</v-icon>
+			</v-btn>
+		</v-date-picker>
+	</v-dialog>
+</div>

@@ -1,0 +1,26 @@
+@import "../../../../../../styles/vars.scss";
+
+#payment-unsuccess-page {
+    .info-container {
+        height: calc(100vh - 120px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .info-content-text {
+            width: 300px;
+        }
+    }
+
+    .repay-btn-container {
+        position: absolute;
+        margin-bottom: 120px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        .repay-btn {
+            background-color: $color-primary;
+        }
+    }
+}

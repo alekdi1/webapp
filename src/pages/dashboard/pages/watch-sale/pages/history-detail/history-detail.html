@@ -1,0 +1,123 @@
+<div id="_shop-sale-history-detail-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="d-flex align-center mb-3">
+					<div class="cpn-text-h6 flex-grow-1">{{ text.title }}</div>
+					<div class="flex-shrink-0 pl-3" v-if="showEditBtn">
+						<v-btn icon @click="editClick" :disabled="downloading !== ''">
+							<fa-icon name="edit" type="fal" color="primary" size="20"/>
+						</v-btn>
+					</div>
+				</div>
+				<v-divider class="mb-6"/>
+
+				<div style="width: 100%; height: 180px;" class="d-flex justify-center align-center" v-if="loading">
+					<cpn-loading />
+				</div>
+
+				<div style="width: 100%; height: 180px;" class="d-flex justify-center align-center" v-else-if="!shopSaleData">
+					<h5>ไม่มีข้อมูล</h5>
+				</div>
+
+				<template v-else>
+
+					<section>
+						<shop-sale-section-title title="วันที่"/>
+						<div class="section-detail-container">
+							<div class="d-flex align-center">
+								<div>
+									<v-img width="20" :src="require('@/assets/images/icons/calendar-black.svg')" />
+								</div>
+								<div class="display-value ml-3">
+									{{ displayDate }}
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<v-divider class="my-6"/>
+
+					<template v-for="(sales, idx) in salesList">
+						<section :key="'sales-' + sales.id + '-' + idx" :data-id="sales.id" >
+							<shop-sale-section-title :title="sales.title" :subtitle="sales.subtitle"/>
+							<div class="section-detail-container">
+								
+								<table cellspacing="0" cellpadding="0" class="sales-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th class="col-sale-amount">ยอดขายเงินสด</th>
+											<th class="col-sale-invoice">จำนวนใบเสร็จ</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(data, dataIdx) in sales.data" :key="'sale-role-' + dataIdx">
+											<td>{{ data.label }}</td>
+											<td class="col-sale-amount">{{ data.amount }}</td>
+											<td class="col-sale-invoice">{{ data.invoice }}</td>
+										</tr>
+										<tr class="total-row">
+											<td>{{ sales.total.label }}</td>
+											<td class="col-sale-amount">{{ sales.total.amount }}</td>
+											<td class="col-sale-invoice">{{ sales.total.invoice }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</section>
+						<v-divider class="my-6" :key="'sales-divider-' + sales.id + '-' + idx"/>
+					</template>
+				</template>
+
+				<section>
+					<div class="total-sales-label">ยอดขายรวมทั้งหมด<br />(บาท)</div>
+					<div class="d-flex justify-end mt-6">
+						<div class="total-sales-value">{{ displayTotalPrice }}</div>
+					</div>
+				</section>
+
+				<v-divider class="my-6"/>
+
+				<section>
+					<shop-sale-section-title title="ใบปิดสิ้นวัน"/>
+					<div class="section-detail-container">
+						<div class="d-flex align-center slip-image-item mb-2" v-for="(slip, idx) in slips" :key="'slip-' + idx">
+							<div class="flex-shrink-0" style="width: 32px; height: 40px;">
+								<shop-sale-slip-file :ext="slip.ext"/>
+							</div>
+							<div class="image-name px-3 flex-grow-1">
+								{{ slip.name }}
+							</div>
+							<div class="download-container px-3 flex-shrink-0">
+								<v-btn text height="40" min-width="40" class="pa-1" @click="downloadImage(slip.name)" :disabled="downloading !== ''" :loading="downloading !== '' && downloading === slip.name">
+									<v-img width="20" :src="require('@/assets/images/icons/file-download.svg')" />
+								</v-btn>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<v-divider class="my-6"/>
+
+				<section>
+					<shop-sale-section-title title="ส่ง/แก้ไขยอดขาย"/>
+					<div class="section-detail-container">
+						<table class="w100 user-stamp">
+							<template v-for="(s, idx) in stampUser">
+								<tr :key="'user-stamp-' + idx">
+									<td>{{ s.label }}</td>
+									<td class="text-right">{{ s.name }}</td>
+								</tr>
+								<tr :key="'date-stamp-' + idx" v-if="s.datetime">
+									<td colspan="2" class="text-right datetime-col">{{ s.datetime }}</td>
+								</tr>
+							</template>
+						</table>
+					</div>
+				</section>
+
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

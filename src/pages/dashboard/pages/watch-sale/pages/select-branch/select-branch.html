@@ -1,0 +1,123 @@
+<div id="_shop-sale-select-branch-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<div class="loading d-flex justify-center align-center" style="height: 100%;" v-if="isLoading">
+				<cpn-loading />
+			</div>
+			<div v-else>
+				<div style="position: absolute;width: 100%;height: 100%;bottom: 5%;" v-if="isdisplay == false">
+					<v-container class="cpm-dbs-content-container" style="width: 100%;height: 100%;position: relative;">
+						<div class="d-flex" style="position: absolute;top: 40%;width: 95%;justify-content: center;">
+							<div style="text-align: center;">
+								<div class="text-playhouse mb-3">{{ text.play_house_desc }}</div>
+								<img class="mb-10" :src="require('@/assets/images/watch-sale-playhouse.png')" alt=""
+									:height="50" />
+								<!-- <div class="cpn-content-subtitle ml-3">{{ text.play_house_detail_desc }}</div> -->
+								<p clas="text-playhouse-detail" style="margin-bottom: 0px">
+									สนใจทำธุรกิจร่วมกับเซ็นทรัลพัฒนา
+								</p>
+								<p class="text-playhouse-detail" style="margin-bottom: 0px">กรุณาติดต่อ คุณรัฐศาสตร์
+									ศิริสวัสดิ์ (081-732-9772) หรือ</p>
+								<p class="text-playhouse-detail" style="margin-bottom: 0px">คุณกุลธาดา ธีระพิจิตร
+									(095-292-3549)</p>
+								<p class="text-playhouse-detail" style="margin-bottom: 0px">โทร 02-667-5555</p>
+							</div>
+						</div>
+					</v-container>
+				</div>
+				<div v-if="isdisplay == true">
+					<v-container class="cpm-dbs-content-container" v-if="isdisplay == true">
+						<div class="cpn-text-h6 mb-3">{{ text.sales_report }}</div>
+						<div class="d-flex">
+							<div class="flex-grow-1">
+								<div class="form-group">
+									<div class="input-group">
+										<label class="form-prepend" for="search-branch">
+											<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+										</label>
+										<input id="search-sales-branch" type="text" class="form-control borderless"
+											:placeholder="text.search_branch" v-model="search" />
+										<div class="form-apppend">
+											<v-btn :disabled="isLoading" @click="search = ''" icon :size="20"
+												v-if="search">
+												<v-icon>cancel</v-icon>
+											</v-btn>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div @click="showSortDialog" class="d-flex sort-btn-container align-center pl-3">
+								<v-btn :disabled="isLoading || isEmptyStoreList" color="primary" icon>
+									<fa-icon :size="20" name="sort-alt" type="fas" color="primary" />
+								</v-btn>
+							</div>
+						</div>
+						<div class="store-list-container mt-10 mx-2">
+							<template>
+								<div v-for="(contract, idx) in displayContractsList" :key="'contract-' + idx"
+									class="store-container">
+									<v-card @click="goToMainPage_Contract(contract)" class="store-card elevation-0 py-4"
+										v-ripple>
+										<div class="contract-item d-flex flex-row">
+											<div class="avatar-col pl-3">
+												<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="56">
+													<span class="text-white headline">{{
+														storeChar(contract.contract_name)
+														}}</span>
+												</v-avatar>
+											</div>
+											<div class="info-col">
+												<div>
+													<div class="cpn-content-title ml-3">{{ contract.contract_name }}
+													</div>
+												</div>
+												<div>
+													<div class="cpn-content-subtitle ml-3">{{ contract.branch_name }}
+													</div>
+												</div>
+												<div v-if="contract.floor_room">
+													<div class="cpn-content-subtitle ml-3">{{ text.room }} {{
+														floorRoom(contract.floor_room) }}
+													</div>
+												</div>
+											</div>
+										</div>
+									</v-card>
+								</div>
+							</template>
+						</div>
+					</v-container>
+				</div>
+			</div>
+		</template>
+	</cpn-dsb-page-content-container>
+	<v-dialog v-model="sortDialog.show" content-class="rental-sort-dialog" ref="rental-sort-dialog" max-width="480"
+		persistent>
+		<v-card flat class="py-10 px-6 dialog-card">
+			<div class="d-flex">
+				<div class="cpn-text-h6 flex-grow-1">{{ text.sort_by }}</div>
+			</div>
+			<section style="max-height: 480px;overflow-y: auto;margin-left: -8px;">
+				<v-list rounded>
+					<!-- <v-list-item v-for="(item, i) in sortDialog.sortList" :key="i" :value="item.value" @click="sortItemClick(item.value)"> -->
+					<v-list-item v-for="(item, i) in sortDialog.sortList" :key="i" :value="item.value"
+						@click="sortItemContractClick(item.value)">
+						<v-list-item-content>
+							<v-list-item-title>
+								<span>{{ item.label }}</span>
+							</v-list-item-title>
+						</v-list-item-content>
+						<v-list-item-icon v-if="sortDialog.sortBy === item.value">
+							<fa-icon name="check" color="primary" type="far" />
+						</v-list-item-icon>
+					</v-list-item>
+				</v-list>
+			</section>
+			<div class="d-flex justify-center mt-4">
+				<v-btn :height="48" color="primary" @click="sortDialog.show = false" rounded>
+					<span class="text-uppercase white-text px-6">{{ $t("close") }}</span>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+</div>

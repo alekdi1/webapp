@@ -1,0 +1,18 @@
+<div id="_approve-void-success">
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<cpn-dsb-action-acknowledge>
+				<template v-slot:title>
+					<div class="cpn-text-h4 font-weight-bold text-white mb-3">SUCCESSFULLY</div>
+				</template>
+				<template v-slot:content>
+					<div class="cpn-content-default text-white text-center" v-html="displayMessage"></div>
+				
+					<v-btn color="primary" @click="goToApprovedVoid" class="mt-6" :height="48" rounded>
+						<span class="px-4">{{ $t("back_to_main") }}</span>
+					</v-btn>
+				</template>
+			</cpn-dsb-action-acknowledge>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

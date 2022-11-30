@@ -1,0 +1,121 @@
+@import "../../../../styles/vars.scss";
+.payment-footer {
+    z-index: $footer-z-idx;
+    .dialog-icon {
+        transition: transform 0.2s;
+        &.active {
+            transform: rotate(180deg);
+        }
+    }
+
+    .vt-line {
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: white;
+    }
+
+    .menu-col, .middle-col {
+        height: calc(100% - 8px) !important;
+    }
+
+    &.show-detail {
+        height: 70px !important;
+    }
+
+    .payment-detail-row {
+        .cpn-text-body-2, .cpn-text-body-1 {
+            line-height: 1 !important;
+        }
+    }
+
+    .payment-detail-table {
+        tr {
+            td {
+                line-height: 1 !important;
+
+                &.col-unit-baht {
+                    width: 40px;
+                    text-align: right;
+                }
+            }
+        }
+    }
+
+    .footer-row {
+        border-bottom: unset !important;
+        height: 100% !important;
+    }
+
+    .continue-btn {
+        .btn-text {
+            color: white;
+        }
+        &:disabled {
+            background-color: $color-secondary !important;
+            .btn-text {
+                color: #989898;
+            }
+        }
+    }
+
+    .download-export-btn {
+        border-radius: 8px !important;
+        .btn-text {
+            text-transform: initial;
+        }
+    }
+}
+.invoice-list-dialog {
+    border-radius: 24px !important;
+
+    .invoice-item {
+        td.check-col {
+            vertical-align: top;
+            width: 32px;
+        }
+
+        .invoice-price {
+            .price {
+                font-size: 20px;
+                font-weight: 500;
+                color: #6fa6b2;
+
+                &.overdue {
+                    color: $color-error;
+                }
+            }
+
+            .price-currency {
+                padding-left: 8px;
+            }
+        }
+
+        .due-date {
+            &.overdue {
+                color: $color-error;
+            }
+        }
+    }
+}
+
+.payment-footer-tooltip {
+    $tri-size: 12px;
+
+    border-radius: 12px !important;
+
+    &::before {
+        transform: rotate(270deg);
+        left: calc(50% - #{ $tri-size });
+        right: auto;
+        content: "";
+        position: absolute;
+        border-top: $tri-size solid transparent;
+        border-bottom: $tri-size solid transparent;
+        border-right: $tri-size * 2 solid var(--v-primary-dark-base);
+        top: calc(100% - #{ $tri-size / 2 });
+    }
+}

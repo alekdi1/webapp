@@ -1,0 +1,64 @@
+<div id="_online-register-page">
+	<cpn-public-page-content-container>
+		<template  v-slot:center-column>
+			<v-container>
+				<v-overlay v-if="!isAcceptedPdpa">
+					<v-card class="pdpa-dialog-container pa-8 ma-10" :max-width="400" color="white">
+						<div class="pdpa-title cpn-text-h5 font-weight-bold text-primary mb-2">
+							ข้อตกลงและเงื่อนไข
+						</div>
+						<div class="pdpa-dialog cpn-text-body-1 text-gray">
+							{{ pdpaDialog }}
+						</div>
+						<div class="d-flex flex-row align-center flex-grow-1">
+							<v-btn @click="setAcceptPdpa()" icon>
+								<cpn-check-icon :checked="acceptPdpa" />
+							</v-btn>
+							<div class="cpn-content-subtitle my-3">ข้าพเจ้ายอมรับเงื่อนไข</div>
+						</div>
+						<div class="text-center">
+							<v-btn @click="closePdpaPopup" class="accept-btn" :disabled="!acceptPdpa" color="primary" elevation="0" height="48" rounded>
+								<div class="cpn-text-body-1 text-uppercase text-white px-4 ">{{ $t("ok") }}</div>
+							</v-btn>
+						</div>
+					</v-card>
+				</v-overlay>
+				<div class="d-flex flex-row justify-center align-center">
+					<div class="logo-container">
+						<v-img :src="require('@/assets/images/cpn-logo-new.png')" cover/>
+					</div>
+				</div>
+				<v-divider class="my-4" />
+				<div class="title-container">
+					<div class="cpn-text-h5 text-primary font-weight-bold">ลงทะเบียนออนไลน์</div>
+					<div class="register-guide">กรุณากรอกข้อมูลด้านล่างให้ครบถ้วน<br>เพื่อสมัครบริการ Central Pattana Serve</div>
+				</div>
+			
+				<div class="register-type-container mt-4">
+					<div class="topic-text font-weight-bold">ประเภทของร้านค้า</div>
+					<div class="d-flex">
+						<div class="d-flex flex-row align-center flex-grow-1">
+							<v-btn @click="setOrdinary(true)" icon>
+								<cpn-check-icon :checked="isOrdinary" />
+							</v-btn>
+							<div class="cpn-content-subtitle font-weight-bold my-3">บุคคลธรรมดา</div>
+						</div>
+						<div class="d-flex flex-row align-center flex-grow-1">
+							<v-btn @click="setOrdinary(false)" icon>
+								<cpn-check-icon :checked="!isOrdinary" />
+							</v-btn>
+							<div class="cpn-content-subtitle font-weight-bold my-3">นิติบุคคล</div>
+						</div>
+					</div>
+				</div>
+			
+				<v-divider />
+
+				<cpn-ordinary-register v-if="isOrdinary" />
+
+				<cpn-cooperation-register v-else />
+
+			</v-container>
+		</template>
+	</cpn-public-page-content-container>
+</div>

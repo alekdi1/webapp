@@ -1,0 +1,45 @@
+<div id="_shopping-center-map-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-2">{{ text.page_title }}</div>
+			
+				<v-divider class="my-6"/>
+
+				<div class="search-branch">
+					<div class="form-group" ref="search-form-group">
+						<div class="input-group">
+							<label class="form-prepend" for="search-branch-input">
+								<fa-icon :size="18" name="search" type="far" color="primary-dark"/>
+							</label>
+							<input autocomplete="off" :disabled="loading" :readonly="loading" v-model="search"  id="search-branch-input" type="text" class="form-control borderless secondary" :placeholder="$t('search_branch')">
+							<div class="form-apppend">
+								<v-btn :disabled="loading" @click="search = ''" icon :size="20" v-if="search">
+									<v-icon>cancel</v-icon>
+								</v-btn>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="branch-list-container">
+					<cpn-loading v-if="loading" />
+					<v-list v-else>
+						<v-list-item class="branch-item" @click="selectBranch(b)" v-for="(b, idx) in branchList" :key="'branch-' + idx">
+							<v-list-item-content>
+								<v-list-item-title >
+									<span class="text-capitalize font-weight-bold" v-html="b.displayName" />
+								</v-list-item-title>
+							</v-list-item-content>
+						</v-list-item>
+					</v-list>
+				</div>
+				
+			</v-container>
+		</template>
+		<template  v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user" />
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

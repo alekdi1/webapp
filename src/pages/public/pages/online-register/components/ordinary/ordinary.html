@@ -1,0 +1,207 @@
+<div id="_ordinary-component">
+	<div class="ordinary-container mt-4">
+		<div class="topic-text font-weight-bold">ข้อมูลส่วนบุคคลของผู้สมัคร</div>
+
+		<div class="firstname-container my-5">
+			<div class="cpn-content-subtitle font-weight-bold my-3">ชื่อ</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input v-model="form.firstname" ref="input-first-name" :disabled="loading" id="input-firstname" type="text" class="form-control" placeholder="ชื่อ">
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.emptyName">
+				{{ form.errors.emptyName }}
+			</div>
+		</div>
+		<div class="lastname-container my-5">
+			<div class="cpn-content-subtitle font-weight-bold my-3">นามสกุล</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input v-model="form.lastname" ref="input-last-name" :disabled="loading" id="input-lastname" type="text" class="form-control" placeholder="นามสกุล">
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.emptyLastname">
+				{{ form.errors.emptyLastname }}
+			</div>
+		</div>
+		<div class="email-container my-5">
+			<div class="cpn-content-subtitle font-weight-bold my-3">อีเมล</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input v-model="form.email" ref="input-email" :disabled="loading" id="input-email" type="text" class="form-control" placeholder="อีเมล">
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.invalidEmail">
+				{{ form.errors.invalidEmail }}
+			</div>
+		</div>
+		<div class="phone-container my-5">
+			<div class="cpn-content-subtitle font-weight-bold my-3">เบอร์โทรศัพท์</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input v-model="form.phone" ref="input-phone" :disabled="loading" id="input-phone" type="text" class="form-control" placeholder="เบอร์โทรศัพท์" maxlength="10">
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.invalidPhone">
+				{{ form.errors.invalidPhone }}
+			</div>
+		</div>
+		<div class="citizen-id-container my-5">
+			<div class="cpn-content-subtitle font-weight-bold my-3">เลขบัตรประชาชน</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input v-model="form.cid" ref="input-cid" :disabled="loading" id="input-cid" maxlength="13" type="text" class="form-control" placeholder="เลขบัตรประชาชน">
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.invalidCitizenId">
+				{{ form.errors.invalidCitizenId }}
+			</div>
+		</div>
+		<div class="shop-container my-5">
+			<div class="cpn-content-subtitle font-weight-bold my-3">ร้านค้า</div>
+			<div class="form-group">
+				<div class="input-group">
+					<input v-model="form.shopName" ref="input-shop-name" :disabled="loading" id="input-shop-name" type="text" maxlength="256" class="form-control" placeholder="ชื่อร้านค้า">
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.emptyShopName">
+				{{ form.errors.emptyShopName }}
+			</div>
+		</div>
+		<div class="branch-container my-5" ref="input-branch-selector">
+			<div class="cpn-content-subtitle font-weight-bold my-3">เลือกสาขา</div>
+			<div>
+				<v-menu
+					:disabled="loading"
+					v-model="selectBranch.menu"
+					rounded="xl"
+					offset-y
+					:z-index="100000"
+					max-height="480"
+				>
+					<template v-slot:activator="{ on, attrs }">
+						<div class="form-group">
+							<input v-model="selectedBranchName" id="select-branch-input" type="text" class="form-control pl-6" v-bind="attrs" v-on="on" readonly />
+							<div class="form-apppend">
+								<label for="select-branch-input" class="d-flex align-center">
+									<fa-icon :size="20" class="rotate-icon" :class="{ 'active-rotate': selectBranch.menu }" name="chevron-down" type="far" color="secondary darken3"/>
+								</label>
+							</div>
+						</div>
+					</template>
+	
+					<v-list>
+						<v-list-item @click="selectBranchClick(branch)" v-for="(branch, index) in branchList" :key="index">
+							<v-list-item-content>
+								<v-list-item-title>{{ branch.displayName }}</v-list-item-title>
+							</v-list-item-content>
+							<v-list-item-icon v-if="selectedBranch && selectedBranch.id === branch.id">
+								<fa-icon name="check" :size="20" color="primary" type="far" />
+							</v-list-item-icon>
+						</v-list-item>
+					</v-list>
+				</v-menu>
+				<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && !selectedBranch">
+					กรุณาเลือกสาขา
+				</div>
+			</div>
+		</div>
+
+		<v-divider />
+
+		<div class="document-container mt-4" ref="input-upload-image">
+			<div class="topic-container">
+				<div class="topic-text font-weight-bold">เอกสารที่ใช้ประกอบการลงทะเบียน</div>
+			</div>
+			<div class="upload-info-container my-3">
+				<div class="cpn-content-subtitle font-weight-bold ">สำหรับบุคคลธรรมดา</div>
+				<div>- สำเนาบัตรประชาชน พร้อมรับรองสำเนาถูกต้อง</div>
+			</div>
+			<div class="upload-file-container">
+				<v-card :disabled="loading" class="upload-container d-flex justify-center align-center mt-3 mb-2" tag="label" for="uploadFile" v-ripple flat>
+					<v-icon :size="32" color="primary">add_circle</v-icon>
+					<div class="cpn-content-subtitle ml-2">อัพโหลดเอกสาร</div>
+				</v-card>
+				<span class="cpn-content-subtitle ml-2">รองรับไฟล์ JPEG และ PDF ขนาดไม่เกิน 5 MB</span>
+				<input id="uploadFile" type="file" v-show="false" @input="form.onFileChange($event)" accept="image/jpeg, image/png, application/pdf"/>
+				<div>
+					<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.emptyUploadedFile">
+						{{ form.errors.emptyUploadedFile }}
+					</div>
+					<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.invalidFile">
+						{{ form.errors.invalidFile }}
+					</div>
+				</div>
+				<div v-for="(item, idx) in form.uploadFiles" :key="'upload-file-' + idx" >
+					<div v-if="item.status === 'uploading'" class="uploading-upload-file-container mt-3 ml-2">
+						<div class="font-weight-bold">{{ item.filename }}</div>
+						<div class="d-flex align-center">
+							<div class="progress-bar-container">
+								<div class="progress-bar" :style="{ width: item.percent + '%' }"></div>
+							</div>
+							<v-btn @click="form.removeFile(item)" :disabled="loading" class="pa-0 ml-auto" icon>
+								<v-icon :size="24" color="#e1e1e1">cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+					<div v-else-if="item.status === 'uploaded'" class="success-upload-file-container d-flex align-center mt-3 ml-2">
+						<div class="font-weight-bold flex-grow-1 text-primary">{{ item.filename }}</div>
+						<div class="d-flex align-center flex-shrink-0 px-1">
+							<fa-icon :size="24" name="check-circle" type="fas" color="primary"/>
+						</div>
+						<div class="d-flex align-center flex-shrink-0">
+							<v-btn @click="form.removeFile(item)" class="pa-0" :disabled="loading" icon>
+								<v-icon :size="24" color="#e1e1e1">cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+					<div v-else class="error-upload-file-container mt-3 ml-2">
+						<div class="font-weight-bold text-error">{{ item.filename }}</div>
+						<div class="d-flex align-center">
+							<div class="progress-bar-container flex-grow-0">
+								<div class="progress-bar-error" :style="{ width: item.percent + '%' }"></div>
+							</div>
+							<v-btn @click="form.removeFile(item)" :disabled="loading" color="error" class="pa-0 ml-auto" icon>
+								<v-icon :size="24" color="#e1e1e1">cancel</v-icon>
+							</v-btn>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<v-divider class="mt-4"/>
+
+	<div class="contact-container mt-4"  ref="input-contact-selector">
+		<div class="topic-container">
+			<div class="topic-text font-weight-bold">ช่องทางการติดต่อ</div>
+			<div class="topic-info-container my-3">
+				<div>กรุณาเลือกช่องทางเพื่อรับข้อมูลการสร้างชื่อผู้ใช้ใหม่</div>
+			</div>
+			<div class="d-flex justify-start">
+				<div v-for="(m, key) in form.methods" :key="'method-' + key">
+					<v-btn @click="form.selectMethod(m.value)":width="60" :height="60" class="mr-3 method-btn" fab depressed>
+						<v-img :src="m.icon" :width="60" :height="60"/>
+					</v-btn>
+					<div class="text-center mt-1 mr-3">{{ m.text }}</div>
+				</div>
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.emptySelectContact">
+				{{ form.errors.emptySelectContact }}
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-else-if="form.validated && form.errors.invalidSelectedEmailContact">
+				{{ form.errors.invalidSelectedEmailContact }}
+			</div>
+			<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-else-if="form.validated && form.errors.invalidSelectedPhoneContact">
+				{{ form.errors.invalidSelectedPhoneContact }}
+			</div>
+		</div>
+	</div>
+
+	<div class="confirm-container mt-4">
+		<v-btn @click="submit()" :disabled="loading" :loading="loading" color="primary" :height="48" elevation="0" block rounded>
+			<span class="cpn-content-subtitle text-uppercase text-white">ยืนยัน</span>
+		</v-btn>
+	</div>
+</div>

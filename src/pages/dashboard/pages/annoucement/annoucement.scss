@@ -1,0 +1,39 @@
+@import "../../../../styles/vars.scss";
+
+#_annoucement-page {
+    #search-annoucement-branch {
+        background: $color-secondary;
+    }
+
+    .v-list-item {
+        &:before {
+            background: transparent;
+        }
+    }
+
+    .annoucemnet-description-container {
+        width: 100%;
+        .annoucemnet-description {
+            color: $color-primary-dark;
+            word-wrap: break-word;
+        }
+    }
+
+    .annoucement-date-container {
+        padding-left: 0px !important;
+        
+        .annoucement-date {
+            color: #666666;
+        }
+    }
+
+    .list-item-date{
+        align-items: center;
+        align-self: center;
+        display: flex;
+        flex-wrap: wrap;
+        flex: 1 1;
+        overflow: hidden;
+        padding: 2px 0;
+    }
+}

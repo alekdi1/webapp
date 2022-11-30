@@ -1,0 +1,59 @@
+<div id="_annoucement-detail-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-3">{{ text.title }}</div>
+				<!-- <v-divider class="mt-10" /> -->
+			</v-container>
+			<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+				<cpn-loading />
+			</div>
+
+			<div v-else>
+				<div class="promotion-image-container mt-0" v-if="annoucement.image">
+					<v-img :src="annoucement.image" />
+				</div>
+				<!-- <div class="video-box-container" v-if="videoUrl">
+					<iframe width="510" height="255" :src="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				</div> -->
+				<v-container >
+					<div class="content-container">
+						<div class="content-date-container d-flex align-center">
+							<div class="content-date">{{ displayDate }}</div>
+							<div class="fav-btn-container ml-auto" v-if="!isQRUser">
+								<v-btn @click="deleteFavorite()" v-if="isFavorited" color="red lighten-1"
+									class="favorite-icon" elevation="0" large icon>
+									<v-icon size="36">favorite</v-icon>
+								</v-btn>
+								<v-btn @click="addFavorite()" v-else class="favorite-icon" elevation="0" large icon>
+									<v-icon size="36">favorite_border</v-icon>
+								</v-btn>
+							</div>
+						</div>
+						<div class="content-title-container d-flex align-center my-5">
+							<div class="title-rectangle mr-5" />
+							<div class="title-text">
+								<div class="cpn-content-title font-weight-bold">{{ annoucement.title }}</div>
+							</div>
+						</div>
+						<div class="content-detail-container" v-html="annoucement.detail" />
+
+						<!-- <div class="d-flex justify-center" v-if="annoucement.file">
+							<v-btn :href="annoucement.file" target="_blank" :loading="isLoading" :disabled="isLoading"
+								text class="mb-8 mt-2 pa-2" :width="160" height="auto">
+								<div class="d-flex flex-column align-center">
+									<v-img :src="require('@/assets/images/icons/file-download.svg')" :width="40" />
+									<div class="mt-2">{{ $t("download") }}</div>
+								</div>
+							</v-btn>
+						</div> -->
+					</div>
+				</v-container>
+			</div>
+		</template>
+
+        <template v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user" />
+		</template>
+    </cpn-dsb-page-content-container>
+</div>

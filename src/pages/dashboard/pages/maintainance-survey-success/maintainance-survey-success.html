@@ -1,0 +1,20 @@
+<div id="_maintainance-survey-success-page">
+
+	<cpn-dsb-page-content-container>
+		<template  v-slot:column-left>
+			<cpn-dsb-action-acknowledge>
+				<template v-slot:title>
+					<div class="status-title font-weight-bold mb-0">THANK YOU</div>
+				</template>
+				<template v-slot:content>
+					<div class="text-white text-center mt-3 font-weight-bold">ส่งประเมินงานแจ้งซ่อมของคุณแล้ว!</div>
+					<div class="text-white text-center mt-3">เราจะนำไปปรับปรุงการบริการให้ดียิ่งขึ้น</div>
+				
+					<v-btn color="primary" @click="backToRepairPose" class="mt-6" :height="48" rounded>
+						<span class="text-uppercase px-4">{{ $t("back_to_main") }}</span>
+					</v-btn>
+				</template>
+			</cpn-dsb-action-acknowledge>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,119 @@
+@import "../../../../../../styles/vars.scss";
+
+#_shop-sale-history-list-page {
+    .date-range {
+        font-size: 12px;
+        color: #000000;
+    }
+
+    .sale-summary-item {
+        position: relative;
+        display: flex;
+        padding-left: 16px;
+        align-items: center;
+
+        .sale-summary-card {
+            margin-bottom: 20px;
+        }
+
+        .item-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #b39656;
+            position: absolute;
+            left: 2px;
+        }
+
+        .item-line {
+            height: 100%;
+            width: 2px;
+            background-color: #d9caab;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 7px;
+        }
+
+        &:first-child {
+            .item-line {
+                top: 50%;
+                height: 50%;
+            }
+        }
+
+        &:last-child {
+            .item-line {
+                bottom: 50%;
+                height: 50%;
+            }
+
+            .sale-summary-card {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        .sale-summary-card {
+            width: 100%;
+            padding: 12px 8px;
+            border-radius: 32px;
+
+            &::before {
+                background: transparent;
+            }
+
+            &:not(.v-card--flat) {
+                box-shadow: 0px 8px 21px 0 rgba(0, 0, 0, 0.05) !important;
+            }
+
+            .date-col {
+                padding-left: 8px;
+                padding-right: 8px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                width: 72px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                border-right: 1px solid #e1e1e1;
+                border-radius: initial !important;
+
+                .summary-date-range {
+                    margin-top: 12px;
+                    font-size: 11px;
+                    text-align: center;
+                    color: #000000;
+                    line-height: 10px;
+                }
+            }
+
+            .summary-col {
+                flex-grow: 1;
+                padding: 16px;
+                .total-label {
+                    font-size: 10.8px;
+                    font-weight: bold;
+                    color: #000000;
+                }
+
+                .summary-value {
+                    font-size: 28px;
+                    font-weight: bold;
+                    color: #000000;
+                }
+            }
+
+            .action-col {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                padding-right: 8px;
+                padding-left: 8px;
+            }
+
+            display: flex;
+            flex-direction: row;
+        }
+    }
+}

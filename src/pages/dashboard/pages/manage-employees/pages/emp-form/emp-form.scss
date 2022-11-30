@@ -1,0 +1,153 @@
+@import "../../../../../../styles/vars.scss";
+#_manage-employees-page {
+    form {
+        .avatar-container {
+            position: relative;
+            .browser-avatar-btn {
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: absolute;
+                right: 0px;
+                bottom: -8px;
+                cursor: pointer;
+            }
+        }
+    }
+    .v-expansion-panels {
+        z-index: 0 !important;
+    }
+    .role-item-card {
+        position: relative;
+        border-radius: 16px;
+        &::before {
+            background-color: transparent !important;
+        }
+        border: solid 1px #acacac;
+        &.selected {
+            border: solid 2px #b39656 !important;
+        }
+        padding: 24px 16px;
+        .role-label {
+            font-size: 12px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1.5;
+            letter-spacing: 0.12px;
+            text-align: left;
+            color: #010101;
+        }
+        .selected-icon {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+        }
+        img {
+            border-radius: 0 !important;
+        }
+    }
+    .v-expansion-panel-content__wrap {
+        padding: 0 !important;
+    }
+    .permission-list {
+        .permission-item {
+            border-radius: 16px !important;
+            border: solid 1px #acacac;
+            padding: 16px 20px;
+        }
+        .v-card--disabled {
+            border-radius: 16px !important;
+            border: solid 1px #eeeeee;
+            padding: 16px 20px;
+        }
+    }
+    .add-store-btn {
+        border-radius: 16px;
+        &::before {
+            background-color: transparent;
+        }
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px dashed $color-primary;
+        .btn-label {
+            font-size: 15px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1.2;
+            letter-spacing: 0.15px;
+            text-align: left;
+        }
+    }
+    .store-flag-label {
+        font-size: 15px;
+        color: #010101;
+    }
+    .form-error-message {
+        font-weight: 300;
+    }
+    .customer-reward-permission-list {
+        margin-top: 8px;
+        .customer-reward-permission-item {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            padding-right: 24px;
+            padding-left: 72px;
+        }
+    }
+}
+
+.select-store-dialog {
+    overflow-y: hidden !important;
+    .dialog-card {
+        padding: 36px 36px;
+    }
+    border-radius: 24px;
+    #search-store-input {
+        background: $color-secondary;
+    }
+    td {
+        vertical-align: top;
+    }
+    .check-col {
+        width: 48px;
+    }
+    .store-name {
+        font-size: 15px;
+        font-weight: bold;
+        color: #030303;
+    }
+    .store-branch {
+        font-size: 15px;
+        color: #000000;
+    }
+    .store-list-group-table {
+        width: 100%;
+        tr {
+            td {
+                vertical-align: top;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                .store-list-table {
+                    width: 100%;
+                    tr {
+                        td {
+                            vertical-align: middle;
+                        }
+                    }
+                }
+            }
+        }
+        .store-name {
+            padding-top: 8px;
+            font-family: CPN;
+            font-size: 15px;
+            font-weight: bold;
+            color: #030303;
+        }
+    }
+}

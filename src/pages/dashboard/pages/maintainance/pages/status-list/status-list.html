@@ -1,0 +1,353 @@
+<div id="_status-list-page">
+
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<div class="maintainance-title-container d-flex">
+				<div class="mx-5 pt-7">
+					<div class="tenant-title-container">
+						<div class="cpn-text-h5 font-weight-bold">{{ tenantName }}</div>
+					</div>
+					<div>{{ displayMasterBranch(tenantWithMaintainance.branchCode) }}</div>
+				</div>
+			</div>
+
+			<div class="tab-container">
+				<v-tabs v-model="statusType" class="cpn-text-body-1 font-weight-bold px-5" grow centered>
+					<v-tab>
+						<span class="cpn-text-body-1 font-weight-bold">{{ text.pending }}</span>
+					</v-tab>
+					<v-tab>
+						<span class="cpn-text-body-1 font-weight-bold">{{ text.in_progress }}</span>
+					</v-tab>
+					<v-tab>
+						<span class="cpn-text-body-1 font-weight-bold">{{ text.success }}</span>
+					</v-tab>
+				</v-tabs>
+				<v-divider class="mx-5"/>
+			</div>
+
+			<div class="maintainance-content-wrapper">
+				<div class="maintainance-content-container">
+					<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+						<cpn-loading />
+					</div>
+	
+					<div class="list-wrapper" v-else>
+						<!-- --------------- Pending List --------------- -->
+						<div class="empty-status-wrapper" v-if="isPendingEmpty">
+							<div class="empty-status-image-container">
+								<v-img :src="require('@/assets/images/icons/repair-man.png')" :height="250" contain/>
+								<div class="cpn-text-body-1 text-center text-gray mt-3">{{ emptyStatus }}</div>
+							</div>
+						</div>
+						<div class="pending-status-wrapper" v-if="pendingMaintainances && statusType === 0">
+							<div class="pending-container px-5" v-for="(pendingM, pIdx) in pendingMaintainances" :key="'pending-m-' + pIdx">
+								<div class="py-5">
+									<div class="info-container">
+										<div class="topic-container mb-1">
+											<div class="d-flex flex-row">
+												<div class="cpn-content-default">{{ displayMaintainanceTitle(pendingM) }}</div>
+												<div class="cpn-content-default text-primary ml-auto font-weight-bold justify-right">{{ pendingM.maintainanceNo }}</div>
+											</div>
+										</div>
+										<div class="description-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="description-header cpn-content-subtitle font-weight-bold">{{ text.detail }}</span>
+												</div>
+												<div class="ml-auto justify-right text-right description-content-container">
+													<span class="description-name">{{ pendingM.desc }}</span>	
+												</div>
+											</div>
+										</div>
+										<div class="technician-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="technician-header cpn-content-subtitle font-weight-bold">{{ text.technician }}</span>
+													<span class="technician-name ml-4">{{ displayName(pendingM.responseBy.name) }}</span>	
+												</div>
+												<div class="ml-auto justify-right">
+													<v-icon color="primary-dark">call</v-icon>
+													<span class="ml-3">{{ displayPhoneNumber(pendingM.responseBy.contactNumber) }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="contact-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="contact-header cpn-content-subtitle font-weight-bold">{{ text.informant }}</span>
+													<span class="contact-name ml-4">{{ displayName(pendingM.contactName) }}</span>	
+												</div>
+												<div class="ml-auto justify-right">
+													<div class="ml-3">{{ displayDateTime(pendingM.createDate) }}</div>
+												</div>
+											</div>
+										</div>
+										<div class="contact-container mb-1">
+											<span class="cpn-text-body-1 font-weight-bold" @click="selectShowDetail(pendingM)"><u style="cursor: pointer;color: #b39656;">ดูรายละเอียด</u></span>
+										</div>
+									</div>
+									<div class="cancel-btn-container text-center mt-3">
+										<v-btn @click="cancelMaintainance(pendingM)" :disabled="isCanceling" :loading="isCanceling && (cancelItem.maintainanceId === pendingM.maintainanceId)" height="40" width="90" color="primary" rounded outlined>
+											<span class="text-uppercase">{{ text.cancel }}</span>
+										</v-btn>
+									</div>
+								</div>
+								<v-divider />
+							</div>
+						</div>
+						<!-- --------------- In progress List --------------- -->
+						<div class="empty-status-wrapper" v-if="isInprogressEmpty">
+							<div class="empty-status-image-container">
+								<v-img :src="require('@/assets/images/icons/repair-man.png')" :height="250" contain/>
+								<div class="cpn-text-body-1 text-center text-gray mt-3">{{ emptyStatus }}</div>
+							</div>
+						</div>
+						<div class="in-progress-status-wrapper" v-if="inProgressMaintainances && statusType === 1">
+							<div class="in-progress-container px-5" v-for="(inpM, pIdx) in inProgressMaintainances" :key="'in-progress-m-' + pIdx">
+								<div class="py-5">
+									<div class="info-container">
+										<div class="topic-container mb-1">
+											<div class="d-flex flex-row">
+												<div class="cpn-content-default">{{ displayMaintainanceTitle(inpM) }}</div>
+												<div class="cpn-content-default text-primary ml-auto font-weight-bold justify-right">{{ inpM.maintainanceNo }}</div>
+											</div>
+										</div>
+										<div class="description-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="description-header cpn-content-subtitle font-weight-bold">{{ text.detail }}</span>
+												</div>
+												<div class="ml-auto justify-right text-right description-content-container">
+													<span class="description-name">{{ inpM.desc }}</span>	
+												</div>
+											</div>
+										</div>
+										<div class="technician-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="technician-header cpn-content-subtitle font-weight-bold">{{ text.technician }}</span>
+													<span class="technician-name ml-4">{{ displayName(inpM.responseBy.name) }}</span>	
+												</div>
+												<div class="ml-auto justify-right">
+													<v-icon color="primary-dark">call</v-icon>
+													<span class="ml-3">{{ displayPhoneNumber(inpM.responseBy.contactNumber) }}</span>
+												</div>
+											</div>
+										</div>
+										<div class="contact-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="contact-header cpn-content-subtitle font-weight-bold">{{ text.informant }}</span>
+													<span class="contact-name ml-4">{{ displayName(inpM.contactName) }}</span>	
+												</div>
+												<div class="ml-auto justify-right">
+													<div class="ml-3">{{ displayDateTime(inpM.createDate) }}</div>
+												</div>
+											</div>
+										</div>
+										<div class="contact-container mb-1">
+											<span class="cpn-text-body-1 font-weight-bold" @click="selectShowDetail(inpM)"><u style="cursor: pointer;color: #b39656;">ดูรายละเอียด</u></span>
+										</div>
+									</div>
+								</div>
+								<v-divider />
+							</div>
+						</div>
+		
+						<!-- --------------- Success List --------------- -->
+						<div class="empty-status-wrapper" v-if="isSuccessEmpty">
+							<div class="empty-status-image-container">
+								<v-img :src="require('@/assets/images/icons/repair-man.png')" :height="250" contain/>
+								<div class="cpn-text-body-1 text-center text-gray mt-3">{{ emptyStatus }}</div>
+							</div>
+						</div>
+						<div class="success-status-wrapper" v-if="successMaintainances && statusType === 2">
+							<div class="success-container px-5" v-for="(succM, pIdx) in successMaintainances" :key="'success-m-' + pIdx">
+								<div class="py-5">
+									<div class="info-container">
+										<div class="topic-container mb-1">
+											<div class="d-flex flex-row">
+												<div class="cpn-content-default">{{ displayMaintainanceTitle(succM) }}</div>
+												<div class="cpn-content-default text-primary ml-auto font-weight-bold justify-right">{{ succM.maintainanceNo }}</div>
+											</div>
+										</div>
+										<div class="description-container mb-1">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="description-header cpn-content-subtitle font-weight-bold">{{ text.detail }}</span>
+												</div>
+												<div class="ml-auto justify-right text-right description-content-container">
+													<span class="description-name">{{ succM.desc }}</span>	
+												</div>
+											</div>
+										</div>
+										<div class="cancel-container mb-1" v-if="isCancel(succM)">
+											<div class="d-flex flex-row">
+												<div>
+													<span class="cancel-header cpn-content-subtitle font-weight-bold">{{ text.cancel }}</span>
+												</div>
+												<div class="ml-auto justify-right text-right cancel-content-container">
+													<span class="cancel-name">{{ displayDateTime(succM.updateDate) }}</span>	
+												</div>
+											</div>
+										</div>
+										<div class="success-detail-container" v-else>
+											<div class="technician-container mb-1">
+												<div class="d-flex flex-row">
+													<div>
+														<span class="technician-header cpn-content-subtitle font-weight-bold">{{ text.technician }}</span>
+														<span class="technician-name ml-4">{{ displayName(succM.responseBy.name) }}</span>	
+													</div>
+													<div class="ml-auto justify-right">
+														<v-icon color="primary-dark">call</v-icon>
+														<span class="ml-3">{{ displayPhoneNumber(succM.responseBy.contactNumber) }}</span>
+													</div>
+												</div>
+											</div>
+											<div class="contact-container mb-1">
+												<div class="d-flex flex-row">
+													<div>
+														<span class="contact-header cpn-content-subtitle font-weight-bold">{{ text.informant }}</span>
+														<span class="contact-name ml-4">{{ displayName(succM.contactName) }}</span>	
+													</div>
+													<div class="ml-auto justify-right">
+														<div class="ml-3">{{ displayDateTime(succM.createDate) }}</div>
+													</div>
+												</div>
+											</div>
+											<!-- ---------------- Survey Container ---------------- -->
+											<div class="survey-result-container">
+												<div class="survey-btn-container text-center mt-3" v-if="!succM.survey.status">
+													<v-btn @click="goToRateSurvey(succM)" class="survey-btn" color="primary" elevation="0" rounded>
+														<span class="text-uppercase text-white">{{ text.do_survey }}</span>
+													</v-btn>
+												</div>
+												<div class="survey-success-container" v-else>
+													<div class="d-flex flex-row">
+														<div>
+															<span class="success-header cpn-content-subtitle font-weight-bold">{{ text.finish_maintainance }}</span>
+														</div>
+														<div class="ml-auto justify-right">
+															<span class="success-datetime ml-4">{{ displayDateTime(succM.updateDate) }}</span>	
+														</div>
+													</div>
+													<div class="d-flex flex-row">
+														<div>
+															<span class="success-header cpn-content-subtitle font-weight-bold">{{ text.result }}</span>
+														</div>
+														<div class="ml-auto justify-right">
+															<span class="success-survey text-primary font-weight-bold ml-4">{{ displaySurveyText(succM.survey) }}</span>	
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="contact-container mb-1">
+											<span class="cpn-text-body-1 font-weight-bold" @click="selectShowDetail(succM)"><u style="cursor: pointer;color: #b39656;">ดูรายละเอียด</u></span>
+										</div>
+									</div>
+										</div>
+								<v-divider />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ------------ Maintainance Button ---------- -->
+			<div class="pose-btn-wrapper" v-if=" statusType !== 2">
+				<div class="pose-btn-container mx-5">
+					<v-btn @click="goToMaintainanceRequestForm" min-width="100%" rounded block height="48" color="primary" class="pose-btn">
+						<span class="text-uppercase text-white cpn-content-default">{{ text.request_maintainace }}</span>
+					</v-btn>
+				</div>
+			</div>
+		</template>
+        <template v-slot:column-right>
+			<v-container class="cpm-dbs-content-container" v-if="showdetail != null">
+				<div class="cpn-text-h6 mb-3">แจ้งซ่อม</div>
+                <v-divider class="my-6" />
+				<section>
+					<div style="max-height: 590px;height: auto;overflow-x: auto;">
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">ระบุปัญหาการแจ้งซ่อม</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ showdetail.typeOther == "" ? showdetail.typeName : showdetail.typeOther }}</div>
+							</div>
+						</div>
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">ระบุรายละเอียดเพิ่มเติม</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ showdetail.desc }}</div>
+							</div>
+						</div>
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">อัพโหลดรูปภาพประกอบ</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray" v-if="showdetail.imageUrls.length <= 0">-</div>
+								<div v-if="showdetail.imageUrls.length > 0">
+									<div v-for="(imgurl, inx) in showdetail.imageUrls">
+										<v-img class="promotion-image" :src="getImage(imgurl)" style="margin-bottom: 10px; border-radius: 20px;" width="90%" max-height="190"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">ระบุวันที่ให้ช่างเข้าซ่อม</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ displayDate(showdetail.time.startDate) }}</div>
+							</div>
+						</div>
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">เลือกเวลาให้ช่างเข้าซ่อม</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ showdetail.time.requestTime == "" ? "-" : showdetail.time.requestTime }}</div>
+							</div>
+						</div>
+						<v-divider class="my-6" />
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">ระบุข้อมูลผู้แจ้งซ่อมในการติดต่อกลับ</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ showdetail.contactName }}</div>
+								<div class="section-subtitle text-gray">{{ showdetail.phoneNumber }}</div>
+							</div>
+						</div>
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">ซ่อมเสร็จ</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ displayDate(showdetail.updateDate) }}</div>
+							</div>
+						</div>
+						<div>
+							<div class="section-title">
+								<div style="padding-bottom: 5px;">ผลการประเมิน</div>
+							</div>
+							<div class="section-title-detail">
+								<div class="section-subtitle text-gray">{{ !showdetail.survey.status?'-':showdetail.status }}</div>
+							</div>
+						</div>
+						<div class="survey-btn-container text-center mt-3" v-if="showdetail.status.toLowerCase() == 'inprogress'">
+							<v-btn @click="goToRateSurvey(showdetail)" class="survey-btn" color="primary" elevation="0" rounded>
+								<span class="text-uppercase text-white">{{ text.do_survey }}</span>
+							</v-btn>
+						</div>
+					</div>
+				</section>
+            </v-container>
+		</template>
+    </cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,38 @@
+<div id="_refund-detail-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-10">{{ text.title }}</div>
+				
+				<cpn-rental-store :store="rentalDetail" v-if="rentalDetail"/>
+
+				<v-divider class="my-7" />
+				
+				<cpn-rental-data :data="rentalDetail" :status="status" v-if="rentalDetail" />
+				<v-divider class="my-7" />
+
+				<cpn-download-btn @click="downloadCurrentCof()" :text="text.download_current_quotation" v-if="!isCOFCurrentFileEmpty" />
+
+				<v-btn v-if="showRequestRefund" @click="submitRefund()" rounded block color="primary" height="48" class="mt-4 mb-6">
+					<div class="cpn-text-subtitle-1 text-uppercase text-white">{{ text.request_refund }}</div>
+				</v-btn>
+
+				<div v-if="submitted && haveTrackingStatus" class="tracking-status-availabel-container">
+					<v-btn @click="timelineToggle()" rounded block color="primary" height="48" class="mt-4 mb-6">
+						<div class="cpn-text-subtitle-1 text-uppercase text-white">{{ text.see_refund_status }}</div>
+					</v-btn>
+		
+					<v-btn v-if="!hideRefundFormButton" :href="downloadForm" target="_blank" rounded block outlined color="primary" height="48" class="mt-4 mb-6">
+						<div class="cpn-text-subtitle-1 text-uppercase text-white">{{ text.request_refund_form }}</div>
+					</v-btn>
+				</div>
+			</v-container>
+		</template>
+		<template v-slot:column-right>
+			<v-container class="cpm-dbs-content-container" v-if="showTimeline">
+				<div class="time-line-title-label">{{ text.refund_status }}</div>
+				<cpn-rental-timeline :data="timelineData" class="mt-6"/>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,88 @@
+@import "../../../../styles/vars.scss";
+
+#_maintainance-survey-page {
+    .survey-container{
+        min-height: 100%;
+        background-color: $color-primary;
+
+        .survey-card-container {
+            position: relative;
+            background-color: white;
+            height: 520px;
+            border-radius: 48px;
+        }
+
+        .question-title-container {
+            text-align: center;
+        }
+
+        .survey-note-container {
+            text-align: center;
+            width: 300px;
+        }
+
+        .v-textarea textarea {
+            width: 300px;
+        }
+
+        .rate-btn-group {
+            .v-btn {
+                padding: 5px;
+            }
+
+            .v-item--active, .v-item--active::before, .v-item--active::after, .v-btn--has-bg {
+                color: transparent !important;
+            }
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .btn-container-wrapper {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: $color-primary-dark;
+            border-bottom-left-radius: 48px;
+            border-bottom-right-radius: 48px;
+
+            .v-btn::before {
+                background: transparent !important;
+            }
+
+            .v-btn.v-btn--disabled .v-icon {
+                color: #666666 !important;
+            }
+        }
+
+        .tracking-dot-container {
+            button {
+                background-color: transparent;
+                padding: 0;
+            }
+
+            .v-btn.v-btn--disabled {
+                background-color: transparent !important;
+            }
+
+            .tracking-dot {
+                height: 10px;
+                width: 10px;
+                background-color: $color-primary-dark;
+                border-radius: 50%;
+                margin: 0 !important;
+            }
+    
+            .tracking-dot-active {
+                height: 10px;
+                width: 40px;
+                background-color: $color-primary-dark;
+                border-radius: 20px;
+                margin: 0 !important;
+            }
+        }
+
+    }
+}

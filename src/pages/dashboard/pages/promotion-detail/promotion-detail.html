@@ -1,0 +1,62 @@
+<div id="_promotion-detail-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<div style="position: relative;height: 100%;">
+				<div>
+					<v-container class="cpm-dbs-content-container">
+						<div class="page-content-title mb-3">{{ text.title }}</div>
+						<v-divider class="mt-10" />
+
+						<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+							<cpn-loading />
+						</div>
+
+						<div v-else>
+							<div class="promotion-image-container mt-0" v-if="promotion.image">
+								<v-img :src="promotion.image" />
+							</div>
+							<v-container>
+								<div class="content-container">
+									<div class="content-date-container d-flex align-center">
+										<div class="content-date">{{ displayDate }}</div>
+										<div class="fav-btn-container ml-auto" v-if="!isQRUser">
+											<v-btn @click="deleteFavorite()" v-if="isFavorited" color="red lighten-1"
+												class="favorite-icon" elevation="0" large icon>
+												<v-icon size="36">favorite</v-icon>
+											</v-btn>
+											<v-btn @click="addFavorite()" v-else class="favorite-icon" elevation="0"
+												large icon>
+												<v-icon size="36">favorite_border</v-icon>
+											</v-btn>
+										</div>
+									</div>
+									<div class="content-title-container d-flex align-center my-5">
+										<div class="title-rectangle mr-5" />
+										<div class="title-text">
+											<div class="cpn-content-title font-weight-bold">{{ promotion.title }}</div>
+										</div>
+									</div>
+									<div class="content-detail-container" v-html="promotion.detail"></div>
+								</div>
+							</v-container>
+						</div>
+					</v-container>
+				</div>
+				<div style="width: 100%;bottom: 0px;height: 135px;">
+					<v-container v-if="promotion.hasCampaign" class="cpm-dbs-content-container"
+						style="position: relative;bottom: 10px;">
+						<div class="confirm-btn-container">
+							<v-btn @click="submitJoin()" class="confirm-btn" :disabled="hasUserJoinedEvent" :height="48"
+								color="primary" elevation="0" block rounded>
+								<div class="text-uppercase cpn-content-subtitle text-white">{{ submitButtonText }}</div>
+							</v-btn>
+						</div>
+					</v-container>
+				</div>
+			</div>
+		</template>
+		<template v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user" />
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,24 @@
+$color-primary: var(--v-primary-base);
+$color-primary-light: rgb(217, 202, 171);
+$color-primary-light2: rgba(237,230,214);
+
+$color-secondary: var(--v-secondary-base);
+$color-primary-dark: var(--v-primary-dark-base);
+$color-primary-dark2: rgba(12, 12, 12);
+$color-box-shadow: rgba(0, 0, 0, 0.16);
+$color-success: var(--v-success-base);
+$color-warning: var(--v-warning-base);
+$color-error: var(--v-error-base);
+$color-info: var(--v-info-base);
+
+$dashboard-menu-width: 360px;
+$dashboard-left-col-width: 526px;
+$dashboard-right-col-width: 480px;
+$dashboard-width: $dashboard-menu-width + $dashboard-left-col-width + $dashboard-right-col-width;
+
+$footer-height: 50px;
+
+$default-font: "CPN", sans-serif;
+$footer-z-idx: 99999;
+$default-font-size: 16px;
+$min-screen-width: 1400px;

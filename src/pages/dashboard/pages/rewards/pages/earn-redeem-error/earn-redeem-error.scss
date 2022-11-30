@@ -1,0 +1,37 @@
+@import "../../../../../../styles/vars.scss";
+
+#_rewards-earn-redeem-error-page {
+    $chip-background: 100px;
+
+    .button-section {
+        position: absolute !important;
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+    }
+
+    .earn-redeem-error-content {
+        margin-top: 90px;
+    }
+
+    .text-18 {
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.18px;
+    }
+
+    .text-15 {
+        font-size: 15px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.15px;
+    }
+
+    .text-12 {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 18px;
+        letter-spacing: 0.12px;
+    }
+}

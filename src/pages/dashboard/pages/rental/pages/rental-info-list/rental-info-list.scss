@@ -1,0 +1,24 @@
+@import "../../../../../../styles/vars.scss";
+
+#_rental-info-list-page {
+    $chip-background: 100px;
+
+    #search-rental-branch {
+        background: $color-secondary;
+    }
+
+    .duedate-chip {
+        background-color: #d95765;
+        width: $chip-background;
+    }
+
+    .refund-chip {
+        background-color: #898989;
+        width: $chip-background;
+    }
+
+    .renew-chip {
+        background-color: #f9cc00;
+        width: $chip-background;
+    }
+}

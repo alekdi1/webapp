@@ -1,0 +1,68 @@
+<div id="payment-result-page">
+    <cpn-dsb-page-content-container >
+        <template v-slot:column-left>
+            <div class="loading-container" v-if="loading">
+                <cpn-loading />
+            </div>
+            <div v-else-if="isPending" class="payment-pending">
+                <div class="info-container">
+                    <div class="">
+                        <div class="cpn-text-h2 text-primary text-center">!</div>
+                        <div class="cpn-text-h5 font-weight-bold text-center">อยู่ระหว่างรอดำเนินการชำระเงิน</div>
+                        <div class="info-content-text-wrapper mt-3">
+                            <div class="info-content-text text-center">หลังจากทำรายการชำระเงินเสร็จสมบูรณ์แล้วท่านสามารถดูรายละเอียดได้ที่ประวัติชำระเงิน</div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="back-btn-container mx-5">
+                    <v-btn @click="backToPaymentList" min-width="100%" rounded height="48" class="back-btn">
+                      <span class="text-white cpn-content-default">{{ text.back_to_main }}</span>
+                    </v-btn>
+                  </div>
+            </div>
+            <div v-else-if="!isSuccess" class="payment-unsuccess">
+                <div class="info-container">
+                    <div>
+                        <div class="cpn-text-h2 text-primary text-center mb-2">!</div>
+                        <div class="cpn-text-h4 font-weight-bold text-center mb-2">UNSUCCESSFUL</div>
+                        <div class="info-content-text text-center mb-2">ทำรายการไม่สำเร็จ กรุณาทำรายการใหม่อีกครั้งหรือติดต่อเรา 02-0219999</div>
+                        <div class="info-content-text cpn-content-subtitle2 text-center mb-2">{{ errorMessage }}</div>
+                    </div>
+                </div>
+                <div class="repay-btn-container mx-5">
+                    <v-btn @click="backToPaymentConfirm" min-width="100%" rounded height="48" class="repay-btn">
+                        <span class="text-uppercase text-white cpn-content-default">ทำรายการใหม่</span>
+                    </v-btn>
+                </div>
+                <div></div>
+            </div>
+            <div v-else> 
+                <v-container class="cpm-dbs-content-container">
+                    <div class="page-content-title mb-2">{{ text.step_finish }}</div>
+                </v-container>
+                <div ref="paymentSuccessRoot" style="background-color: white;">
+                    <cpn-payment-stepper class="payment-stepper">
+                        <div class="step-content">
+                             
+                            <cpn-payment-slip :data="slip" ref="slipView"/>
+                            <div class="px-8 d-flex flex-column align-center justify-start py-6">
+                                <v-divider  />
+ 
+                                <v-btn :disabled="downloading || loading" :loading="downloading" text class="mb-8 mt-2 pa-2" :width="120" height="auto">
+                                    <div class="step-result-slip-download d-flex flex-column align-center" @click="downloadSlip">
+                                        <v-img :src="require('@/assets/images/icons/file-download.svg')" :width="64"/>
+                                        <div class="mt-2">{{ text.download_slip }}</div>
+                                    </div>
+                                </v-btn>
+                                <v-btn :disabled="downloading || loading" @click="backToPaymentList" min-width="100%" rounded height="40" block class="back-btn">
+                                    <span class="text-uppercase text-white cpn-content-default">{{ text.back_to_main }}</span>
+                                </v-btn>
+                            </div>
+                        </div>
+                    </cpn-payment-stepper>
+                </div>
+            </div>
+            
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,32 @@
+@import "../../../../styles/vars.scss";
+
+#_news-and-activities-detail-page {
+    .news-content-container {
+        min-height: calc(100vh - 140px);
+    }
+    .content-title-container {
+        width: 450px;
+
+        .title-rectangle {
+            width: 7px;
+            height: 70px;
+            background-color: $color-primary;
+        }
+    }
+    .confirm-btn-container {
+        position: relative;
+    }
+    .confirm-btn {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    .content-detail-container {
+        color: #0c0c0c;
+        font-family: inherit;
+        img {
+            max-width: 100% !important;
+        }
+    }
+}

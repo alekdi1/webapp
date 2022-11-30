@@ -1,0 +1,317 @@
+<div id="_shop-sale-sales-form-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <v-container class="cpm-dbs-content-container">
+                <div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+
+                <v-divider class="my-6" />
+
+                <section style="width: 100%; height: 180px;" class="d-flex justify-center align-center"
+                    v-if="loading && !isInited">
+                    <cpn-loading />
+                </section>
+
+                <section v-else>
+                    <!-- ระบุวันที่ -->
+                    <section>
+                        <div class="section-title">
+                            <div>{{ text.section_date_title }}</div>
+                            <div class="section-subtitle">{{ text.section_date_subtitle }}</div>
+                        </div>
+                        <div class="section-subtitle-extra-line mt-1">{{ text.section_date_subtitle_extra }}</div>
+                        <div class="date-input mt-5">
+                            <v-dialog :id="'date-picker-dialog-' + form.id" :key="'date-picker-dialog-' + form.id"
+                                content-class="cpn-custom-date-picker shop-sale-date-picker" ref="date-picker-dialog"
+                                v-model="form.datePickerShow" :return-value.sync="form.date" persistent width="360"
+                                :disabled="datePickerDisabled">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <div class="form-group" v-on="on">
+                                        <div class="input-group">
+                                            <label class="form-prepend" for="input-sales-date">
+                                                <div>
+                                                    <v-img :src="require('@/assets/images/icons/calendar.svg')"
+                                                        :width="24" height="auto" @click="form.datePickerShow = true" />
+                                                </div>
+                                            </label>
+                                            <input readonly
+                                                :style="{background: datePickerDisabled ? '#ebebeb' : 'transparent'}"
+                                                v-model="form.displayDate" id="input-sales-date" type="text"
+                                                class="form-control" :disabled="datePickerDisabled">
+
+                                            <div class="form-apppend" v-if="loading">
+                                                <v-progress-circular indeterminate color="primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+
+        <v-date-picker :events="datePickerEvents" :max="form.maxDate" :min="form.minDate" v-model="form.date" :locale="lang">
+            <v-btn rounded color="primary" @click="confirmSelectDate()" :height="48">
+                <span class="text-uppercase px-6">{{ text.ok }}</span>
+            </v-btn>
+            <v-btn width="48" height="48" fab color="primary-dark" @click="cancelSelectDate()" class="close-date-picker-btn">
+                <v-icon color="white">close</v-icon>
+            </v-btn>
+
+        </v-date-picker>
+        </v-dialog>
+</div>
+<div class="cpn-text-body-2 mt-2 ml-2 text-error" v-if="form.validated && form.errors.saveDate">
+    {{ form.errors.saveDate }}</div>
+</section>
+<!-- ระบุยอดขาย -->
+<div v-for="(salesChannel, idx) in form.salesChannelList" :key="idx">
+    <v-divider class="my-6" />
+    <section>
+        <table class="w100">
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="section-title">
+                            <div>{{ salesChannel.title }}</div>
+                            <div class="section-subtitle">{{ text.include_vat }}</div>
+                        </div>
+                    </td>
+                    <td class="col-no-sales-image">
+                        <v-btn :disabled="formDisabled" icon @click="salesChannel.noSalesClick()">
+                            <fa-icon name="check-circle" type="fas" :color="formDisabled ? '#aaaaaa' : 'primary'" :size="28" v-if="salesChannel.noSalesFlag" />
+                            <fa-icon name="circle" type="fal" :color="formDisabled ? '#aaaaaa' : 'primary'" :size="28" v-else />
+                        </v-btn>
+                    </td>
+                    <td class="col-no-sales-text">{{ text.no_sales }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="sales-input mt-5">
+            <table class="w100 form-table" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr v-if="salesChannel.noSalesFlag == false">
+                        <th class="col-action"></th>
+                        <th class="col-title"></th>
+                        <th class="col-amount sales-amount-title">{{ text.sales_amount_title }}</th>
+                        <th class="col-invoice sales-invoice-title">{{ text.sales_invoice_title }}
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr v-if="salesChannel.noSalesFlag == false" v-for="(salesPOS, salesPOSIdx) in salesChannel.salesPOSList" :key="salesPOSIdx">
+                        <td class="col-action">
+                            <v-btn v-if="salesPOSIdx > 0 && !formDisabled" @click="salesChannel.removeSalesPOS(salesPOS)" icon>
+                                <v-icon>remove_circle_outline</v-icon>
+                            </v-btn>
+                        </td>
+                        <td class="col-title">{{ text.pos }} {{ salesPOSIdx + 1 }}</td>
+                        <td class="col-amount">
+                            <div class="form-group">
+                                <input :disabled="formDisabled" :id="'input-sales-pos-amount-' + salesChannel.id + salesPOS.id" v-model="salesPOS.salesAmount" step='0.01' placeholder='0.00' type="number" :class="salesPOS.salesAmountError && salesPOS.salesAmount === '' ? 'form-control form-validate-error text-right' : 'form-control text-right'">
+                            </div>
+                        </td>
+                        <td class="col-invoice">
+                            <div class="form-group">
+                                <input :disabled="formDisabled" :id="'input-sales-pos-invoice-' + salesChannel.id + salesPOS.id" v-model="salesPOS.salesInvoice" placeholder="0" type="number" class="form-control text-right">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="salesChannel.noSalesFlag == false">
+                        <td class="col-action"></td>
+                        <td class="col-title"></td>
+                        <td class="col-amount">
+                            <div class="d-flex justify-end">
+                                <div v-if="formDisabled" class="add-pos-button disabled">
+                                    <v-icon color="white">add</v-icon>
+                                    <span class="ml-2">{{ text.add }} {{ text.pos }}</span>
+                                </div>
+                                <div v-else @click="salesChannel.addSalesPOS()" class="add-pos-button" v-ripple>
+                                    <v-icon color="white">add</v-icon>
+                                    <span class="ml-2">{{ text.add }} {{ text.pos }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-invoice"></td>
+                    </tr>
+                    <!-- Hide credit card field -->
+                    <tr v-if="salesCredit_status">
+                        <td class="col-action"></td>
+                        <td class="col-title">{{ text.sales_credit_title }}</td>
+                        <td class="col-amount">
+                            <div class="form-group">
+                                <input :disabled="formDisabled" :id="'input-credit-amount' + salesChannel.id" v-model="salesChannel.creditCardAmount" step='0.01' placeholder="0.00" type="number" :class="salesChannel.creditCardAmountError && salesChannel.creditCardAmount > salesChannel.salesAmount ? 'form-control form-validate-error text-right' : 'form-control text-right'"
+                                />
+                            </div>
+                        </td>
+                        <td class="col-invoice">
+                            <div class="form-group">
+                                <input :disabled="formDisabled" :id="'input-credit-invoice' + salesChannel.id" v-model="salesChannel.creditCardInvoice" placeholder="0" type="number" class="form-control text-right" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="salesChannel.noSalesFlag == false">
+                        <td></td>
+                        <td colspan="3" class="col-hr">
+                            <v-divider class="my-2" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="w100 form-table">
+                <tbody>
+                    <tr>
+                        <td class="col-total-title channel-total-title">{{ text.total_sales_amount_title }}</td>
+                        <td class="col-total-amount channel-total-price">{{ salesChannel.displaySalesAmount }}</td>
+                        <td class="col-total-invoice channel-total-invoice">{{ salesChannel.salesInvoice }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+<v-divider class="my-6" />
+<!-- ยอดขายรวมทั้งหมด (บาท) -->
+<section>
+    <div class="section-sales-amount-title">
+        <div>{{ text.section_sales_amount_title }}</div>
+        <div>{{ text.section_sales_amount_subtitle }}</div>
+    </div>
+    <div class="cpn-text-h4 font-weight-bold text-right">{{ form.displaySalesAmountAllChannel }}
+    </div>
+</section>
+<v-divider class="my-6" />
+<!-- แนบใบปิดสิ้นวัน -->
+<section>
+    <div class="section-title">
+        <div>{{ text.section_upload_title }}</div>
+        <div class="section-subtitle" v-html="text.section_upload_subtitle"></div>
+    </div>
+    <v-card v-ripple style="cursor: pointer;" tag="label" for="uploadFile" flat :disabled="formDisabled" class="upload-container d-flex flex-column align-center mt-3">
+
+        <div class="icon-container mt-4 mb-2">
+            <v-img class="mx-auto" :src="require('@/assets/images/icons/upload-file.svg')" width="48" />
+        </div>
+        <div class="title-container mb-3">
+            <div class="cpn-content-subtitle">{{ text.upload_file }}</div>
+        </div>
+    </v-card>
+    <input id="uploadFile" :disabled="formDisabled" type="file" v-show="false" @input="form.onFileChange($event)" :accept="form.uploadFileExtensions" />
+    <div class="cpn-form-label mt-3">{{ text.uploaded_file }}</div>
+    <table class="w100 mt-3 file-list-table">
+        <tbody>
+            <template>
+                                    <tr v-for="(img, idx) in form.displayUploadedImages" :key="'uploaded-image-' + idx">
+                                        <td class="col-file-type">
+                                            <shop-sale-slip-file :ext="img.ext" />
+                                        </td>
+                                        <td class="col-file-name">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-card flat @click="viewImageFromId(img.name)" v-bind="attrs"
+                                                        v-on="on" :disabled="loadingFile === img.name">
+                                                        <div style="word-break: break-all;">{{ img.name }}</div>
+                                                    </v-card>
+                                                </template>
+            <span v-if="isImage(img.name)">View image</span>
+            <span v-else>Download file</span>
+            </v-tooltip>
+            <div class="mt-1" v-if="loadingFile === img.name">
+                <v-progress-linear indeterminate color="primary" />
+            </div>
+            </td>
+            <td class="col-file-action pt-0">
+                <v-btn v-if="isDisabled === false" icon @click="form.removeUploadedImage(img.name)">
+                    <v-icon>remove_circle_outline</v-icon>
+                </v-btn>
+            </td>
+            </tr>
+            </template>
+            <template v-for="(uploadFile, idx) in form.uploadFiles">
+                                    <tr v-if="uploadFile.file" :key="'upload-file-' + idx">
+                                        <td class="col-file-type">
+                                            <template>
+                                                <shop-sale-slip-file :ext="uploadFile.fileExtension" />
+                                            </template>
+            </td>
+            <td class="col-file-name">
+                <template>
+                                                <v-tooltip bottom>
+                                                    <template v-slot:activator="{ on, attrs }">
+                                                        <v-card v-bind="attrs" v-on="on" flat
+                                                            class="mb-1 file-name-view"
+                                                            @click="viewUploadImage(uploadFile)">
+                                                            <div class="file-name-text">{{ uploadFile.file.name }}</div>
+                                                            <div class="file-upload-text">{{ uploadFile.displayPercent
+                                                                }}%</div>
+                                                        </v-card>
+                                                    </template>
+                <span>View Image</span>
+                </v-tooltip>
+
+                <div class="upload-progress-frame">
+                    <div :class="uploadFile.progressClass" :style="`width: ${uploadFile.displayPercent}% !important;`">
+                    </div>
+                </div>
+                </template>
+            </td>
+            <td class="col-file-action">
+                <div class="head-col-file-action">
+                    <!-- <v-btn :disabled="form.loading" v-if="uploadFile.loading === false && uploadFile.uploadSuccess === true" @click="form.removeUploadFile(uploadFile)" icon>
+                                                    <v-icon>remove_circle_outline</v-icon>
+                                                </v-btn> -->
+                    <v-btn :disabled="form.loading" v-if="uploadFile.loading === false && uploadFile.uploadSuccess === false" @click="form.uploadFile(uploadFile)" icon>
+                        <v-icon color="#e94a60">replay_circle_filled</v-icon>
+                    </v-btn>
+                    <v-btn :disabled="form.loading" v-if="uploadFile.loading === false" @click="form.removeUploadFile(uploadFile)" icon>
+                        <v-icon>remove_circle_outline</v-icon>
+                    </v-btn>
+                </div>
+            </td>
+            </tr>
+            </template>
+        </tbody>
+    </table>
+</section>
+<v-divider class="my-6" />
+<!-- ส่ง/แก้ไขยอดขาย -->
+<section>
+    <div class="section-title">
+        <div>{{ text.section_created_updated_title }}</div>
+        <div class="section-subtitle text-white">_</div>
+    </div>
+    <div>
+        <v-row class="created-by-container mt-3">
+            <v-col cols="6" class="cpn-form-label">{{ text.created_by }}</v-col>
+            <v-col cols="6" class="cpn-form-label text-right">
+                <div>{{ createdBy }}</div>
+                <div>{{ createdDate }}</div>
+            </v-col>
+        </v-row>
+        <v-row class="updated-by-container mt-3" v-if="isUpdate">
+            <v-col cols="6" class="cpn-form-label">{{ text.updated_by }}</v-col>
+            <v-col cols="6" class="cpn-form-label text-right">
+                <div>{{ updatedBy }}</div>
+                <div>{{ updatedDate }}</div>
+            </v-col>
+        </v-row>
+        <v-row class="updated-by-container mt-3" v-if="comment">
+            <v-col cols="6" class="cpn-form-label">{{ text.note }}</v-col>
+            <v-col cols="6" class="cpn-form-label text-right">
+                <div>{{ comment }}</div>
+            </v-col>
+        </v-row>
+    </div>
+</section>
+<!-- บันทึก -->
+<section class="form-section my-6">
+    <v-btn v-if="isVerified" disabled block :height="48" rounded style="background-color: #aaaaaa !important;">
+        <span class="text-uppercase text-white">{{ text.already_verified }}</span>
+    </v-btn>
+    <v-btn v-else :disabled="form.submitDisabled || formDisabled" :loading="form.loading" @click="submitSalesForm" block :height="48" rounded color="primary">
+        <span class="text-uppercase">{{ text.save }}</span>
+    </v-btn>
+</section>
+</section>
+</v-container>
+</template>
+</cpn-dsb-page-content-container>
+
+<cpn-image-viewer ref="imgView" />
+</div>

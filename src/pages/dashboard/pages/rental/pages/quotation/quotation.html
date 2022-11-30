@@ -1,0 +1,59 @@
+<div id="_quotation-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-10">{{ text.new_quotations }}</div>
+				<cpn-rental-store :store="quotationDetail" v-if="quotationDetail" />
+				<v-divider class="my-7" />
+				<div class="cpn-content-subtitle font-weight-bold">{{ text.new_quotations }}</div>
+				<cpn-rental-quotation-data :data="quotationDetail" />
+				<v-divider class="my-7" />
+				<cpn-download-btn :disabled="disabled" :loading="downloading" :text="text.download_new_quotations"
+					@click="downloadRenewCof()" v-if="!isCOFRenewEmpty" />
+				<div v-if="showConfirmfromStatus(quotationDetail) && quotationDetail.cofRenewFile != ''">
+					<v-btn class="my-4" v-if="canActionContact" @click="confirmedPrice()"
+						:disabled="disabled || confirming || submittedRenew" :loading="confirming" rounded block
+						color="primary" height="48">
+						<div class="cpn-text-subtitle-1 white-text">{{ displayConfirmButtonText }}</div>
+					</v-btn>
+				</div>
+				<div v-if="canActionContact && submittedRenew && quotationDetail.submittedRenewDate"
+					class="cpn-content-subtitle2 text-center">{{ displaySubmittedRenewDate }}</div>
+
+				<div v-if="showContactStaffFromStatus(quotationDetail)">
+					<v-divider class="my-6" />
+
+					<div class="contact-staff-label-container">
+						<div class="cpn-text-h6 font-weight-bold">{{ text.contact_us }}</div>
+						<div>{{ text.contact_desc }}</div>
+					</div>
+
+					<div class="contact-form mt-6">
+						<div class="d-flex justify-start ">
+							<v-btn @click="contactForm.selectMethod(m.value)" :width="60" :height="60" fab depressed
+								v-for="(m, key) in contactForm.methods" :key="'method-' + key" class="mr-3 method-btn">
+								<v-img :src="m.icon" :width="60" :height="60" />
+							</v-btn>
+						</div>
+						<div class="password-container form-group mt-3 mb-1">
+							<div class="password-input">
+								<input id="contact-input" type="text" class="form-control"
+									:maxlength="contactForm.isPhone ? 10 : 100"
+									:placeholder="contactForm.inputPlaceholder" v-model="contactForm.value"
+									:disabled="disabled" autocomplete="on">
+							</div>
+							<div class="text-error form-error cpn-text-subtitle-1 ml-2"
+								v-if="contactForm.validate && contactForm.error">{{ contactForm.error }}</div>
+						</div>
+
+						<v-btn @click="submitContact()" rounded block :loading="contactForm.loading" color="primary"
+							height="48" class="mt-4 mb-6"
+							:disabled="disabled || (contactForm.validate && contactForm.error !== null)">
+							<div class="text-uppercase cpn-text-subtitle-1 white-text">{{ text.contact_us }}</div>
+						</v-btn>
+					</div>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

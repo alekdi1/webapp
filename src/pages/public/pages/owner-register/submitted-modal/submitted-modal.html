@@ -1,0 +1,32 @@
+<div id="submitted-modal-page">
+    <v-overlay :value="overlay && open">
+        <v-card :width=450 color="white" class="py-7 px-5">
+            <div class="submit-content-container d-flex flex-column align-center">
+                <div class="icon-container">
+                    <fa-icon name="check-circle" type="fal" :size="64" color="primary"/>
+                </div>
+                <div class="title-container my-2">
+                    <div class="text-primary cpn-text-h5 font-weight-bold">SUBMITTED</div>
+                </div>
+                <div class="content-container">
+                    <div class="content-header cpn-text-h6 text-primary-dark font-weight-bold text-center">
+                        ส่งข้อมูลเรียบร้อย!
+                    </div>
+                    <div class="content-info text-primary-dark text-center mt-1">
+                        คุณได้สร้างชื่อผู้ใช้ใหม่เรียบร้อยแล้ว<br>
+                        และคุณสามารเพิ่มชื่อพนักงาน<br>
+                        เพื่อเข้าใช้งาน Central Pattana Serve ได้
+                    </div>
+                </div>
+                <div class="content-btn-contanier mt-5">
+                    <v-btn @click="addEmployee()" class="px-5" :height="48" min-width="100%" color="primary" elevation="0" rounded >
+                        <div class="cpn-text-subtitle-1 text-uppercase">เพิ่มพนักงาน</div>
+                    </v-btn>
+                    <v-btn @click="login()" class="mt-2 px-5" :height="48" min-width="100%" color="primary" elevation="0" rounded outlined>
+                        <div class="cpn-text-subtitle-1 text-uppercase">Login</div>
+                    </v-btn>
+                </div>
+            </div>
+        </v-card>
+    </v-overlay>
+</div>

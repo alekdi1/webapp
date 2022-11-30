@@ -1,0 +1,1087 @@
+<div id="_emp-manage-form-page">
+
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+
+			<cpn-emp-result v-if="showStatus" />
+			<v-container v-else class="cpm-dbs-content-container">
+				<div class="page-content-title mb-2">{{ isEdit ? text.title_edit_new_emp : text.title_add_new_emp }}
+				</div>
+
+				<form>
+					<div class="d-flex justify-center">
+						<div class="avatar-container">
+							<v-avatar :size="80">
+								<v-img :src="form.avatar.fileDataUrl || form.avatar.value" alt="User Avatar"
+									v-if="form.avatar.fileDataUrl || form.avatar.value" />
+								<v-img :src="avatarPlaceholder" v-else />
+							</v-avatar>
+							<!-- <v-card :for="'avatar-file-browser-' + form.avatar.id" title="Select image" :elevation="4" tag="label" v-ripple :width="32" :height="32" color="white" class="browser-avatar-btn">
+								<v-icon :size="20" color="primary-dark">photo_camera</v-icon>
+							</v-card>
+							<input type="file" v-show="false" :id="'avatar-file-browser-' + form.avatar.id" @input="form.avatar.onFileInput($event)" accept="image/x-png,image/gif,image/jpeg"/> -->
+						</div>
+					</div>
+
+					<div class="firstname-container form-group my-3">
+						<label :for="'input-profile-firstname-' + form.firstname.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.firstname }}</span>
+						</label>
+						<div class="firstname-input">
+							<input autocomplete="off" :id="'input-profile-firstname-' + form.firstname.id" type="text"
+								class="form-control" :placeholder="text.phl_firstname" v-model="form.firstname.value"
+								:disabled="loading" />
+						</div>
+						<div class="form-error-message text-error" v-if="form.validate && form.errors.firstname"
+							v-html="form.errors.firstname" />
+					</div>
+
+					<div class="lastname-container form-group my-3">
+						<label :for="'input-profile-lastname-' + form.lastname.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ text.lastname }}</span>
+						</label>
+						<div class="lastname-input">
+							<input autocomplete="off" :id="'input-profile-lastname-' + form.lastname.id" type="text"
+								class="form-control" :placeholder="text.phl_lastname" v-model="form.lastname.value"
+								:disabled="loading" />
+						</div>
+						<div class="form-error-message text-error" v-if="form.validate && form.errors.lastname"
+							v-html="form.errors.lastname" />
+					</div>
+
+					<div class="email-container form-group my-3">
+						<label :for="'input-profile-email-' + form.email.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ $t('email') }}</span>
+						</label>
+						<div class="email-input">
+							<input ref="input-email" autocomplete="off" :id="'input-profile-email-' + form.email.id"
+								type="text" class="form-control" :placeholder="text.phl_email"
+								v-model="form.email.value" :disabled="loading" />
+						</div>
+						<div class="form-error-message text-error" v-if="form.validate && form.errors.email"
+							v-html="form.errors.email" />
+					</div>
+
+					<div class="phone-container form-group my-3">
+						<label :for="'input-profile-phone-' + form.phone.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ $t('phone_number') }}</span>
+						</label>
+						<div class="phone-input">
+							<input :maxlength="10" autocomplete="off" :id="'input-profile-phone-' + form.phone.id"
+								type="text" class="form-control" :placeholder="text.phl_phone"
+								v-model="form.phone.value" :disabled="loading" />
+						</div>
+						<div class="form-error-message text-error" v-if="form.validate && form.errors.phone"
+							v-html="form.errors.phone" />
+					</div>
+
+					<v-divider class="my-6" />
+
+					<section>
+						<div class="section-title">{{ text.role }}</div>
+
+						<v-row class="role-list mt-4">
+							<v-col cols="4" v-for="(role, idx) in roles" :key="'role-' + idx">
+								<v-card :disabled="loading" :class="{ selected: form.role && form.role.id === role.id }"
+									@click="selectRole(role)"
+									class="role-item-card d-flex flex-column align-center justify-center">
+									<img :src="role.image" :height="48" width="auto">
+									<div class="role-label mt-3">{{ role.displayName }}</div>
+
+									<div class="selected-icon" v-if="form.role && form.role.id === role.id">
+										<fa-icon name="check-circle" type="fas" color="primary" />
+									</div>
+								</v-card>
+							</v-col>
+						</v-row>
+
+						<div class="form-error-message mt-3 text-error" v-if="form.validate && form.errors.role"
+							v-html="form.errors.role" />
+
+						<!-- add store to apply all enabled permissions -->
+						<v-card :disabled="loading " @click="addStoreDialog('apply_all')" flat class="add-store-btn mt-7"
+							v-if="form.enabledPermissionForms.length > 0">
+							<v-icon :size="32" color="primary">add_circle</v-icon>
+							<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+						</v-card>
+					</section>
+
+					<section class="mt-6 mb-4">
+						<v-expansion-panels flat v-model="permissionExpand">
+							<v-expansion-panel>
+								<v-expansion-panel-header class="px-0">
+									<div class="section-title">{{ text.data_accesses }}</div>
+								</v-expansion-panel-header>
+								<v-expansion-panel-content class="px-0">
+									<div class="permission-list">
+
+										<!-- ======== ข้อมูลการเช่า ======== -->
+										<div class="my-3" :ref="form.permissionRentalData.permission">
+											<!-- <v-card class="permission-item" :disabled="!form.permissionRentalData.enabled && (loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_info)))" flat> -->
+											<v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_info))" flat>
+												<div class="d-flex">
+													<div class="flex-shrink-0">
+														<!-- <img :src="require('@/assets/images/dashboard-rental-value.svg')"
+															alt="Store" height="40" width="auto" /> -->
+															<img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_info))?require('@/assets/images/disable/dashboard-rental-value.svg'):require('@/assets/images/dashboard-rental-value.svg')" alt="Store" height="40" width="auto" />
+													</div>
+
+													<div class="flex-grow-1 d-flex align-center px-3">
+														<div class="permission-label">
+															{{ text.rental_info }}
+														</div>
+													</div>
+
+													<div class="flex-shrink-0 d-flex align-center">
+														<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_info))" hide-details class="mt-0"
+															color="#7da580" v-model="form.permissionRentalData.enabled"
+															inset />
+													</div>
+												</div>
+											</v-card>
+
+											<template v-if="form.permissionRentalData.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionRentalData.stores"
+													v-if="form.permissionRentalData.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_info))"
+													@click="addStoreDialog(form.permissionRentalData.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionRentalData.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.contract_info))"> -->
+													<!-- @click="selectStoreFlag(form.permissionRentalData.permission, f.id)" -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_info))?null:selectStoreFlag(form.permissionRentalData.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionRentalData.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== การต่อสัญญา/ขอคืนเงินมัดจำ ======== -->
+<div class="my-3" :ref="form.permissionRenew.permission">
+    <!-- <v-card class="permission-item" :disabled="!form.permissionRenew.enabled && (loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_renew_refund)))" flat> -->
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_renew_refund))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-reg-e-invoice.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_renew_refund))?require('@/assets/images/disable/dashboard-reg-e-invoice.svg'):require('@/assets/images/dashboard-reg-e-invoice.svg')" alt="Store" height="40"
+                    width="auto" />
+
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.renew_contract_refund }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_renew_refund))" hide-details class="mt-0" color="#7da580" v-model="form.permissionRenew.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionRenew.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionRenew.stores"
+													v-if="form.permissionRenew.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_renew_refund))"
+													@click="addStoreDialog(form.permissionRenew.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionRenew.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.contract_renew_refund))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.contract_renew_refund))?null:selectStoreFlag(form.permissionRenew.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionRenew.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== Payment ======== -->
+<div class="my-3" :ref="form.permissionPayment.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.payment))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-payment.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.payment))?require('@/assets/images/disable/dashboard-payment.svg'):require('@/assets/images/dashboard-payment.svg')" alt="Store" height="40" width="auto" />
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.payment }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.payment))" hide-details class="mt-0" color="#7da580" v-model="form.permissionPayment.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionPayment.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionPayment.stores"
+													v-if="form.permissionPayment.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.payment))"
+													@click="addStoreDialog(form.permissionPayment.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionPayment.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.payment))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.payment))?null:selectStoreFlag(form.permissionPayment.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionPayment.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+
+</div>
+
+<!-- ======== แจ้งซ่อม ======== -->
+<div class="my-3" :ref="form.permissionMaintenance.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.maintenance))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-repair-pose.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.maintenance))?require('@/assets/images/disable/dashboard-repair-pose.svg'):require('@/assets/images/dashboard-repair-pose.svg')" alt="Store" height="40" width="auto"
+                />
+
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.maintenance }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.maintenance))" hide-details class="mt-0" color="#7da580" v-model="form.permissionMaintenance.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionMaintenance.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionMaintenance.stores"
+													v-if="form.permissionMaintenance.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.maintenance))"
+													@click="addStoreDialog(form.permissionMaintenance.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionMaintenance.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.maintenance))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.maintenance))?null:selectStoreFlag(form.permissionMaintenance.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionMaintenance.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== จัดการผู้ใช้งาน ======== -->
+<div class="my-3" :ref="form.permissionManageUser.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.employee_management))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-manage-employees.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.employee_management))?require('@/assets/images/disable/dashboard-manage-employees.svg'):require('@/assets/images/dashboard-manage-employees.svg')" alt="Store" height="40"
+                    width="auto" />
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.manage_user }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.employee_management))" hide-details class="mt-0" color="#7da580" v-model="form.permissionManageUser.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionManageUser.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionManageUser.stores"
+													v-if="form.permissionManageUser.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.employee_management))"
+													@click="addStoreDialog(form.permissionManageUser.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionManageUser.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.employee_management))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.employee_management))?null:selectStoreFlag(form.permissionManageUser.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionManageUser.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== - QR Code ======== -->
+<div class="my-3" :ref="form.permissionQRCode.permission">
+    <v-card class="permission-item" flat :disabled="!form.permissionQRCode.enabled && (loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.qr_code)))">
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-my-qr-code.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.qr_code))?require('@/assets/images/disable/dashboard-my-qr-code.svg'):require('@/assets/images/dashboard-my-qr-code.svg')" alt="Store" height="40" width="auto" />
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.qr_code }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.qr_code))" hide-details class="mt-0" color="#7da580" v-model="form.permissionQRCode.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionQRCode.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionQRCode.stores"
+													v-if="form.permissionQRCode.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.qr_code))"
+													@click="addStoreDialog(form.permissionQRCode.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionQRCode.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.qr_code))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.qr_code))?null:selectStoreFlag(form.permissionQRCode.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionQRCode.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== รีวอร์ดลูกค้า ======== -->
+<div class="my-3" :ref="form.permissionCustomerReward.permission" v-if="ishideReward">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission.includes('reward')))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-rewards.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission.includes('reward')))?require('@/assets/images/dashboard-rewards.svg'):require('@/assets/images/dashboard-rewards.svg')" alt="Store" height="40" width="auto" />
+
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.reward }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || user.permissions.find(p => p.permission.includes('reward'))" hide-details class="mt-0" color="#7da580" v-model="form.permissionCustomerReward.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionCustomerReward.enabled">
+
+												<div class="customer-reward-permission-list">
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.process_transaction }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || user.permissions.find(p => p.permission === EmployeeServices.PERMISSIONS.rewards_manage_point)" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCustomerReward.managePoint.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.transaction_history }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || user.permissions.find(p => p.permission === EmployeeServices.PERMISSIONS.rewards_history)" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCustomerReward.transactionHistory.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.transaction_download }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || user.permissions.find(p => p.permission === EmployeeServices.PERMISSIONS.rewards_history_download)" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCustomerReward.transactionDownload.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.void_transaction }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || user.permissions.find(p => p.permission === EmployeeServices.PERMISSIONS.rewards_cancel_point)" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCustomerReward.cancelPoint.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.transaction_dashboard }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || user.permissions.find(p => p.permission === EmployeeServices.PERMISSIONS.rewards_dashboard)" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCustomerReward.transactionDashboard.enabled"
+																inset />
+														</div>
+													</div>
+
+												</div>
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionCustomerReward.stores"
+													v-if="form.permissionCustomerReward.stores.length > 0" />
+
+												<v-card :disabled="loading || user.permissions.find(p => p.permission.includes('reward'))"
+													@click="addStoreDialog(form.permissionCustomerReward.permission)"
+													flat class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionCustomerReward.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p =>  p.permission.includes('reward')))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission.includes('reward')))?null:selectStoreFlag(form.permissionCustomerReward.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionCustomerReward.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== บันทึกยอดขาย ======== -->
+<div class="my-3" :ref="form.permissionSaleRecord.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.shop_sale))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-shop-sale.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.shop_sale))?require('@/assets/images/disable/dashboard-shop-sale.svg'):require('@/assets/images/dashboard-shop-sale.svg')" alt="Store" height="40" width="auto" />
+
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.shopsale }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.shop_sale))" hide-details class="mt-0" color="#7da580" v-model="form.permissionSaleRecord.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionSaleRecord.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionSaleRecord.stores"
+													v-if="form.permissionSaleRecord.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.shop_sale))"
+													@click="addStoreDialog(form.permissionSaleRecord.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionSaleRecord.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.shop_sale))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.shop_sale))?null:selectStoreFlag(form.permissionSaleRecord.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionSaleRecord.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== ดูยอดขาย ======== -->
+<div class="my-3" :ref="form.permissionViewSaleRecord.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-ordering.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering))?require('@/assets/images/disable/dashboard-ordering.svg'):require('@/assets/images/dashboard-ordering.svg')" alt="Store" height="40" width="auto" />
+
+            </div>
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.view_shopsale }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering))" hide-details class="mt-0" color="#7da580" v-model="form.permissionViewSaleRecord.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionViewSaleRecord.enabled">
+												<div class="customer-reward-permission-list">
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.sale_monthly }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering_last_month_report))" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionViewSaleRecord.saleMonthly.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.sale_account }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering_accounting_report))" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionViewSaleRecord.saleAccount.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.sale }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering_report))" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionViewSaleRecord.sale.enabled"
+																inset />
+														</div>
+													</div>
+
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.stock }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering_stock_report))" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionViewSaleRecord.stock.enabled"
+																inset />
+														</div>
+													</div>
+
+												</div>
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="!form.permissionViewSaleRecord.sale.enabled  && !form.permissionViewSaleRecord.saleAccount.enabled  && !form.permissionViewSaleRecord.saleMonthly.enabled  && !form.permissionViewSaleRecord.stock.enabled "
+													v-html="text.please_select_sale_record" />
+												<permission-store-list class="mt-5"
+													:stores="form.permissionViewSaleRecord.stores"
+													v-if="form.permissionViewSaleRecord.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering))"
+													@click="addStoreDialog(form.permissionViewSaleRecord.permission)"
+													flat class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionViewSaleRecord.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.ordering))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.ordering))?null:selectStoreFlag(form.permissionViewSaleRecord.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionViewSaleRecord.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== ประกาศศูนย์การค้า ======== -->
+<div class="my-3" :ref="form.permissionShopCenterAnnouncement.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.branch_announcement))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-news-and-activities.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.branch_announcement))?require('@/assets/images/disable/dashboard-news-and-activities.svg'):require('@/assets/images/dashboard-news-and-activities.svg')" alt="Store"
+                    height="40" width="auto" />
+
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.annoucement }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.branch_announcement))" hide-details class="mt-0" color="#7da580" v-model="form.permissionShopCenterAnnouncement.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionShopCenterAnnouncement.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionShopCenterAnnouncement.stores"
+													v-if="form.permissionShopCenterAnnouncement.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.branch_announcement))"
+													@click="addStoreDialog(form.permissionShopCenterAnnouncement.permission)"
+													flat class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionShopCenterAnnouncement.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.branch_announcement))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.branch_announcement))?null:selectStoreFlag(form.permissionShopCenterAnnouncement.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionShopCenterAnnouncement.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- ======== สมัคร E-invoice & E-receipt   ======== -->
+<div class="my-3" :ref="form.permissionRegEInvoiceEReceipt.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.e_invoice_receipt))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/dashboard-reg-e-invoice.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.e_invoice_receipt))?require('@/assets/images/disable/dashboard-reg-e-invoice.svg'):require('@/assets/images/dashboard-reg-e-invoice.svg')" alt="Store" height="40" width="auto"
+                />
+
+            </div>
+
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.apply_e_inv_recp }}
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.e_invoice_receipt))" hide-details class="mt-0" color="#7da580" v-model="form.permissionRegEInvoiceEReceipt.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+
+    <template v-if="form.permissionRegEInvoiceEReceipt.enabled">
+
+												<permission-store-list class="mt-5"
+													:stores="form.permissionRegEInvoiceEReceipt.stores"
+													v-if="form.permissionRegEInvoiceEReceipt.stores.length > 0" />
+
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.e_invoice_receipt))"
+													@click="addStoreDialog(form.permissionRegEInvoiceEReceipt.permission)"
+													flat class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionRegEInvoiceEReceipt.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.e_invoice_receipt))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.e_invoice_receipt))?null:selectStoreFlag(form.permissionRegEInvoiceEReceipt.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionRegEInvoiceEReceipt.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+
+<!-- คูปอง -->
+<div class="my-3" :ref="form.permissionCoupon.permission">
+    <v-card class="permission-item" :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon))" flat>
+        <div class="d-flex">
+            <div class="flex-shrink-0">
+                <!-- <img :src="require('@/assets/images/icons/coupon.svg')" alt="Note" height="40" width="auto" /> -->
+                <img :src="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon))?require('@/assets/images/disable/coupon.svg'):require('@/assets/images/icons/coupon.svg')" alt="Store" height="40" width="auto" />
+
+            </div>
+            <div class="flex-grow-1 d-flex align-center px-3">
+                <div class="permission-label">
+                    {{ text.coupon_text }}
+                </div>
+            </div>
+            <div class="flex-shrink-0 d-flex align-center">
+                <v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon))" hide-details class="mt-0" color="#7da580" v-model="form.permissionCoupon.enabled" inset />
+            </div>
+        </div>
+    </v-card>
+    <template v-if="form.permissionCoupon.enabled">
+												<div class="customer-reward-permission-list">
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.coupon_main }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon_main))" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCoupon.main.enabled" inset />
+														</div>
+													</div>
+													<div
+														class="d-flex w100 align-center customer-reward-permission-item">
+														<div class="permission-label flex-grow-1 pr-2">
+															{{ text.coupon_history }}
+														</div>
+														<div class="flex-shrink-0 d-flex align-center">
+															<v-switch :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon_history))" hide-details class="mt-0"
+																color="#7da580"
+																v-model="form.permissionCoupon.history.enabled" inset />
+														</div>
+													</div>
+												</div>
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="!form.permissionCoupon.main.enabled && !form.permissionCoupon.history.enabled "
+													v-html="text.please_enable_coupon" />
+												<permission-store-list class="mt-5"
+													:stores="form.permissionCoupon.stores"
+													v-if="form.permissionCoupon.stores.length > 0" />
+												<v-card :disabled="loading || (!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon))"
+													@click="addStoreDialog(form.permissionCoupon.permission)" flat
+													class="add-store-btn mt-3">
+													<v-icon :size="32" color="primary">add_circle</v-icon>
+													<div class="btn-label text-primary px-3">{{ text.add_store }}</div>
+												</v-card>
+												<div class="form-error-message mt-3 mb-3 text-error"
+													v-if="form.validate && form.permissionCoupon.stores.length === 0"
+													v-html="text.please_select_store" />
+
+												<div class="d-flex flex-row mt-4 mb-6">
+												<!-- <div class="d-flex flex-row mt-4 mb-6" v-if="(user.isOwner || user.permissions.find(p => p.permission === permissions.coupon))"> -->
+													<div v-ripple
+														@click="(!user.isOwner && !user.permissions.find(p => p.permission === permissions.coupon))?null:selectStoreFlag(form.permissionCoupon.permission, f.id)"
+														style="cursor: pointer;" class="d-flex pr-2 align-center"
+														v-for="(f, idx) in form.storeFlags" :key="'f-' + idx">
+														<v-btn icon>
+															<fa-icon name="check-circle" type="fas" color="primary"
+																:size="24"
+																v-if="form.permissionCoupon.storeFlag === f.id" />
+															<fa-icon name="circle" type="fas" color="secondary"
+																:size="24" v-else />
+														</v-btn>
+														<div class="store-flag-label">
+															{{ f.label }}
+														</div>
+													</div>
+												</div>
+											</template>
+</div>
+</div>
+</v-expansion-panel-content>
+</v-expansion-panel>
+</v-expansion-panels>
+</section>
+
+<v-btn @click="save" :disabled="loading || (form.validate && !form.allValidated)" :loading="loading" rounded :height="48" block color="primary">
+    <span class="text-uppercase btn-text">{{ text.confirm_per }}</span>
+</v-btn>
+</form>
+</v-container>
+</template>
+</cpn-dsb-page-content-container>
+
+<v-dialog content-class="select-store-dialog" persistent max-width="480" v-model="selectStoreDialog.show">
+    <v-card class="dialog-card">
+        <div class="d-flex align-center">
+            <div class="page-content-title flex-grow-1">{{ text.select_store }}</div>
+            <div class="d-flex align-center flex-shrink-0">
+                <v-btn icon @click="selectStoreDialog.show = false">
+                    <v-icon>clear</v-icon>
+                </v-btn>
+            </div>
+        </div>
+        <div class="d-flex mt-3">
+            <div class="flex-grow-1">
+                <div class="form-group" ref="search-form-group">
+                    <div class="input-group">
+                        <label class="form-prepend" for="search-store-input">
+								<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+							</label>
+                        <input autocomplete="off" :disabled="selectStoreDialog.loading || stores.length === 0" :readonly="selectStoreDialog.loading" v-model="selectStoreDialog.search" id="search-store-input" type="text" class="form-control borderless" :placeholder="text.search_store">
+                        <div class="form-apppend">
+                            <v-btn :disabled="selectStoreDialog.loading" @click="selectStoreDialog.clearSearch()" icon :size="20" v-if="selectStoreDialog.search">
+                                <v-icon>cancel</v-icon>
+                            </v-btn>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- -----------selected branches ----------- -->
+        <!-- <div class="selected-store-list mt-4" v-if="selectStoreDialog.selectedStore.length > 0">
+				<div>ร้านที่เลือก : {{ selectStoreDialog.displaySelectedStore }}</div>
+			</div> -->
+        <div class="d-flex pt-2">
+            <v-btn text @click="selectStoreDialog.toggleSelectAll()">
+                <div class="d-flex align-center">
+                    <fa-icon v-if="selectStoreDialog.isSelectAll" name="check-circle" type="fas" color="primary" />
+                    <fa-icon v-else name="circle" type="fas" color="#e1e1e1" />
+                    <span class="px-2">เลือกทั้งหมด</span>
+                </div>
+            </v-btn>
+        </div>
+        <div class="store-list mt-2" style="overflow-y: auto;" :style="{ 'max-height': maxDialogContentHeight + 'px' }">
+            <div class="no-data d-flex justify-center align-center" style="height: 120px;" v-if="stores.length === 0">
+                <span>ไม่มีร้านค้า</span>
+            </div>
+            <v-list two-line>
+                <v-list-item v-for="(store, idx) in selectStoreDialog.displayStores" :key="'store-' + idx">
+                    <v-list-item-action class="mr-3 mt-0">
+                        <v-btn icon width="28" height="28" @click="selectStoreDialog.selectStore(store)">
+                            <fa-icon v-if="selectStoreDialog.isStoreSelected(store)" name="check-circle" type="fas" color="primary" />
+                            <fa-icon v-else name="circle" type="fas" color="#e1e1e1" />
+                        </v-btn>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>
+                            <div class="store-name">{{ store.displayName }}</div>
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                            <span class="floor">{{ displayStoreBranchAndRoom(store) }}</span>
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+        </div>
+
+        <div class="mt-3">
+            <v-btn @click="confirmSelectStore" rounded block :height="48" color="primary" :disabled="selectStoreDialog.isStoreSelectEmpty">
+                <span class="text-uppercase btn-text">{{ $t("ok") }}</span>
+            </v-btn>
+        </div>
+    </v-card>
+
+</v-dialog>
+</div>

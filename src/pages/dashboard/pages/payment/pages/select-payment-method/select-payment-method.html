@@ -1,0 +1,874 @@
+<div id="select-payment-method-page" ref="selectPaymentMethodPage">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <v-container class="cpm-dbs-content-container">
+                <div class="page-content-title mb-2">{{ text.step_select_method }}</div>
+            </v-container>
+            <cpn-payment-stepper>
+                <div class="step-content">
+                    <div class="header-content" v-ripple @click="showFilterBankDialog">
+                        <div class="d-flex">
+                            <div class="flex-grow-1 d-flex flex-column">
+                                <div class="cpn-content-title">{{ text.label_select_bank }}</div>
+                                <cpn-note-text class="mt-1">{{ text.desc_support_all_bank }}</cpn-note-text>
+                            </div>
+                            <div class="flex-shrink-0 d-flex">
+                                <v-btn icon>
+                                    <div>
+                                        <v-img :width="28" :aspect-ratio="1"
+                                            :src="require('@/assets/images/icons/filter.svg')" />
+                                    </div>
+                                </v-btn>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-center py-4" v-if="filteredBank">
+                            <img :src="filteredBank.image" :width="28" :height="28" :aspect-ratio="1" class="mr-4"
+                                style="border-radius: 6px;" />
+                            <span class="">{{ filteredBank.displayName }}</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-list mt-4">
+
+                        <!-- ------------------ filtered ------------------ -->
+                        <template v-if="filteredBank">
+
+                            <template v-if="bankServices.thai_qr || bankServices.push_noti">
+                                <v-expansion-panels flat class="payment-method-item-expansion">
+                                    <v-expansion-panel>
+                                        <v-expansion-panel-header class="pa-0">
+                                            <v-card flat class="payment-method-item">
+                                                <div class="d-flex w100 py-4 ">
+                                                    <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                        <v-btn icon>
+                                                            <cpn-check-icon
+                                                                :checked="paymentMethods.mobile_banking.selected" />
+                                                        </v-btn>
+                                                    </div>
+                                                    <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                        <img contain :src="paymentMethods.mobile_banking.icon"
+                                                            height="32" width="auto" />
+                                                    </div>
+                                                    <div
+                                                        class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                        <div class="label-payment-method">{{
+                                                            paymentMethods.mobile_banking.name }}</div>
+                                                    </div>
+                                                </div>
+                                            </v-card>
+                                        </v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-list flat>
+
+                                                <!-- push_noti -->
+                                                <v-list-item v-if="bankServices.push_noti"
+                                                    @click.stop="selectMethod('push_noti', bankServices.push_noti.id)">
+                                                    <v-list-item-content>
+                                                        <span class="px-2">{{ text.push_noti }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="'push_noti' === selectedMethod && bankServices.push_noti.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+
+                                                <!-- thai_qr -->
+                                                <v-list-item v-if="bankServices.thai_qr"
+                                                    @click.stop="selectMethod('thai_qr', bankServices.thai_qr.id)">
+                                                    <v-list-item-content>
+                                                        <span class="px-2">{{ text.thai_qr }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="'thai_qr' === selectedMethod && bankServices.thai_qr.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
+
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <!-- credit_card -->
+                            <template v-if="false && (bankServices.credit_card || bankServices.unionpay)">
+                                <v-expansion-panels flat class="payment-method-item-expansion">
+                                    <v-expansion-panel>
+                                        <v-expansion-panel-header class="pa-0">
+                                            <v-card flat class="payment-method-item">
+                                                <div class="d-flex w100 py-4 ">
+                                                    <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                        <v-btn icon>
+                                                            <cpn-check-icon
+                                                                :checked="paymentMethods.credit_card.id === selectedMethod" />
+                                                        </v-btn>
+                                                    </div>
+                                                    <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                        <img contain :src="paymentMethods.credit_card.icon" height="32"
+                                                            width="auto" />
+                                                    </div>
+                                                    <div
+                                                        class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                        <div class="label-payment-method">{{
+                                                            paymentMethods.credit_card.name }}</div>
+                                                    </div>
+                                                </div>
+                                            </v-card>
+                                        </v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-list flat>
+                                                <!-- credit_card -->
+                                                <v-list-item class="px-0" v-if="bankServices.credit_card"
+                                                    @click.stop="selectMethod(paymentMethods.credit_card.id, bankServices.credit_card.id)">
+                                                    <v-list-item-content>
+                                                        <div class="d-flex align-center">
+                                                            <span class="px-2">{{ text.pay_by_card }}</span>
+                                                            <img width="auto" class="mr-2" height="32"
+                                                                v-for="(img, imgX) in bankServices.credit_card.images"
+                                                                :key="imgX" :src="img"
+                                                                :alt="bankServices.credit_card.displayName"
+                                                                :title="bankServices.credit_card.displayName" />
+                                                        </div>
+                                                        <cpn-note-text class="mt-1">{{ displayVatPercent(2.5) }}
+                                                        </cpn-note-text>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="paymentMethods.credit_card.id === selectedMethod && bankServices.credit_card.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+
+                                                <!-- unionpay -->
+                                                <v-list-item class="px-0" v-if="bankServices.unionpay"
+                                                    @click.stop="selectMethod(paymentMethods.credit_card.id, bankServices.unionpay.id)">
+                                                    <v-list-item-content>
+                                                        <div class="d-flex align-center">
+                                                            <span class="px-2">{{ text.pay_by_card }}</span>
+                                                            <img width="auto" class="mr-2" height="32"
+                                                                v-for="(img, imgX) in bankServices.unionpay.images"
+                                                                :key="imgX" :src="img"
+                                                                :alt="bankServices.unionpay.displayName"
+                                                                :title="bankServices.unionpay.displayName" />
+                                                        </div>
+                                                        <cpn-note-text class="mt-1">{{ displayVatPercent(2) }}
+                                                        </cpn-note-text>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="paymentMethods.credit_card.id === selectedMethod && bankServices.unionpay.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <!-- promptpay -->
+                            <template v-if="true">
+                                <v-card flat class="payment-method-item" v-ripple
+                                    @click="selectMethod(paymentMethods.promptpay.id, paymentMethods.promptpay.id)">
+                                    <div class="d-flex w100 py-4 ">
+                                        <div class="d-flex flex-shrink-0 align-start pr-2">
+                                            <v-btn icon>
+                                                <cpn-check-icon
+                                                    :checked="paymentMethods.promptpay.id === selectedMethod" />
+                                            </v-btn>
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                            <img contain :src="paymentMethods.promptpay.icon" height="32"
+                                                width="auto" />
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                            <div class="label-payment-method">{{ paymentMethods.promptpay.name }}</div>
+                                        </div>
+                                    </div>
+                                </v-card>
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <!-- alipay -->
+                            <template v-if="false">
+                                <v-card flat class="payment-method-item" v-ripple
+                                    @click="selectMethod(paymentMethods.alipay.id, paymentMethods.alipay.id)">
+                                    <div class="d-flex w100 py-4 ">
+                                        <div class="d-flex flex-shrink-0 align-start pr-2">
+                                            <v-btn icon>
+                                                <cpn-check-icon
+                                                    :checked="paymentMethods.alipay.id === selectedMethod" />
+                                            </v-btn>
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                            <img contain :src="paymentMethods.alipay.icon" height="32" width="auto" />
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                            <div class="label-payment-method">{{ paymentMethods.alipay.name }}</div>
+                                        </div>
+                                    </div>
+                                </v-card>
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <!-- wechatpay -->
+                            <template v-if="false">
+                                <v-card flat class="payment-method-item" v-ripple
+                                    @click="selectMethod(paymentMethods.wechatpay.id, paymentMethods.wechatpay.id)">
+                                    <div class="d-flex w100 py-4 ">
+                                        <div class="d-flex flex-shrink-0 align-start pr-2">
+                                            <v-btn icon>
+                                                <cpn-check-icon
+                                                    :checked="paymentMethods.wechatpay.id === selectedMethod" />
+                                            </v-btn>
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                            <img contain :src="paymentMethods.wechatpay.icon" height="32"
+                                                width="auto" />
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                            <div class="label-payment-method">{{ paymentMethods.wechatpay.name }}</div>
+                                        </div>
+                                    </div>
+                                </v-card>
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <!-- internet_banking -->
+                            <template v-if="bankServices.internet_banking">
+                                <v-card flat class="payment-method-item" v-ripple
+                                    @click="selectMethod(bankServices.internet_banking.id, bankServices.internet_banking.id)">
+                                    <div class="d-flex w100 py-4 ">
+                                        <div class="d-flex flex-shrink-0 align-start pr-2">
+                                            <v-btn icon>
+                                                <cpn-check-icon
+                                                    :checked="bankServices.internet_banking.id === selectedMethod" />
+                                            </v-btn>
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                            <img contain :src="bankServices.internet_banking.image" height="32"
+                                                width="auto" />
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                            <div class="label-payment-method">{{
+                                                bankServices.internet_banking.displayName }}</div>
+                                        </div>
+                                    </div>
+                                </v-card>
+
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <template v-if="bankServices.atm">
+                                <v-card flat class="payment-method-item" v-ripple
+                                    @click="selectMethod(bankServices.atm.id, bankServices.atm.id)">
+                                    <div class="d-flex w100 py-4 ">
+                                        <div class="d-flex flex-shrink-0 align-start pr-2">
+                                            <v-btn icon>
+                                                <cpn-check-icon :checked="bankServices.atm.id === selectedMethod" />
+                                            </v-btn>
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                            <img contain :src="bankServices.atm.image" height="32" width="auto" />
+                                        </div>
+                                        <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                            <div class="label-payment-method">{{ bankServices.atm.displayName }}</div>
+                                        </div>
+                                    </div>
+                                </v-card>
+
+                                <v-divider class="my-1" />
+                            </template>
+
+                            <template v-if="bankServices.cash || bankServices.cheque">
+                                <v-expansion-panels flat class="payment-method-item-expansion">
+                                    <v-expansion-panel>
+                                        <v-expansion-panel-header class="pa-0">
+                                            <v-card flat class="payment-method-item">
+                                                <div class="d-flex w100 py-4 ">
+                                                    <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                        <v-btn icon>
+                                                            <cpn-check-icon
+                                                                :checked="paymentMethods.bank_counter.id === selectedMethod" />
+                                                        </v-btn>
+                                                    </div>
+                                                    <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                        <img contain :src="paymentMethods.bank_counter.icon" height="32"
+                                                            width="auto" />
+                                                    </div>
+                                                    <div
+                                                        class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                        <div class="label-payment-method">{{
+                                                            paymentMethods.bank_counter.name }}</div>
+                                                    </div>
+                                                </div>
+                                            </v-card>
+                                        </v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-list flat>
+                                                <!-- cash -->
+                                                <v-list-item v-if="bankServices.cash"
+                                                    @click.stop="selectMethod(paymentMethods.bank_counter.id, bankServices.cash.id)">
+                                                    <v-list-item-content>
+                                                        <span class="px-2">{{ text.cash }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="paymentMethods.bank_counter.id === selectedMethod && bankServices.cash.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+
+                                                <!-- cheque -->
+                                                <v-list-item v-if="bankServices.cheque"
+                                                    @click.stop="selectMethod(paymentMethods.bank_counter.id, bankServices.cheque.id)">
+                                                    <v-list-item-content>
+                                                        <span class="px-2">{{ text.cheque }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="paymentMethods.bank_counter.id === selectedMethod && bankServices.cheque.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
+
+                                <v-divider class="my-1" />
+                            </template>
+
+                        </template>
+
+                        <!-- ------------------ no filter ------------------ -->
+                        <template v-else>
+
+                            <!-- mobile_banking -->
+                            <v-expansion-panels flat class="payment-method-item-expansion">
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header class="pa-0">
+                                        <v-card flat class="payment-method-item">
+                                            <div class="d-flex w100 py-4 ">
+                                                <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                    <v-btn icon>
+                                                        <cpn-check-icon
+                                                            :checked="paymentMethods.mobile_banking.selected" />
+                                                    </v-btn>
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                    <img contain :src="paymentMethods.mobile_banking.icon" height="32"
+                                                        width="auto" />
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                    <div class="label-payment-method">{{
+                                                        paymentMethods.mobile_banking.name }}</div>
+                                                </div>
+                                            </div>
+                                        </v-card>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-list flat>
+                                            <v-list-item-group no-action
+                                                v-for="(o, idx) in paymentMethods.mobile_banking.options" :key="idx">
+                                                <v-list-item :ripple="false">
+                                                    <v-list-item-content>
+                                                        <span class="font-weight-bold">{{ o.title }}</span>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+
+                                                <v-list-item v-for="(s, sidx) in o.services"
+                                                    :key="'service-item-' + sidx"
+                                                    @click.stop="selectMethod(o.id, s.id)">
+                                                    <v-list-item-icon></v-list-item-icon>
+                                                    <v-list-item-avatar>
+                                                        <v-img :src="s.image" :aspect-ratio="1" />
+                                                    </v-list-item-avatar>
+                                                    <v-list-item-content>
+                                                        <span class="px-2">{{ s.name }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="o.id === selectedMethod && s.id === selectedMethodOption">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+
+                            <v-divider class="my-1" />
+
+                            <!-- credit_card -->
+                            <v-expansion-panels flat class="payment-method-item-expansion">
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header class="pa-0">
+                                        <v-card flat class="payment-method-item">
+                                            <div class="d-flex w100 py-4 ">
+                                                <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                    <v-btn icon>
+                                                        <cpn-check-icon
+                                                            :checked="paymentMethods.credit_card.id === selectedMethod" />
+                                                    </v-btn>
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                    <img contain :src="paymentMethods.credit_card.icon" height="32"
+                                                        width="auto" />
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                    <div class="label-payment-method">{{ paymentMethods.credit_card.name
+                                                        }}</div>
+                                                </div>
+                                            </div>
+                                        </v-card>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-list flat>
+                                            <v-list-item-group v-for="(o, idx) in paymentMethods.credit_card.options"
+                                                :key="'credit_card-' + idx">
+                                                <v-list-item
+                                                    @click.stop="selectMethod(paymentMethods.credit_card.id, o.id)">
+                                                    <v-list-item-content>
+                                                        <div class="d-flex align-center">
+                                                            <span class="pr-3">{{ o.label }}</span>
+                                                            <img class="mr-2" height="32"
+                                                                v-for="(img, imgX) in o.images"
+                                                                :key="o.id + '-img-' + imgX" :src="img.img"
+                                                                :alt="img.label" :title="img.label" />
+                                                        </div>
+                                                        <cpn-note-text class="mt-1">{{ displayVatPercent(o.tax) }}
+                                                        </cpn-note-text>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="o.id === selectedMethodOption && paymentMethods.credit_card.id === selectedMethod">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                                <!-- <v-divider class="my-1"/> -->
+                            </v-expansion-panels>
+
+                            <v-divider class="my-1" />
+                            <!-- promptpay -->
+                            <v-card flat class="payment-method-item" v-ripple
+                                @click="selectMethod(paymentMethods.promptpay.id)" v-if="true">
+                                <div class="d-flex w100 py-4 ">
+                                    <div class="d-flex flex-shrink-0 align-start pr-2">
+                                        <v-btn icon>
+                                            <cpn-check-icon :checked="paymentMethods.promptpay.id === selectedMethod" />
+                                        </v-btn>
+                                    </div>
+                                    <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                        <img contain :src="paymentMethods.promptpay.icon" height="32" width="auto" />
+                                    </div>
+                                    <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                        <div class="label-payment-method">{{ paymentMethods.promptpay.name }}</div>
+                                    </div>
+                                </div>
+                                <v-divider class="my-1" />
+                            </v-card>
+
+                            <v-divider class="my-1" v-if="false" />
+
+                            <!-- alipay -->
+                            <v-card v-if="false" flat class="payment-method-item" v-ripple
+                                @click="selectMethod(paymentMethods.alipay.id)">
+                                <div class="d-flex w100 py-4 ">
+                                    <div class="d-flex flex-shrink-0 align-start pr-2">
+                                        <v-btn icon>
+                                            <cpn-check-icon :checked="paymentMethods.alipay.id === selectedMethod" />
+                                        </v-btn>
+                                    </div>
+                                    <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                        <img contain :src="paymentMethods.alipay.icon" height="32" width="auto" />
+                                    </div>
+                                    <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                        <div class="label-payment-method">{{ paymentMethods.alipay.name }}</div>
+                                    </div>
+                                </div>
+                                <v-divider class="my-1" />
+                            </v-card>
+
+                            <v-divider class="my-1" v-if="false" />
+
+                            <!-- wechatpay -->
+                            <v-card v-if="false" flat class="payment-method-item" v-ripple
+                                @click="selectMethod(paymentMethods.wechatpay.id)">
+                                <div class="d-flex w100 py-4 ">
+                                    <div class="d-flex flex-shrink-0 align-start pr-2">
+                                        <v-btn icon>
+                                            <cpn-check-icon :checked="paymentMethods.wechatpay.id === selectedMethod" />
+                                        </v-btn>
+                                    </div>
+                                    <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                        <img contain :src="paymentMethods.wechatpay.icon" height="32" width="auto" />
+                                    </div>
+                                    <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                        <div class="label-payment-method">{{ paymentMethods.wechatpay.name }}</div>
+                                    </div>
+                                </div>
+                                <v-divider class="my-1" />
+                            </v-card>
+
+                            <v-divider class="my-1" v-if="false" />
+
+                            <!-- internet_banking -->
+                            <v-expansion-panels flat class="payment-method-item-expansion">
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header class="pa-0">
+                                        <v-card flat class="payment-method-item">
+                                            <div class="d-flex w100 py-4 ">
+                                                <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                    <v-btn icon>
+                                                        <cpn-check-icon
+                                                            :checked="paymentMethods.internet_banking.id === selectedMethod" />
+                                                    </v-btn>
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                    <img contain :src="paymentMethods.internet_banking.icon" height="32"
+                                                        width="auto" />
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                    <div class="label-payment-method">{{
+                                                        paymentMethods.internet_banking.name }}</div>
+                                                </div>
+                                            </div>
+                                        </v-card>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-list flat>
+                                            <v-list-item-group>
+                                                <v-list-item
+                                                    @click.stop="selectMethod(paymentMethods.internet_banking.id, o.id)"
+                                                    v-for="(o, idx) in paymentMethods.internet_banking.banks"
+                                                    :key="'bank-' + o.id">
+                                                    <v-list-item-avatar>
+                                                        <v-img :src="o.image" :aspect-ratio="1" />
+                                                    </v-list-item-avatar>
+                                                    <v-list-item-content>
+                                                        <span>{{ o.name }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="o.id === selectedMethodOption && paymentMethods.internet_banking.id === selectedMethod">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+
+                            <v-divider class="my-1" />
+
+                            <!-- atm -->
+                            <v-expansion-panels flat class="payment-method-item-expansion">
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header class="pa-0">
+                                        <v-card flat class="payment-method-item">
+                                            <div class="d-flex w100 py-4 ">
+                                                <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                    <v-btn icon>
+                                                        <cpn-check-icon
+                                                            :checked="paymentMethods.atm.id === selectedMethod" />
+                                                    </v-btn>
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                    <img contain :src="paymentMethods.atm.icon" height="32"
+                                                        width="auto" />
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                    <div class="label-payment-method">{{ paymentMethods.atm.name }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </v-card>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-list flat>
+                                            <v-list-item-group>
+                                                <v-list-item @click.stop="selectMethod(paymentMethods.atm.id, o.id)"
+                                                    v-for="(o, idx) in paymentMethods.atm.banks" :key="'bank-' + o.id">
+                                                    <v-list-item-avatar>
+                                                        <v-img :src="o.image" :aspect-ratio="1" />
+                                                    </v-list-item-avatar>
+                                                    <v-list-item-content>
+                                                        <span>{{ o.displayName }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="o.id === selectedMethodOption && paymentMethods.atm.id === selectedMethod">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+
+                            <v-divider class="my-1" />
+
+                            <!-- bank_counter -->
+                            <v-expansion-panels flat class="payment-method-item-expansion">
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header class="pa-0">
+                                        <v-card flat class="payment-method-item">
+                                            <div class="d-flex w100 py-4 ">
+                                                <div class="d-flex flex-shrink-0 align-start pr-2">
+                                                    <v-btn icon>
+                                                        <cpn-check-icon
+                                                            :checked="paymentMethods.bank_counter.selected" />
+                                                    </v-btn>
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-shrink-0 align-center">
+                                                    <img contain :src="paymentMethods.bank_counter.icon" height="32"
+                                                        width="auto" />
+                                                </div>
+                                                <div class="d-flex payment-method-img flex-grow-1 align-center pl-3">
+                                                    <div class="label-payment-method">{{
+                                                        paymentMethods.bank_counter.name }}</div>
+                                                </div>
+                                            </div>
+                                        </v-card>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-list flat>
+                                            <v-list-item-group v-for="(o, idx) in paymentMethods.bank_counter.options"
+                                                :key="'bank_counter-' + o.id">
+                                                <v-list-item :ripple="false">
+                                                    <v-list-item-content>
+                                                        <span class="font-weight-bold">{{ o.label }}</span>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                                <v-list-item @click.stop="selectMethod(o.id, b.id)"
+                                                    v-for="(b, bidx) in o.banks" :key="o.id + '-' + bidx">
+                                                    <v-list-item-icon />
+                                                    <v-list-item-avatar :size="32">
+                                                        <v-img :src="b.image" :aspect-ratio="1" />
+                                                    </v-list-item-avatar>
+                                                    <v-list-item-content>
+                                                        <span class="px-3">{{ b.displayName }}</span>
+                                                    </v-list-item-content>
+                                                    <v-list-item-icon
+                                                        v-if="b.id === selectedMethodOption && o.id === selectedMethod">
+                                                        <fa-icon name="check" :size="20" color="primary" type="far" />
+                                                    </v-list-item-icon>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+
+                            <v-divider class="my-1" />
+
+                        </template>
+                    </div>
+
+                    <div class="w100 receipt-select mt-4">
+                        <cpn-note-text class="mt-1">
+                            <div style="font-size: 15px;" v-html="text.term_select_receipt_desc"></div>
+                        </cpn-note-text>
+                        <!-- select receipt branch -->
+                        <div>
+                            <div v-if="!isHideEmailReceipt">
+                                <div v-if="checkIsHasPermissionEReceipt || user.isOwner">
+                                    <div class="div-check-checkfilter">
+                                        <input type="checkbox" class="checkfilter-notifications" value="1"
+                                            @click="checkSelectReceiptMethod($event)" :checked="selectEmailReceipt">
+                                        <div style="padding-top: 4px;padding-left: 10px;">
+                                            <span class="span-condition">{{ text.email_receipt_text }}</span>
+                                        </div>
+                                    </div>
+                                    <div v-if="receiptPayment != null && selectEmailReceipt"
+                                        style="padding-left: 40px;">
+                                        <div class="info-label" style="padding-bottom: 10px;">{{ text.email_send_text }}
+                                        </div>
+                                        <table class="subscription-info">
+                                            <tr>
+                                                <td class="info-label-col">
+                                                    <div class="info-label">{{ text.email_text }}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="info-values" v-html="HTMLEmails"
+                                                        style="padding-left: 20px;"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="info-label-col">
+                                                    <div class="info-label">CC: {{ text.email_text }}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="info-values" v-html="HTMLCCEmails"
+                                                        style="padding-left: 20px;"></div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div v-if="receiptPayment == null && selectEmailReceipt">
+                                        <div class="info-label" style="padding-bottom: 10px;">{{
+                                            text.email_not_accept_receipt }}</div>
+                                        <v-btn color="primary" @click="registerReceipt"
+                                            style="width: 100%; border-radius: 20px; height: 50px;">
+                                            <span class="text-uppercase px-6">{{ text.register_receipt }}</span>
+                                        </v-btn>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="!isHideBranchReceipt">
+                                <div class="div-check-checkfilter">
+                                    <input type="checkbox" class="checkfilter-notifications" value="2"
+                                        @click="checkSelectReceiptMethod($event)" :checked="selectBranchReceipt">
+                                    <div style="padding-top: 4px;padding-left: 10px;">
+                                        <span class="span-condition">{{ text.branch_receipt_text }}</span>
+                                    </div>
+                                </div>
+                                <v-menu v-if="selectBranchReceipt" v-model="selectBranch.menu" rounded="xl" offset-y
+                                    :z-index="100000" max-height="480">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <div class="form-group">
+                                            <input v-model="selectedBranchName" id="select-branch-input" type="text"
+                                                class="pl-6 form-control" readonly v-bind="attrs" v-on="on" />
+                                            <div class="form-apppend">
+                                                <label for="select-branch-input" class="d-flex align-center">
+                                                    <fa-icon :size="20" class="rotate-icon"
+                                                        :class="{ 'active-rotate': selectBranch.menu }"
+                                                        name="chevron-down" type="far" color="secondary darken3" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <v-list>
+                                        <v-list-item @click="selectBranchClick(branch)"
+                                            v-for="(branch, index) in branchOptions" :key="index">
+                                            <v-list-item-content>
+                                                <v-list-item-title>{{ branch.displayName }}</v-list-item-title>
+                                            </v-list-item-content>
+                                            <v-list-item-icon v-if="selectedBranch && selectedBranch.id === branch.id">
+                                                <fa-icon name="check" :size="20" color="primary" type="far" />
+                                            </v-list-item-icon>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
+                            </div>
+                        </div>
+                        <div class="form-group mt-6">
+                            <div class="d-flex">
+                                <div class="flex-grow-1">
+                                    <label for="note-input" class="cpn-form-label">{{ text.label_note }}</label>
+                                </div>
+                                <div class="d-flex flex-shrink-0 align-center">
+                                    <span style="color: var(--v-secondary-darken3);">{{ note.length }}/{{ maxNote
+                                        }}</span>
+                                </div>
+                            </div>
+                            <input @input="onNoteInput" :maxlength="maxNote" type="text" id="note-input"
+                                class="form-control" v-model="note" />
+                        </div>
+                    </div>
+                </div>
+            </cpn-payment-stepper>
+        </template>
+    </cpn-dsb-page-content-container>
+    <v-dialog :attach="$refs.selectPaymentMethodPage" v-model="dialog" width="640"
+        content-class="cpn-dialog filter-bank-dialog dashboard-dialog">
+        <v-card class="dialog-card">
+            <div class="d-flex header-content">
+                <span class="font-weight-bold cpn-text-h6">{{ text.label_select_bank_dialog }}</span>
+            </div>
+            <div class="dialog-content py-4" :style="{ 'max-height': dialogContentHeight + 'px' }"
+                style="overflow-y: auto;">
+                <v-list flat>
+                    <v-list-item v-for="(bank, idx) in banks" :key="'bank-' + idx" @click="selectBank(bank)">
+                        <v-list-item-avatar style="border-radius: unset;">
+                            <v-img :src="bank.image" />
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                <span>{{ bank.displayName }}</span>
+                            </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-icon v-if="isBankSelected(bank)">
+                            <fa-icon name="check" :size="20" color="primary" type="far" />
+                        </v-list-item-icon>
+                    </v-list-item>
+                </v-list>
+            </div>
+            <div class="dialog-footer d-flex align-center justify-center">
+                <v-btn color="primary" rounded @click="dialog = false">
+                    <span class="text-uppercase px-6">{{ $t("close") }}</span>
+                </v-btn>
+            </div>
+        </v-card>
+    </v-dialog>
+    <div class="details-modal-overlay" v-if="isShowModal"></div>
+    <div v-if="isShowModal" class="register-invoice-modal">
+        <div>
+            <div class="page-content-title mb-2">{{ text.register_page_title }}</div>
+            <div class="register-form">
+                <div class="emails-container form-group my-1">
+                    <label>
+                        <span class="cpn-text-subtitle-1 font-weight-regular" style="color: #717271;">{{
+                            text.email_text }}</span>
+                    </label>
+                    <div class="emails-input">
+                        <input type="text" class="form-control" v-model="ReceiptEmail"
+                            placeholder="yourmail@email.com" />
+                    </div>
+                    <div class="input-error-message"
+                        v-if=" validateEmail(ReceiptEmail, false) != '' && isClickedConfirm">{{
+                        validateEmail(ReceiptEmail, false) }}</div>
+                </div>
+                <div class="cc-emails-container form-group my-1">
+                    <label>
+                        <span class="cpn-text-subtitle-1 font-weight-regular" style="color: #717271;">CC: {{
+                            text.email_text }}</span>
+                    </label>
+                    <div class="cc-emails-input">
+                        <input type="text" class="form-control" v-model="ReceiptccEmail"
+                            placeholder="yourccmail1@email.com, yourccmail2@email.com" />
+                    </div>
+                </div>
+                <div style="width: 100%;display: flex;padding-top: 10px;padding-bottom: 10px;">
+                    <div style="width: 100%;display: flex;">
+                        <input type="checkbox" class="checkfilter-notifications"
+                            @click="acceptTermAndConditionReceipt($event)" :checked="isAcceptConsentandTerm">
+                        <div style="padding-top: 4px;padding-left: 10px;">
+                            <span class="span-condition" style="color: #5f605f;">{{ text.accept_condition }}</span>
+                            <u class="span-term" style="color: #5f605f;padding-left: 5px;cursor: pointer;"
+                                @click="readCondition">{{
+                                text.terms_text }}</u>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="!isAcceptConsentandTerm && isClickedConfirm">
+                    <span style="font-size: 16px;color: #9b2035;">
+                        {{ text.error_isAcceptTheTerms }}
+                    </span>
+                </div>
+                <div ref="condition-receipt" class="pdpa-dialog cpn-text-body-1 text-gray"
+                    style="max-height: 205px;overflow-y: auto;height: 0px;" v-html="conditionReceipt"></div>
+                <hr />
+                <div style="padding-top: 20px;">
+                    <cpn-note-text>{{ text.multi_email_desc }}</cpn-note-text>
+                    <cpn-note-text>{{ text.e_receipt_desc }}</cpn-note-text>
+                </div>
+            </div>
+            <div class="btn-container mt-6" style="display: flex; justify-content: center;">
+                <v-btn class="mb-3" :disabled="!isAcceptConsentandTerm" :loading="loadingConfirmReceipt"
+                    style="height: 48px;border-radius: 15px;width: 150px;margin: 5px;" @click="confirmRegisterReceipt"
+                    color="primary">
+                    <span class="text-uppercase">{{ text.ok }}</span>
+                </v-btn>
+                <v-btn class="mb-3" style="height: 48px;border-radius: 15px;width: 150px;margin: 5px;"
+                    @click="closeModal" color="primary">
+                    <span class="text-uppercase">{{ text.cancel_text }}</span>
+                </v-btn>
+            </div>
+        </div>
+    </div>
+</div>

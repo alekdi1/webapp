@@ -1,0 +1,26 @@
+@import "../../../../../../styles/vars.scss";
+
+#_shop-sale-select-branch-page {
+    $chip-background: 100px;
+
+    #search-sales-branch {
+        background: $color-secondary;
+    }
+}
+
+.footer-div-download{
+    position: absolute;
+    bottom: 130px;
+    width: 90%;
+}
+.text-playhouse{
+    font-family: "CPN", sans-serif !important;
+    font-size: 1.6rem !important;
+    font-weight: 700;
+    letter-spacing: 0.0125em !important;
+    line-height: 2rem;
+}
+.text-playhouse-detail
+{
+    margin-bottom: 0px !important;
+}

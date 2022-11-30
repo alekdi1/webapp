@@ -1,0 +1,146 @@
+<div id="_reg-e-invoice-receipt-detail-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<cpn-dsb-action-acknowledge v-if="showResult">
+				<template v-slot:title>
+					<div class="status-title mb-0">SUBMITTED</div>
+				</template>
+				<template v-slot:content>
+					<div class="d-flex align-center flex-column">
+						<div class="acknowledge-subtitle">{{ text.submitted_message }}</div>
+						<div class="acknowledge-desc mt-2">
+							{{ acknowledge.subtitle }}
+						</div>
+
+						<v-btn color="primary" @click="backToHome" class="mt-6" :height="48" rounded>
+							<span class="text-uppercase px-4">{{ $t("go_back_to_main") }}</span>
+						</v-btn>
+					</div>
+				</template>
+			</cpn-dsb-action-acknowledge>
+			<div class="d-flex justify-center align-center" style="height: 100%;width: 100%;" v-else-if="loading">
+				<cpn-loading />
+			</div>
+			<v-container class="cpm-dbs-content-container" v-else>
+
+				<!-- ============= form ============= -->
+				<div style="flex: 1;" class="d-flex flex-column" v-if="showForm">
+					<div class="page-content-title mb-2">{{ text.page_title }}</div>
+
+					<form class="register-form" :data-email-size="form.allEmailSize">
+						<!-- email -->
+						<div class="emails-container form-group my-3">
+							<label :for="'input-profile-emails-' + form.emails.id">
+								<span class="cpn-text-subtitle-1 font-weight-regular">{{ $t('email') }}</span>
+							</label>
+							<div class="emails-input">
+								<input :id="'input-profile-emails-' + form.emails.id" type="text" class="form-control"
+									placeholder="yourmail@email.com" v-model="form.emails.value" />
+							</div>
+							<div class="input-error-message" v-if="form.validated && form.errors.emails">{{
+								form.errors.emails }}</div>
+						</div>
+
+						<!-- cc-email -->
+						<div class="cc-emails-container form-group mb-3 mt-8">
+							<label :for="'input-profile-cc-emails-' + form.CCEmails.id">
+								<span class="cpn-text-subtitle-1 font-weight-regular">CC: {{ $t('email') }}</span>
+							</label>
+							<div class="cc-emails-input">
+								<input :id="'input-profile-cc-emails-' + form.CCEmails.id" type="text"
+									class="form-control" placeholder="yourccmail1@email.com, yourccmail2@email.com"
+									v-model="form.CCEmails.value" />
+							</div>
+							<div class="input-error-message" v-if="form.validated && form.errors.ccemails">{{
+								form.errors.ccemails }}</div>
+						</div>
+
+						<div style="width: 100%;display: flex;padding-top: 25px;padding-bottom: 15px;">
+							<div style="width: 100%;display: flex;">
+								<input type="checkbox" class="checkfilter-notifications" @click="checkReadNotifications($event)" :checked="isAcceptConsentandTerm">
+								<div style="padding-top: 4px;padding-left: 10px;">
+									<span class="span-condition">{{ text.accept_condition }}</span>
+									<u class="span-term" @click="readCondition">{{
+										text.terms_text }}</u>
+								</div>
+							</div>
+						</div>
+						<div v-if="form.validated && form.errors.isAcceptTheTerms">
+							<span style="font-size: 16px;color: #9b2035;">
+								{{ form.errors.isAcceptTheTerms }}
+							</span>
+						</div>
+						<v-divider class="my-6" />
+						<cpn-note-text class="mb-2">{{ text.multi_email_desc }}</cpn-note-text>
+						<cpn-note-text v-if="isReceipt">{{ text.e_receipt_desc }}</cpn-note-text>
+						<cpn-note-text v-else>{{ text.e_invoice_desc }}</cpn-note-text>
+					</form>
+
+					<div class="btn-container mt-6">
+						<v-btn class="mb-3" :disabled="loading || (form.validated && !form.allValidated) || !isAcceptConsentandTerm"
+							:loading="loading" v-if="!isSubscribed" @click="submitReg" :height="48" block rounded
+							color="primary">
+							<span class="text-uppercase">{{ text.reg_e_invoice }}</span>
+						</v-btn>
+						<v-btn class="mb-3" :disabled="loading || (form.validated && !form.allValidated) || !isAcceptConsentandTerm"
+							:loading="loading" v-if="isSubscribed" @click="saveEdit" :height="48" block rounded
+							color="primary">
+							<span class="text-uppercase">{{ $t("ok") }}</span>
+						</v-btn>
+					</div>
+				</div>
+
+				<!-- ============= detail ============= -->
+				<template v-else>
+					<section class="subscription-detail d-flex flex-column">
+						<div class="page-content-title mb-2">{{ text.page_title }}</div>
+						<div class="flex-grow-1">
+							<table class="subscription-info">
+								<tr>
+									<td class="info-label-col">
+										<div class="info-label">{{ $t('email') }}</div>
+									</td>
+									<td>
+										<div class="info-values" v-html="HTMLEmails"></div>
+									</td>
+								</tr>
+								<tr>
+									<td class="info-label-col">
+										<div class="info-label">CC: {{ $t('email') }}</div>
+									</td>
+									<td>
+										<div class="info-values" v-html="HTMLCCEmails"></div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</section>
+					<div class="btn-container mt-6" style="min-height: 120px;">
+						<v-btn :disabled="!!loading" class="mb-3" v-if="isSubscribed" @click="editSubscribed"
+							:height="48" block rounded color="primary">
+							<span class="text-uppercase">{{ text.edit }}</span>
+						</v-btn>
+						<v-btn :disabled="!!loading" :loading="loading === 'cancel'" class="mb-3" outlined
+							v-if="isSubscribed" @click="cancelSubscribed" :height="48" block rounded color="primary">
+							<span class="text-uppercase">{{ text.cancel_e_invoice }}</span>
+						</v-btn>
+					</div>
+				</template>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+	<v-overlay v-if="isShowModal">
+		<v-card class="pdpa-dialog-container pa-8 ma-10" color="white">
+			<div class="pdpa-title cpn-text-h5 font-weight-bold text-primary mb-2">
+				ข้อตกลงและเงื่อนไข
+			</div>
+			<div class="pdpa-dialog cpn-text-body-1 text-gray" v-html="discription">
+			</div>
+			<div class="text-center">
+				<v-btn @click="closeModal" class="accept-btn" color="primary" elevation="0" height="48" rounded>
+					<div class="cpn-text-body-1 text-uppercase text-white px-4 ">{{ text.text_close }}</div>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-overlay>
+</div>

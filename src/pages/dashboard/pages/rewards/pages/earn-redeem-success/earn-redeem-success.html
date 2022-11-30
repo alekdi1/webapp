@@ -1,0 +1,173 @@
+<div id="_rewards-earn-redeem-success-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+                <div ref="slip">
+                    <div class="slip-box">
+                        <div class="slip-content">
+                            <!-- Header -->
+                            <section>
+                                <div class="d-flex flex-column align-center mb-6">
+                                    <v-img class="mt-12 mb-10" :src="require('@/assets/images/cpn-logo-new.png')" :width="150" contain/>
+                                    <div class="text-24 font-weight-bold text-color-primary mb-10">{{ text.title }}</div>
+                                    <div class="text-15 font-weight-bold mb-3">{{ storeName }}</div>
+                                    <div class="text-12">{{ branchName }}</div>
+                                    <div class="text-12">{{ text.room }} {{ floorRoom }}</div>
+                                </div>
+                            </section>
+                            <v-divider class="mb-6"/>
+                            <!-- Member -->
+                            <section v-if="member" class="mb-6">
+                                <table class="w100 member-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-member-image">
+                                                <v-img :src="require('@/assets/images/icons/user.svg')" width="26" height="34"/>
+                                            </td>
+                                            <td class="col-member-data">
+                                                <div class="text-15 font-weight-bold mb-1">{{ member.displayName }}</div>
+                                                <div class="text-12 mb-1">{{ text.the_1 }}: <b>{{ member.cardNo }}</b></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                            <v-divider class="mb-6"/>
+                            <!-- Detail and Total -->
+                            <section v-if="earnRedeemData" class="mb-3">
+                                <table class="w100 detail-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-detail-title">
+                                                <div class="text-12">{{ text.transaction_no }}</div>
+                                            </td>
+                                            <td class="col-detail-value">
+                                                <div class="text-12 text-right">{{ earnRedeemData.transactionId }}</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="col-detail-title">
+                                                <div class="text-12">{{ text.date }}</div>
+                                            </td>
+                                            <td class="col-detail-value">
+                                                <div class="text-12 text-right">{{ createdDate }}</div>
+                                            </td>
+                                        </tr
+                                        ><tr>
+                                            <td class="col-detail-title">
+                                                <div class="text-12">{{ text.time }}</div>
+                                            </td>
+                                            <td class="col-detail-value">
+                                                <div class="text-12 text-right">{{ createdTime }}</div>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="isRedeemed">
+                                            <td class="col-detail-title">
+                                                <div class="text-12">{{ text.total_amount }} ({{ text.baht }})</div>
+                                            </td>
+                                            <td class="col-detail-value">
+                                                <div class="text-12 text-right">{{ totalAmountText }}</div>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="isRedeemed">
+                                            <td class="col-detail-title">
+                                                <div class="text-12">{{ text.discount_from_redeem }} ({{ text.baht }})</div>
+                                            </td>
+                                            <td class="col-detail-value">
+                                                <div class="text-12 text-right">{{ redeemedDiscountText }}</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                            <section v-if="earnRedeemData" class="mb-3">
+                                <table class="w100 total-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-total-image">
+                                                <v-img :src="require('@/assets/images/dashboard-payment.svg')" width="29" height="29"/>
+                                            </td>
+                                            <td class="col-total-title">
+                                                <div class="text-18 font-weight-bold ml-3">{{ text.total }} ({{ text.baht }})</div>
+                                            </td>
+                                            <td class="col-total-value">
+                                                <div class="text-27 font-weight-bold text-right">{{ totalAmountWithDiscountText }}</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                            <!-- Redeem Barcode -->
+                            <section v-if="isRedeemed && redeemedReceiptNo" class="text-center">
+                                <div class="text-12">{{ text.redeem_point_barcode_label }}</div>
+                            </section>
+                            <section v-if="isRedeemed && redeemedReceiptNo" class="text-center">
+                                <cpn-barcode :value="redeemedReceiptNo" width="1" height="60" fontSize="12"></cpn-barcode>
+                            </section>
+                            <v-divider class="mb-6"/>
+                            <!-- Point -->
+                            <section class="mb-3">
+                                <table class="w100 point-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-point-image">
+                                                <v-img :src="require('@/assets/images/t1c-logo.png')" width="27" height="28"/>
+                                            </td>
+                                            <td class="col-point-title">
+                                                <div v-if="isRedeemed" class="text-12">{{ text.the_1_redeemed }} ({{ text.point }})</div>
+                                                <div class="text-12">{{ text.the_1_earned }} ({{ text.point }})</div>
+                                            </td>
+                                            <td class="col-point-value">
+                                                <div v-if="isRedeemed" class="text-12 text-right">{{ redeemedPointText }}</div>
+                                                <div class="text-18 font-weight-bold text-right">{{ earnPointText }}</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                            <!-- Earn Barcode -->
+                            <section v-if="earnReceiptNo" class="text-center">
+                                <div class="text-12">{{ text.earn_point_barcode_label }}</div>
+                            </section>
+                            <section v-if="earnReceiptNo" class="text-center">
+                                <cpn-barcode :value="earnReceiptNo" width="1" height="60" fontSize="12"></cpn-barcode>
+                            </section>
+                            <v-divider class="mb-6"/>
+                            <!-- Note -->
+                            <section v-if="note" class="mb-6">
+                                <div class="d-flex mt-1" >
+                                    <div class="flex-shrink-0 mr-2">
+                                        <span class="text-12">{{ text.note }}</span>
+                                    </div>
+                                    <div class="flex-shrink-1 text-right">
+                                        <span class="text-12">{{ note }}</span>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="slip-footer"></div>
+                </div>
+                
+                <!-- Download -->
+                <!-- <section class="form-section mt-6 mb-6"> -->
+                <div class="text-center">
+                    <v-btn :disabled="downloading || loading" :loading="downloading" text class="mb-8 mt-2 pa-2" :width="120" height="auto">
+                        <div class="step-result-slip-download d-flex flex-column align-center" @click="downloadSlip">
+                            <v-img :src="require('@/assets/images/icons/file-download.svg')" :width="43"/>
+                            <div class="text-12 mt-2">{{ text.download_slip }}</div>
+                        </div>
+                    </v-btn>
+                </div>
+                <!-- </section> -->
+                <!-- Back to Main Page -->
+                <section class="form-section mt-6 mb-6 text-center">
+                    <div class="text-12 text-color-gray mb-3">{{ text.point_update }}</div>
+                    <v-btn :disabled="downloading || loading" @click="backToMainPage" min-width="100%" rounded height="48" block color="primary">
+                        <span class="text-15">{{ text.back_to_main }}</span>
+                    </v-btn>
+                </section>
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,142 @@
+<div id="home-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container>
+				<cpn-user-on-board-home-modal v-if="isOnBoarding && !isQRUser" @openOnBoard="onNotFirstVisitOrFinishOnBoard" :isOnboard="isOnBoarding"/>
+				<cpn-annoucement-modal v-if="!isOnPop" :popup="popup" />
+				<div class="ma-5">
+					<div class="menus-container mt-5">
+						<v-card class="menu-card-container rounded-xl px-7 py-5" elevation="0" v-if="!isQRUser">
+							<template>
+								<v-row>
+									<template v-for="(menu, idx) in userFavMenu">
+										<v-col v-if="menu === null" cols="4" :key="'menu-' + idx" class="menu-column">
+											<div class="menu-item">
+												<v-card @click="addNewFavMenu(idx)" :disabled="showDeleteIcon" :class="[{ 'card-active': idx === addMenuIndex }, 'menu-card', 'py-3']" align="center" elevation="0" color="#f2f1ee" v-ripple>
+													<v-img :src="require('@/assets/images/icons/circle-add-sign.svg')" :width="40" :height="40"></v-img>
+													<div class="text-primary-dark mt-1">{{ text.add_fav_menu }}</div>
+												</v-card>
+											</div>
+											<div class="menu-divider" v-if="idx % 3 !== 2" />
+										</v-col>
+										<v-col v-else cols="4" :key="'menu-' + idx" class="menu-column">
+											<div class="menu-item">
+												<div @click="selectedDeleteFavMenu(idx)" v-if="showDeleteIcon" class="minus-icon-container d-flex justify-center">
+													<v-icon class="text-white" small>remove</v-icon>
+												</div>
+												<v-card @click="goToSelectedMenu(menu)" class="menu-card py-3" align="center" elevation="0" color="#f2f1ee">
+													<v-img :src="menu.icon" :width="40" :height="40" contain></v-img>
+													<div class="text-primary-dark mt-1" v-html="menu.label"></div>
+												</v-card>
+											</div>
+											<div class="menu-divider" v-if="idx % 3 !== 2" />
+										</v-col>
+									</template>
+        </v-row>
+        </template>
+        <div class="d-flex justify-center">
+            <div class="menu-remove-btn-container">
+                <v-btn @click="confirmDeleteFavMenu" :loading="isDeleting" elevation="0" color="primary-dark" v-if="showDeleteIcon">
+                    <v-icon color="white">check_circle_outline</v-icon>
+                </v-btn>
+                <v-btn @click="deleteFavMenu" elevation="0" color="primary" :disabled="showButtomSheet" v-else>
+                    <v-icon>remove_circle_outline</v-icon>
+                </v-btn>
+            </div>
+        </div>
+        </v-card>
+        <div v-if="!showButtomSheet" class="annoucement-container mt-10">
+            <div class="cpn-content-title" align="center">
+                <span>ONLY FOR YOU</span>
+            </div>
+            <div class="news-annoucement">
+                <div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isNotificationLoading">
+                    <cpn-loading />
+                </div>
+                <div v-else>
+                    <div class="empty-annoucement-container" v-if="isAnnoucementEmpty">
+                        <div class="empty-annoucement-content d-flex flex-column justify-center align-center">
+                            <v-img :src="require('@/assets/images/icons/annoucement-blur.png')" :width="200" :max-height="200" contain />
+                            <div class="mt-5">{{ text.no_new_news }}</div>
+                        </div>
+                    </div>
+                    <div class="annoucment-item-container" v-else>
+                        <div v-for="(notiItm, notiIdx) in notifications" :key="'annoucement-item-' + notiIdx">
+                            <v-card @click="notiClick(notiItm)" class="annoucement-card-container rounded-xl my-5 py-5 px-10" elevation="0" color="#f2f1ee">
+                                <v-row>
+                                    <v-col sm="1">
+                                        <div class="annoucement-dot"></div>
+                                    </v-col>
+                                    <v-col>
+                                        <div class="cpn-content-subtitle font-weight-bold">{{ notiItm.title }}</div>
+                                        <div class="cpn-content-subtitle">{{ notiItm.desc }}</div>
+                                    </v-col>
+                                </v-row>
+                            </v-card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+</v-container>
+<div v-if="showButtomSheet" class="bottom-sheet-container">
+    <div class="bottom-item-container px-8" align="center">
+        <div class="cpn-text-h4 font-weight-bold">FAVORITES MENU</div>
+        <div>{{ text.select_fav_menu }}</div>
+        <div class="my-5">
+            <template>
+							<v-row>
+								<template v-for="(menu, idx) in permissionMenus">
+									<v-col cols="4" :key="'fav-menu-' + idx">
+										<v-card @click="selectAddFavMenu(menu)" :disabled="!menu.show" :width="130" :height="130" elevation="0" v-ripple :class="[{ 'card-active': selectedAddMenuItem && menu.route === selectedAddMenuItem.route }, 'fav-item', 'd-flex', 'flex-column', 'justify-center', 'align-center', 'pa-2']">
+											<div>
+												<v-img :src="menu.icon" :width="40" :height="40" contain></v-img>
+											</div>
+											<div class="text-primary-dark mt-1" v-html="menu.label"></div>
+										</v-card>
+									</v-col>
+								</template>
+            </v-row>
+            </template>
+        </div>
+        <div class="confirm-fav-menu-btn-container py-6">
+            <v-btn @click="confirmAddFavMenu" :loading="isAdding" height="48" min-width="100%" elevation="0" color="primary" rounded>
+                <span class="cpn-text-body-1 text-uppercase">{{ text.confirm }}</span>
+            </v-btn>
+        </div>
+    </div>
+</div>
+</template>
+<template v-slot:column-right>
+			<v-container class="news-container">
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isNewsLoading">
+					<cpn-loading />
+				</div>
+				<div v-for="(item, idx) in newsContents" class="news-group-container ma-5" v-else>
+					<div class="group-title cpn-text-h6 font-weight-regular text-white text-uppercase">{{ item.catTitle }}</div>
+					<div @click="goToNews(item)" class="my-3">
+						<span class="see-more-icon-container mr-2">
+							<v-img :src="require('@/assets/images/icons/view-all-content.svg')" width="12" height="12" class="view-promo-icon mr-2" contain></v-img>
+						</span>
+						<a class="text-white">{{ text.see_all }}</a>
+					</div>
+					<div class="news-content-detail-container">
+						<div @click="goToPost(item)" class="news-image-container" >
+							<v-img class="news-image" :src="getImage(item.image)" style="width: 100%; height: 195px;"/>
+						</div>
+						<div class="desc-container my-3">
+							<div class="desc-content">
+								<a @click="goToPost(item)" class="news-title cpn-content-subtitle font-weight-bold" style="color: #ffff;">{{ item.title }}</a>
+							</div>
+							<div class="desc-date">
+								<div class="cpn-text-body-1 text-white" style="font-size: calc(1rem - 2px) !important;">{{ text.betweenDate }} {{ displayDate(item.date) }} - {{ displayDate(item.endDate) }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</v-container>
+		</template>
+</cpn-dsb-page-content-container>
+</div>

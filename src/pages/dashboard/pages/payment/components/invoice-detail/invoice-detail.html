@@ -1,0 +1,119 @@
+<div id="payment-invoice-detail" v-if="isEmpty">
+	<v-card class="invoice-detail-item" elevation="2">
+		<div class="cpn-text-h6 text-uppercase">{{ text.payment_detail }}</div>
+		<v-divider class="my-3" />
+
+		<div v-for="(item, idx) in invoices" :key="'invoice-item-' + idx">
+			<div class="cpn-text-h6 text-primary">{{ item.name }}</div>
+			<div class="cpn-text-subtitle-1">{{ displayMasterBranch(item.branchCode) }}</div>
+			<div class="d-flex mt-2">
+				<div class="flex-grow-1 d-flex flex-row align-center">
+					<fa-icon name="calendar-alt" class="mr-2" type="fal" color="primary-dark" />
+					<span class="cpn-text-subtitle-1">{{ text.duedate }}</span>
+				</div>
+				<div class="flex-shrink-0">
+					<span class="cpn-text-subtitle-1 due-date">{{ item.displayDueDate }}</span>
+				</div>
+			</div>
+			<div class="cpn-text-body-1 my-2">
+				<!-- <span class="font-weight-bold">{{ text.invoice_no }}:&nbsp;</span> -->
+				<span class="font-weight-bold">{{ item.invoiceDesc }}:&nbsp;</span>
+				<span>{{ item.id }}</span>
+			</div>
+			<div class="d-flex" v-if="item.isPartial">
+				<fa-icon name="info-circle" type="fal" color="secondary" />
+				<span class="pl-2 cpn-text-subtitle-2 font-weight-light">
+					{{ text.label_cpn_payment_info }}
+				</span>
+			</div>
+			<div class="pl-2">
+				<div class="d-flex mt-3" v-for="(s, idx) in item.items" :key="'item-' + idx + '-' + s.id"
+					:data-id="s.id">
+					<div v-if="!item.isPartial" class="flex-shrink-0">
+						<v-btn icon @click="toggleSelectItem(s)">
+							<cpn-check-icon :size="20" :checked="s.selected" />
+						</v-btn>
+					</div>
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1" style="line-break: auto !important;">{{ s.name }}</span>
+						<span class="cpn-text-subtitle-2 font-weight-regular">{{ s.desc }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<!-- <span class="price cpn-text-h6 font-weight-regular">{{ s.displayPrice }}</span> -->
+						<span class="price cpn-text-h6 font-weight-regular">{{
+							item.invoiceType !=
+							"invoice"?(s.price>0?'-'+s.displayPrice:s.displayPrice.replace('-','')):s.displayPrice
+							}}</span>
+						<span class="pl-2 cpn-text-subtitle-2">{{ text.baht }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="pl-2 mt-4">
+				<div class="d-flex mt-3" v-for="(discount, didx) in item.selectedItemsDiscounts"
+					:key="'discount-' + didx">
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1" style="line-break: auto !important;">{{ discount.name }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<span class="price cpn-text-h6 font-weight-regular">{{ item.displayPrice(discount.value)
+							}}</span>
+						<span class="pl-2 cpn-text-subtitle-2">{{ text.baht }}</span>
+					</div>
+				</div>
+			</div>
+			<v-divider class="my-4" />
+		</div>
+		<div class="summary">
+			<div class="pl-2 mt-3">
+				<!-----------  new 2021-12-02  ------------>
+				<div class="d-flex mt-3" v-if="true">
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1">{{ text.payment_amount }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<span class="price cpn-text-h6 font-weight-regular">{{ displayPrice(paymentAmount) }}</span>
+						<span class="pl-2 cpn-text-subtitle-2">{{ text.baht }}</span>
+					</div>
+				</div>
+				<div class="d-flex mt-3" v-if="totalTax">
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1">{{ text.withholding_tax }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<span class="price cpn-text-h6 font-weight-regular">{{ displayPrice(totalTax) }}</span>
+						<span class="pl-2 cpn-text-subtitle-2">{{ text.baht }}</span>
+					</div>
+				</div>
+				<div class="d-flex mt-3" v-if="totalVatDiscount">
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1">{{ text.vat_discount }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<span class="price cpn-text-h6 font-weight-regular">{{ displayPrice(totalVatDiscount) }}</span>
+						<span class="pl-2 cpn-text-subtitle-2">{{ text.baht }}</span>
+					</div>
+				</div>
+				<div class="d-flex mt-3" v-if="totalTaxDiscount">
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1">{{ text.withholding_tax_discount }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<span class="price cpn-text-h6 font-weight-regular">{{ displayPrice(totalTaxDiscount) }}</span>
+						<span class="pl-2 cpn-text-subtitle-2">{{ text.baht }}</span>
+					</div>
+				</div>
+				<div class="d-flex mt-3" v-if="totalPrice">
+					<div class="flex-grow-1 d-flex flex-column px-2">
+						<span class="cpn-text-body-1 font-weight-bold">{{ text.total_payment }}</span>
+					</div>
+					<div class="flex-shrink-0">
+						<span class="price cpn-text-h6 font-weight-regular font-weight-bold">{{ displayPrice(totalPrice)
+							}}</span>
+						<span class="pl-2 cpn-text-subtitle-2 font-weight-bold">{{ text.baht }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</v-card>
+</div>

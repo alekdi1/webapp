@@ -1,0 +1,222 @@
+<div id="_edit-profile-page">
+
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+
+			<!-- ==================== view profile ==================== -->
+			<div class="profile-container" v-if="view === 'view'">
+				<div class="d-flex flex-column align-center">
+					<div class="profile-avatar-container">
+						<cpn-user-avatar :user="user" color="#7a0026" :size="90" />
+					</div>
+
+					<div class="user-name mt-4 cpn-text-h5">{{ user.fullName }}</div>
+				</div>
+
+				<table class="profile-info-table">
+					<tbody>
+						<tr>
+							<td class="profile-label">
+								<div class="font-weight-bold">{{ $t("email") }}</div>
+							</td>
+							<td>
+								<div class="py-1">{{ user.email || "-" }}</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="profile-label">
+								<div class="font-weight-bold">{{ $t("phone_number") }}</div>
+							</td>
+							<td>
+								<div class="py-1">{{ user.mobileNo || "-" }}</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="profile-label">
+								<div class="font-weight-bold">{{ text.status_consent }}</div>
+							</td>
+							<td>
+								<div class="py-1">{{ ConsentValue == 'Y'? text.acceptConsent : ConsentValue ==
+									'N'?text.notAcceptConsent:'-'}}</div>
+							</td>
+							<td>
+								<div v-if="user.cpntid" style="color: #b39757;display: flex;cursor: pointer;" @click="showModalConsent">
+									<fa-icon type="far" name="edit" color="primary" :size="20" />
+									<div class="btn-text pl-2">{{ $t("edit") }}</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- <cpn-note-text class="mt-3" v-if="isOwner && (!user.firstName || !user.lastName || !user.mobileNo)">
+					{{ text.contact_note }}
+				</cpn-note-text> -->
+				<cpn-note-text class="mt-3" v-if="isOwner">
+					{{ text.contact_note }}
+				</cpn-note-text>
+
+				<!-- <cpn-note-text class="mt-3" v-else-if="!user.fullName || !user.email || !user.mobileNo">
+					{{ text.contact_note }}
+				</cpn-note-text> -->
+				<div style="padding-top: 20px;" v-if="Shopes.length > 0">
+					<div class="font-weight-bold">{{ $t("shops_in_moderation") }}</div>
+				</div>
+				<div style="display: block;" v-if="Shopes.length > 0">
+					<v-expansion-panels flat style="z-index: 0 !important;">
+						<v-expansion-panel v-for="(shop, idx) in Shopes" :key="'role-' + idx">
+							<v-expansion-panel-header class="px-0">
+								<div class="store-item d-flex flex-row">
+									<div class="avatar-col pl-2">
+										<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="40">
+											<span class="text-white headline">{{ shop.shopName.charAt(0) }}</span>
+										</v-avatar>
+									</div>
+									<div style="padding: 0px 0px 0px 20px;align-self: center;">
+										<span style="font-size: x-revert;">{{ shop.shopName.toUpperCase() }}</span>
+									</div>
+								</div>
+							</v-expansion-panel-header>
+							<v-expansion-panel-content v-for="(branch, idx) in shop.branches" :key="'role-' + idx"
+								class="px-0">
+								<div class="store-item d-flex flex-row">
+									<div class="avatar-col pl-3">
+										<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="35">
+											<span class="text-white headline">{{ branch.code.charAt(0) }}</span>
+										</v-avatar>
+									</div>
+									<div style="padding: 0px 0px 0px 20px;align-self: center;">
+										<span style="font-size: unset;">สาขา {{ branch.nameTh }}</span>
+									</div>
+								</div>
+							</v-expansion-panel-content>
+						</v-expansion-panel>
+					</v-expansion-panels>
+					<div name="footer" style="height: 60px;"></div>
+				</div>
+
+				<div style="padding-bottom: 70px;" v-if="!isOwner">
+					<v-btn @click="editProfileClick" block rounded color="primary" :height="48" v-if="!loading">
+						<span class="text-uppercase">{{ text.editText }}</span>
+					</v-btn>
+				</div>
+			</div>
+
+			<!-- ==================== edit profile ==================== -->
+			<div class="profile-container edit" v-else-if="view === 'edit'">
+				<div class="d-flex flex-column align-center">
+					<div class="profile-avatar-container">
+						<v-avatar v-if="form.avatar.file" :size="90">
+							<v-img :src="form.avatar.fileDataUrl" />
+						</v-avatar>
+						<cpn-user-avatar v-else :user="user" color="#7a0026" :size="90" />
+						<v-card :for="'avatar-file-browser-' + form.avatar.id" title="Select image" :elevation="4"
+							tag="label" v-ripple :width="32" :height="32" color="white" class="browser-avatar-btn">
+							<v-icon :size="20" color="primary-dark">photo_camera</v-icon>
+						</v-card>
+						<input type="file" v-show="false" :id="'avatar-file-browser-' + form.avatar.id"
+							@input="form.avatar.onFileInput($event)" accept="image/x-png,image/gif,image/jpeg" />
+					</div>
+
+					<div class="user-name mt-4 cpn-text-h5">{{ user.fullName }}</div>
+				</div>
+
+				<v-divider class="my-8" />
+
+				<form class="profile-form">
+					<div class="email-container form-group my-3">
+						<label :for="'input-profile-email-' + form.email.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ $t('email') }}</span>
+						</label>
+						<div class="email-input">
+							<input :id="'input-profile-email-' + form.email.id" type="text" class="form-control"
+								:placeholder="$t('email')" v-model="form.email.value" :disabled="loading" />
+						</div>
+						<div class="error-message text-error" v-if="form.validate && form.errors.email">{{
+							form.errors.email }}</div>
+					</div>
+
+					<div class="phone-container form-group my-3">
+						<label :for="'input-profile-phone-' + form.phone.id">
+							<span class="cpn-text-subtitle-1 font-weight-regular">{{ $t('phone_number') }}</span>
+						</label>
+						<div class="phone-input">
+							<input maxlength="10" :id="'input-profile-phone-' + form.phone.id" type="text"
+								class="form-control" :placeholder="$t('phone_number')" v-model="form.phone.value"
+								:disabled="loading" />
+						</div>
+						<div class="error-message text-error" v-if="form.validate && form.errors.phone">{{
+							form.errors.phone }}</div>
+					</div>
+				</form>
+				<div class="bt-btn-container">
+					<v-btn @click="saveEditProfile" :disabled="loading" :loading="loading" block rounded color="primary"
+						:height="48">
+						<span class="text-uppercase">{{ $t("save") }}</span>
+					</v-btn>
+
+					<v-btn class="mt-3" @click="cancelEdit" :disabled="loading" outlined block rounded color="primary"
+						:height="48">
+						<span class="text-uppercase">{{ $t("cancel") }}</span>
+					</v-btn>
+				</div>
+			</div>
+		</template>
+    </cpn-dsb-page-content-container>
+
+    <v-dialog persistent max-width="98%" :width="420" v-model="isShowModal" content-class="login-consent-dialog">
+        <v-card class="dialog-card py-5 px-8">
+            <div class="mt-6">
+                <div>
+                    <div class="py-1">{{ text.consent_desc }} </div>
+                </div>
+                <div class="consent-tnc mt-2">
+                    <table class="w100 consent-table">
+                        <tr>
+                            <td class="check-col">
+                                <v-btn width="32" height="32" icon @click="clickClooseConsentValue('Y')">
+                                    <fa-icon :size="28" v-if="dialogConsentValue == 'Y'" name="check-circle" type="fas" color="primary" />
+                                    <fa-icon :size="28" v-else name="circle" type="fal" color="primary" />
+                                </v-btn>
+                            </td>
+                            <td class="col-center">
+                                <div class="d-flex align-center justify-start">
+                                    <div>{{ text.acceptConsent }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="check-col">
+                                <v-btn width="32" height="32" icon @click="clickClooseConsentValue('N')">
+                                    <fa-icon :size="28" v-if="dialogConsentValue == 'N'" name="check-circle" type="fas" color="primary" />
+                                    <fa-icon :size="28" v-else name="circle" type="fal" color="primary" />
+                                </v-btn>
+                            </td>
+                            <td class="col-center">
+                                <div class="d-flex align-center justify-start">
+                                    <div>{{ text.notAcceptConsent }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="padding: 20px 0px 20px 0px;">
+                    <div class="py-1">{{ text.consent_desc_2 }}</div>
+                    <a :href="text.url" target="_blank">{{text.url}}</a>
+                </div>
+
+                <div class="d-flex justify-center">
+                    <v-btn @click="submitComfirmConsent" :disabled="dialogConsentValue == 'U' || !dialogConsentValue" :height="48" class="confirm-consent-btn" :loading="submitConsentloading" rounded color="primary" :width="180">
+                        <span class="text-white text-uppercase">{{ $t("ok") }}</span>
+                    </v-btn>
+                </div>
+                <div class="d-flex justify-center mt-4" style="position: relative;">
+                    <v-btn fab @click="isShowModal = false" color="primary-dark" :size="56" class="dialog-close-btn">
+                        <v-icon :size="32" color="white">close</v-icon>
+                    </v-btn>
+                </div>
+            </div>
+        </v-card>
+    </v-dialog>
+</div>

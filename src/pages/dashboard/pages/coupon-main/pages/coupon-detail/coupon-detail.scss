@@ -1,0 +1,129 @@
+.coupon-icon{
+    color: #b39656;
+}
+
+#detail-coupon {
+    padding: 15px 0px 15px 0px;
+}
+
+[name=cpn-content-title]{
+    padding-bottom: 15px; display: flex;
+}
+
+.border-icon{
+    border-style: solid;border-color: #b39656;border-radius: 50px;
+}
+
+[name=cpn-content-span]{
+    padding-top: 2px;padding-left: 10px;
+}
+
+.detail-coupon-centent{
+    width: 100%;display: flex;height: auto;padding: 10px 0px;position: relative;
+}
+
+.coupon-detail-img{
+    width: 100%;
+    position: absolute;
+    height: auto;
+    z-index: 1;
+    top: -10%;
+}
+
+[name=display-coupon-img]{
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    max-height: 245px;
+    background-size: contain;
+}
+
+.title-content-coupon{
+    width: 50%;
+    text-align: left;
+    align-self: auto;
+    padding-left: 15px;
+    position: relative;
+}
+
+#transaction-coupon{
+    padding: 10px 0px 10px 0px;
+}
+
+[name=contain-btn-bottom-1]{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    padding: 0px 20px 5px 20px;
+}
+
+[name=contain-btn-bottom-2]{
+    position: sticky;
+    bottom: 0px;
+    width: 100%;
+    padding: 0px 20px 5px;
+    background-color: white;
+}
+
+[name=div-subtitle]{
+    padding-top: 5px;
+}
+
+[name=div-subtitle-span]{
+    padding-left: 10px;
+}
+
+#coupon-detail{
+    min-height: 100%;
+    position: relative;
+    padding-bottom: 25px;
+}
+
+#coupon-discription{
+    padding: 10px;
+    word-break: break-word;
+    white-space: pre-wrap;
+    // margin-bottom: 45px;
+}
+
+.public-action-acknowledge-view {
+    background: #0c0c0c;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .status-content-container {
+        padding-top: 80px;
+        padding-bottom: 24px;
+        padding-left: 24px;
+        padding-right: 24px;
+        flex: 1;
+        width: 100%;
+
+        .status-content {
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .icon-container {
+            margin-bottom: 20px;
+        }
+
+        .status-title {
+            font-size: 20px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+.head-coupon-detail{
+    position: relative;
+    height: 100%;
+}

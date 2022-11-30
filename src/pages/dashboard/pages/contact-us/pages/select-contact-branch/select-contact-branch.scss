@@ -1,0 +1,30 @@
+#select-contact-branch-page {
+    .contact-option {
+        padding: 12px 12px;
+        border-radius: 12px !important;
+        &:before {
+            background: transparent;
+        }
+        .option-label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+        }
+    }
+
+    .select-branch-container {
+        position: relative;
+        padding-top: 84px !important;
+        .search-branch {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+        }
+    }
+
+    .v-list-item {
+        border-radius: 8px !important;
+         
+    }
+}

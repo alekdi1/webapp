@@ -1,0 +1,13 @@
+{
+    "baseUrl": "https://serve-dev.centralpattana.co.th",
+    "integrationFolder": "cypress/integration/dev",
+    "reporter": "cypress-mochawesome-reporter",
+    "reporterOptions": {
+        "reportDir": "cypress/reports",
+        "screenshotsFolder": "cypress/screenshots",
+        "charts": true,
+        "reportPageTitle": "Test Result.",
+        "embeddedScreenshots": true,
+        "inlineAssets": true
+    }
+}

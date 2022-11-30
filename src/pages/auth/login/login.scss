@@ -1,0 +1,139 @@
+@import "../../../styles/vars.scss";
+
+#login-page {
+    .login-form {
+        height: 100%;
+        position: relative;
+
+        .login-card-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    .rn-link {
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .how-to-cpn-btn {
+        .btn-text {
+            font-size: 16px;
+            color: #212423;
+            text-transform: capitalize !important;
+        }
+    }
+
+    .how-to-cpn-dialog {
+        border-radius: 24px !important;
+
+        .how-to-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: $color-primary;
+        }
+
+        .how-to-content {
+            max-height: calc(100vh - 240px);
+            overflow-y: auto;
+            img {
+                max-width: 100% !important;
+            }
+        }
+
+        a.call-center-phone {
+            text-decoration: none;
+            color: $color-primary-dark;
+            &:hover {
+                text-decoration: underline;
+                color: $color-primary;
+            }
+        }
+        
+        #close-btn {
+            position: absolute;
+            bottom: -24px;
+            z-index: 10;
+        }
+    }
+}
+
+.login-consent-dialog {
+    overflow-y: initial !important;
+    border-radius: 24px;
+    .consent-content {
+        max-height: calc(100vh - 320px);
+        overflow-y: auto;
+        border-radius: 0 !important;
+        img {
+            max-width: 100% !important;
+        }
+    }
+
+    .term-dialog-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: $color-primary;
+    }
+
+    .dialog-close-btn {
+        position: absolute !important;
+        bottom: -60px;
+    }
+
+    .consent-table {
+        td {
+            vertical-align: top;
+            &.check-col {
+                width: 40px;
+            }
+
+            &.col-center {
+                vertical-align: middle;
+            }
+        }
+    }
+
+    .consent-html-container {
+        input[type="checkbox"] {
+            display: none;
+        }
+    }
+}
+
+.user-profile-form-dialog {
+    overflow-y: visible;
+    border-radius: 16px !important;
+    .user-profile-form-card {
+        position: relative;
+        border-radius: 16px !important;
+        padding: 48px 24px 72px 24px;
+
+        #close-btn {
+            position: absolute;
+            bottom: -24px;
+            z-index: 10;
+        }
+    }
+}
+
+.splash-screen{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.splash-screen > img{
+    width: 100%;
+}
+
+.how-to-cpn-dialog {
+    .btn-outline {
+        border: 1px solid var(--v-primary-base);
+    }
+}

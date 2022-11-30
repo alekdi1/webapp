@@ -1,0 +1,163 @@
+// ----------- text colors -----------
+.text-secondary {
+    color: $color-secondary !important;
+}
+
+.text-primary {
+    color: $color-primary !important;
+}
+
+.text-primary-dark {
+    color: $color-primary-dark !important;
+}
+
+.text-success {
+    color: $color-success !important;
+}
+
+.text-error {
+    color: $color-error !important;
+}
+
+.text-info {
+    color: $color-info !important;
+}
+
+.text-white {
+    color: white !important;
+}
+
+.text-gray {
+    color: #666666 !important;
+}
+
+
+// ----------- text content style -----------
+.page-content-title {
+    color: $color-primary-dark;
+    font-weight: 700;
+    font-size: #{ 18px / $default-font-size }rem;
+}
+
+.cpn-content-title {
+    font-weight: 700;
+    font-size: #{ 20px / $default-font-size }rem;
+    color: $color-primary-dark;
+}
+
+.cpn-content-default {
+    font-size: #{ 18px / $default-font-size }rem;
+    color: $color-primary-dark;
+}
+
+.cpn-content-subtitle {
+    font-weight: 500;
+    font-size: 1rem;
+    color: $color-primary-dark;
+}
+
+.cpn-content-subtitle2 {
+    font-weight: 500;
+    font-size: #{ 14px / $default-font-size }rem;
+    color: $color-primary-dark;
+}
+
+.cpn-text-h1 {
+    font-family: $default-font !important;
+    font-size: 6rem!important;
+    line-height: 6rem;
+    letter-spacing: -.015625em!important;
+    font-weight: 300;
+}
+.cpn-text-h2 {
+    font-family: $default-font !important;
+    font-size: 3.75rem!important;
+    line-height: 3.75rem;
+    letter-spacing: -.0083333333em!important;
+    font-weight: 300;
+}
+.cpn-text-h3 {
+    font-family: $default-font !important;
+    font-weight: 400;
+    font-size: 3rem!important;
+    line-height: 3.125rem;
+    letter-spacing: normal!important;
+}
+.cpn-text-h4 {
+    font-family: $default-font !important;
+    font-size: 2.125rem!important;
+    line-height: 2.5rem;
+    letter-spacing: .0073529412em!important;
+    font-weight: 400;
+}
+.cpn-text-h5 {
+    font-family: $default-font !important;
+    line-height: 2rem;
+    font-size: 1.5rem!important;
+    font-weight: 400;
+    letter-spacing: normal!important;
+}
+.cpn-text-h6 {
+    font-family: $default-font !important;
+    font-size: 1.25rem!important;
+    font-weight: 700;
+    letter-spacing: .0125em!important;
+    line-height: 2rem;
+}
+.cpn-text-subtitle-1 {
+    font-family: $default-font !important;
+    font-size: 1rem!important;
+    font-weight: 400;
+    line-height: 1.75rem;
+    letter-spacing: .009375em!important;
+}
+.cpn-text-subtitle-2 {
+    font-family: $default-font !important;
+    font-size: .875rem!important;
+    font-weight: 500;
+    line-height: 1.375rem;
+    letter-spacing: .0071428571em!important;
+}
+.cpn-text-body-1 {
+    font-family: $default-font !important;
+    font-size: 1rem!important;
+    font-weight: 400;
+    line-height: 1.5rem;
+    letter-spacing: .03125em!important;
+}
+.cpn-text-body-2 {
+    font-family: $default-font !important;
+    font-size: .875rem!important;
+    font-weight: 400;
+    line-height: 1.25rem;
+    letter-spacing: .0178571429em!important;
+}
+.cpn-text-button {
+    font-family: $default-font !important;
+    font-weight: 500;
+    line-height: 2.25rem;
+    letter-spacing: .0892857143em!important;
+    text-transform: capitalize !important;
+    font-size: .875rem!important;
+}
+.cpn-text-caption {
+    font-family: $default-font !important;
+    font-size: .75rem!important;
+    font-weight: 400;
+    line-height: 1.25rem;
+    letter-spacing: .0333333333em!important;
+}
+.cpn-text-overline {
+    font-family: $default-font !important;
+    font-weight: 500;
+    line-height: 2rem;
+    letter-spacing: .1666666667em!important;
+    font-size: .75rem!important;
+}
+
+.cpn-form-label {
+    font-family: $default-font !important;
+    font-size: 1rem!important;
+    font-weight: 500;
+    letter-spacing: .0125em!important;
+}

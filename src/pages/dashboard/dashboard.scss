@@ -1,0 +1,70 @@
+@import "../../styles/vars.scss";
+
+#_dashboard-page {
+    height: 100vh;
+    // background: #f9fafc;
+    overflow-x: auto;
+    overflow-y: auto;
+
+    .page-container {
+        box-shadow: 0 0 8px #00000080;
+        margin: 0 auto;
+        width: $dashboard-width;
+        min-width: $dashboard-width;
+
+        &.fluid {
+            max-width: unset !important;
+            margin: unset !important;
+        }
+    }
+
+    main {
+        margin-left: $dashboard-menu-width;
+        min-width: $dashboard-width - $dashboard-menu-width;
+        height: 100vh;
+    }
+
+    .cpm-dbs-content-container {
+        padding: 24px !important;
+    }
+
+    .loading-container {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
+
+.cpn-session-expire-dialog {
+    .cpn-session-expire-dialog-popup {
+        border-radius: 24px !important;
+        padding-top: 64px;
+        padding-bottom: 64px;
+
+        .swal2-actions {
+            position: relative;
+            margin-top: 8px !important;
+            button {
+                cursor: pointer;
+                &.swal2-confirm {
+                    border-radius: 50% !important;
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin: 0 !important;
+                    width: 64px;
+                    height: 64px;
+                    padding: 0 !important;
+                    position: absolute;
+                    bottom: -94px;
+
+                    &:focus {
+                        outline: 0;
+                        box-shadow: 0 0 0 3px rgb(222 222 222 / 50%) !important;
+                    }
+                }
+            }
+        }
+    }
+}

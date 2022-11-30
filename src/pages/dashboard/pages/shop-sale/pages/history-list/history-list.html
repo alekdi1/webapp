@@ -1,0 +1,100 @@
+<div id="_shop-sale-history-list-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<v-divider class="mb-3"/>
+
+				<!-- ------------ date picker ------------ -->
+				<section class="d-flex">
+					<div class="flex-grow-1">
+						<div class="cpn-text-body-1 font-weight-bold">{{ text.title }}</div>
+					</div>
+					<div class="flex-shrink-0 d-flex align-center">
+
+						<v-dialog
+							content-class="cpn-custom-date-picker"
+							ref="date-range-picker-dialog"
+							v-model="dateRange.show"
+							:return-value.sync="dateRange.dates"
+							persistent
+							width="360"
+						>
+							<template v-slot:activator="{ on, attrs }">
+								<v-btn text v-bind="attrs" v-on="on" :disabled="loading">
+									<div class="d-flex align-center">
+										<div class="date-range text-capitalize mr-2">{{ dateRange.displayDateRange }}</div>
+										<v-img width="20" :src="require('@/assets/images/icons/calendar.svg')" />
+									</div>
+								</v-btn>
+							</template>
+
+        <v-date-picker :max="dateRange.maxDate" :min="dateRange.minDate" range v-model="dateRange.dates" :locale="lang" :selected-items-text="dateRange.displayPickerDateRang">
+            <v-btn rounded color="primary" @click="confirmSelectDates" :height="48" :disabled="dateRange.dates.length === 0">
+                <span class="text-uppercase px-6">{{ $t("ok") }}</span>
+            </v-btn>
+            <v-btn width="48" height="48" fab color="primary-dark" @click="cancelSelectDate" class="close-date-picker-btn">
+                <v-icon color="white">close</v-icon>
+            </v-btn>
+
+        </v-date-picker>
+        </v-dialog>
+</div>
+</section>
+
+<div style="width: 100%; height: 180px;" class="d-flex justify-center align-center" v-if="loading">
+    <cpn-loading />
+</div>
+
+<div style="width: 100%; height: 180px;" class="d-flex justify-center align-center" v-else-if="isEmpty">
+    <h5>ไม่มีข้อมูล</h5>
+</div>
+
+<!-- ------------ summary ------------ -->
+<section class="mt-4" v-else>
+    <div class="sale-summary-item">
+        <v-card flat class="sale-summary-card">
+            <div class="date-col">
+                <div>
+                    <v-img width="20" :src="require('@/assets/images/icons/calendar-black.svg')" />
+                </div>
+                <div class="summary-date-range" v-html="displaySummaryDates" />
+            </div>
+            <div class="summary-col">
+                <div class="total-label">ยอดขายทั้งหมด (บาท)</div>
+                <div class="summary-value" style="font-size: 36px;">{{ displaySummarySalesAmount }}</div>
+            </div>
+        </v-card>
+    </div>
+    <v-divider class="my-4" />
+
+    <div class="date-summary-list">
+        <div class="sale-summary-item" v-for="(item, idx) in salesDateList" :key="'sale-date-' + item.id" :data-id="item.id">
+            <v-card @click.stop="diffitemdate(item.item)?viewDetail(item):null" class="sale-summary-card" color="white">
+                <div class="date-col">
+                    <div>
+                        <v-img width="20" :src="require('@/assets/images/icons/calendar-black.svg')" />
+                    </div>
+                    <div class="summary-date-range">{{ item.displayDate }}</div>
+                </div>
+                <div class="summary-col">
+                    <div class="total-label">ยอดขายทั้งหมด (บาท)</div>
+                    <div class="summary-value">{{ item.displayTotalAmount }} </div>
+                </div>
+                <div class="action-col" v-if="diffitemdate(item.item)">
+                    <v-btn icon large v-if="!item.isVerified" @click.stop="editItemClick(item)">
+                        <fa-icon name="edit" type="fal" color="primary" size="24" />
+                    </v-btn>
+                    <v-icon v-else size="24" color="primary-dark">arrow_forward_ios</v-icon>
+                </div>
+            </v-card>
+            <div class="item-line" v-if="salesDateList.length > 1" />
+            <div class="item-dot" />
+        </div>
+    </div>
+</section>
+
+</v-container>
+</template>
+</cpn-dsb-page-content-container>
+</div>

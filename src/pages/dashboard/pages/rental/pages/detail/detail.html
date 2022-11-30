@@ -1,0 +1,22 @@
+<div id="_detail-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="page-content-title mb-10">{{ text.title }}</div>
+				
+				<cpn-rental-store :store="rentalDetail" v-if="rentalDetail"/>
+
+				<v-divider class="my-7" />
+				
+				<cpn-rental-data :data="rentalDetail"/>
+				<v-divider class="my-7" />
+
+				<cpn-download-btn v-if="!isCOFCurrentFileEmpty && isLessThanOneYear" @click="downloadCurrentCof()" text="รายละเอียดสัญญา" />
+
+				<v-btn v-if="isStatusTypeRenew && !isCOFRenewFileEmpty" @click="viewQuotation" rounded block color="primary" height="48" class="mt-4 mb-6">
+					<div class="text-uppercase cpn-text-subtitle-1 text-white">{{ text.see_new_quotations }}</div>
+				</v-btn>
+			</v-container>
+		</template>
+    </cpn-dsb-page-content-container>
+</div>

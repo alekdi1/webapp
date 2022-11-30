@@ -1,0 +1,17 @@
+@import "../../../../styles/vars.scss";
+
+#_manage-employees-page {
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1;
+        letter-spacing: 0.18px;
+        text-align: left;
+        color: #000000;
+        padding-left: 16px;
+        border-left: 4px solid $color-primary;
+    }
+}

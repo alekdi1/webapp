@@ -1,0 +1,74 @@
+pipeline {
+    agent { label '10.9.98.28' }
+    
+    environment {
+        dockerImage = ''
+    }
+    
+    stages {
+        stage('update code') {
+           steps {
+                script {
+                    echo "PWD = ${PWD}"
+                }
+            }
+        }
+            
+        stage('Scan') {
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                //withSonarQubeEnv('sonarscan') {
+                //    sh '${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=leadtracking-client -Dsonar.projectName=leadtracking-client'+
+                //     '-Dsonar.language=js -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=. -Dsonar.java.binaries=**/target/classes ' 
+                //}
+                echo "Not SCAN"
+            }
+        }
+        stage('Build image') {
+            steps {
+                script {
+                     withDockerRegistry(
+                        credentialsId: 'f684ee49-7e5b-468d-ba7b-8b66524785e0', 
+                        url: 'https://gitlabdev.centralpattana.co.th') {
+                    // --no-cache
+                    dockerImage = docker.build("gitlabdev.centralpattana.co.th/tenant/cpnserve/webapp:devph1nginx-${env.BUILD_ID}", " -f Dockerfile .")
+                     }
+                }
+            }
+        }
+        stage('Push image') {
+            steps {
+                script {
+                    withDockerRegistry(
+                        credentialsId: 'f684ee49-7e5b-468d-ba7b-8b66524785e0', 
+                        url: 'https://gitlabdev.centralpattana.co.th') {
+                        dockerImage.push()
+                     }
+                    
+                }
+            }
+        }
+        stage('Deployment') {
+            steps {
+                script {
+                    def inptext = readFile file: "deployment-dev_https_template.yml" 
+                    inptext = inptext.replaceAll("image_version", "devph1nginx-${env.BUILD_ID}")
+                    writeFile file: "deployment-dev_https.yml", text: inptext
+                    //sh 'kubectl create secret generic app --from-file=user.txt --dry-run -o yaml | kubectl apply -f -'
+                    sh 'kubectl apply -f deployment-dev_https.yml'
+                }
+            }
+        }
+        stage(' Test Funtional') {
+            steps {
+                //build job: 'JMeterRedemption'
+                script {
+                    echo "call Job test funtional"
+                    //sh 'jmeter -n -t D:\CPN\test_load\redemption.jmx -l D:\CPN\test_load\redemption\redemption.jtl -e -o D:\CPN\test_load\redemption'
+                }
+            }
+        }
+    }
+}

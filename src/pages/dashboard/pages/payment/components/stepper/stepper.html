@@ -1,0 +1,25 @@
+<div id="payment-stepper">
+    <div class="step-container">
+        <div class="step-item" :class="{ active: step.active }" v-for="(step, idx) in steps" :key="'step-' + (idx + 1)" :style="{ 'width': (100 / steps.length) + '%' }">
+            <div class="step-number-container d-flex">
+                <div class="step-number-circle">
+                    <div class="step-number">{{ idx + 1 }}</div>
+                </div>
+                <div class="step-line" />
+            </div>
+            <div
+                class="step-label cpn-text-subtitle-2 "
+                :class="[
+                    step.active ?
+                    'font-weight-medium text-white'
+                    :
+                    'font-weight-light'
+                ]">
+                {{ step.label }}
+            </div>
+        </div>
+    </div>
+    <div class="step-card-content">
+        <slot></slot>
+    </div>
+</div>

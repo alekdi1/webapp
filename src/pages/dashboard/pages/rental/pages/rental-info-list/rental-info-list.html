@@ -1,0 +1,145 @@
+<div id="_rental-info-list-page">
+	<cpn-dsb-page-content-container>
+		<template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<cpn-rental-not-found-modal @show="showModalToggle" v-if="showModal" />
+				<div class="page-content-title mb-2">{{ text.title }}</div>
+				<div class="d-flex">
+					<div class="flex-grow-1">
+						<div class="form-group">
+							<div class="input-group">
+								<label class="form-prepend" for="search-branch">
+									<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+								</label>
+								<input id="search-rental-branch" type="text" class="form-control borderless"
+									:placeholder="text.search_branch" v-model="searchBranch" />
+								<div class="form-apppend">
+									<v-btn :disabled="isLoading || hasNoRental" @click="searchBranch = ''" icon
+										:size="20" v-if="searchBranch">
+										<v-icon>cancel</v-icon>
+									</v-btn>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div @click="showSortDialog" class="d-flex sort-btn-container align-center pl-3">
+						<v-btn :disabled="isLoading || hasNoRental" color="primary" icon>
+							<fa-icon :size="20" name="sort-alt" type="fas" color="primary" />
+						</v-btn>
+					</div>
+				</div>
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+					<cpn-loading />
+				</div>
+				<div class="rental-store-list-container mt-10 mx-2" v-else>
+					<template v-if="!isEmptyRentalStore">
+						<div v-for="(store, idx) in displayStoreList" :key="'rental-store-' + idx"
+							class="rental-store-container">
+							<v-card @click="goToDetail(store)" class="rental-store-card elevation-0 py-4" v-ripple>
+								<div class="rental-store-item d-flex flex-row">
+									<div class="avatar-col pl-3">
+										<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="56">
+											<span class="text-white headline">{{ storeChar(store.contractName) }}</span>
+										</v-avatar>
+									</div>
+									<div class="info-col flex-grow-1">
+										<div>
+											<div class="cpn-content-title ml-3">{{ store.contractName }}</div>
+										</div>
+										<div>
+											<!-- [Web][Rental] สาขาไม่แสดงเป็นภาษาอังกฤษ ในกรณีที่เลือกภาษาอังกฤษ -->
+											<div class="cpn-content-subtitle ml-3">{{ store.branch.displayName }}</div>
+										</div>
+										<div class="duedate-wrapper ml-3">
+											<v-row class="duedate-container">
+												<template v-if="isEmptyInfo(store)">
+													<v-col cols="8">
+														<div class="cpn-content-subtitle2">{{ text.duedate }}</div>
+													</v-col>
+													<v-col>
+														<div class="cpn-content-subtitle2 text-right">
+															{{ displayDueDate(store.end) }}
+														</div>
+													</v-col>
+												</template>
+												<template v-else>
+													<v-col cols="8">
+														<!-- <div class="cpn-content-subtitle2">{{ store.info.name }}</div> -->
+														<div class="cpn-content-subtitle2">
+															{{ getStatusText(store.info.type) }}</div>
+													</v-col>
+													<v-col class="text-right" v-if="isExpiring(store)">
+														<div
+															class="duedate-chip cpn-content-subtitle2 text-white text-center ml-auto">
+															{{ displayDueDate(store.end) }}
+														</div>
+													</v-col>
+													<v-col class="text-right" text-white v-else-if="isRefund(store)">
+														<div
+															class="refund-chip cpn-content-subtitle2 text-white text-center ml-auto">
+															{{ displayDueDate(store.end) }}
+														</div>
+													</v-col>
+													<v-col class="text-right" text-white v-else-if="isRenew(store)">
+														<div
+															class="renew-chip cpn-content-subtitle2 text-center ml-auto">
+															{{ displayDueDate(store.end) }}
+														</div>
+													</v-col>
+													<v-col v-else>
+														<div class="cpn-content-subtitle2 text-right">
+															{{ displayDueDate(store.end) }}
+														</div>
+													</v-col>
+												</template>
+											</v-row>
+										</div>
+									</div>
+								</div>
+							</v-card>
+						</div>
+					</template>
+				</div>
+				<v-divider />
+				<div class="see-expired-link-container text-right mt-3">
+					<a @click="goToExpireList">
+						<div class="text-decoration-underline">{{ text.see_expired }}</div>
+					</a>
+				</div>
+			</v-container>
+		</template>
+	</cpn-dsb-page-content-container>
+
+	<v-dialog v-model="sortDialog.show" content-class="rental-sort-dialog" ref="rental-sort-dialog" max-width="480"
+		persistent>
+		<v-card flat class="py-10 px-6 dialog-card">
+			<div class="d-flex">
+				<div class="cpn-text-h6 flex-grow-1">{{ text.sort_by }}</div>
+			</div>
+
+			<section style="max-height: 480px;overflow-y: auto;margin-left: -8px;">
+				<v-list rounded>
+					<v-list-item-group color="primary">
+						<v-list-item v-for="(item, i) in sortDialog.sortList" :key="i" :value="item.value"
+							@click="sortItemClick(item.value)">
+							<v-list-item-content>
+								<v-list-item-title>
+									<span>{{ item.label }}</span>
+								</v-list-item-title>
+							</v-list-item-content>
+							<v-list-item-icon v-if="sortDialog.sortBy === item.value">
+								<fa-icon name="check" color="primary" type="far" />
+							</v-list-item-icon>
+						</v-list-item>
+					</v-list-item-group>
+				</v-list>
+			</section>
+
+			<div class="d-flex justify-center mt-4">
+				<v-btn :height="48" color="primary" @click="sortDialog.show = false" rounded>
+					<span class="text-uppercase white-text px-6">{{ $t("close") }}</span>
+				</v-btn>
+			</div>
+		</v-card>
+	</v-dialog>
+</div>

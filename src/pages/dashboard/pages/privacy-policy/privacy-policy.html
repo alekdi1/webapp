@@ -1,0 +1,18 @@
+<div id="_pivacy-policy-page">
+
+	<cpn-dsb-page-content-container >
+		<template  v-slot:column-left>
+			<div class="d-flex justify-center align-center" style="height: 100%; width: 100%;" v-if="loading">
+				<cpn-loading />
+			</div>
+			<v-container class="cpm-dbs-content-container" v-else>
+				<div class="page-content-title mb-2">{{ $t("pages.dashboard.menu_pvp") }}</div>
+				<v-divider class="mt-6 mb-6"/>
+				<div class="consent-html" v-html="consentHtml" />
+			</v-container>
+		</template>
+		<template  v-slot:column-right>
+			<cpn-dsb-feed-view category="news" :user="user" />
+		</template>
+	</cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,425 @@
+<div id="_request-form-page">
+
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<div class="loading d-flex justify-center align-center" style="height: 100%;z-index: 5;"
+				v-if="isLoadingAll">
+				<cpn-loading />
+			</div>
+			<div v-if="!isLoadingAll">
+				<div class="request-branch-title d-flex">
+					<div class="mx-5">
+						<div class="font-weight-bold my-5">{{ text.title }}</div>
+						<div class="shop-title-container">
+							<div class="cpn-text-h5 font-weight-bold">{{ requestForm.shop.displayIdAsName }}</div>
+						</div>
+						<div>{{ requestForm.branch_new.displayIdAsName }}</div>
+					</div>
+				</div>
+				<div class="request-form-content px-5">
+					<div class="tab-menu-container py-6">
+						<v-tabs @change="clearStoredData()" v-model="tabType" class="cpn-text-body-1 font-weight-bold"
+							grow centered>
+							<v-tab style="text-transform: capitalize !important;">
+								<span class="cpn-text-body-1 font-weight-bold">{{ text.label_invoice }}</span>
+							</v-tab>
+							<v-tab style="text-transform: capitalize !important;">
+								<span class="cpn-text-body-1 font-weight-bold">{{ text.label_receipt }}</span>
+							</v-tab>
+						</v-tabs>
+					</div>
+					<div>{{ isReceipt ? text.label_recp_info : text.label_inv_info }}</div>
+					<div class="form-group">
+						<div class="email-input-group my-3">
+							<label class="email-input-container">
+								<div class="font-weight-bold">{{ text.email }}</div>
+							</label>
+							<input id="email" type="text" class="form-control borderless" v-model="reqForm.email"
+								placeholder="user@example.com" :disabled="isLoading || isEmpty">
+							<div class="input-error-message mt-1 ml-3" v-if="!reqForm.validateEmail && reqForm.email">
+								{{ text.validate_email }}
+							</div>
+						</div>
+						<div class="selecte-file-option d-flex">
+							<div class="d-flex flex-row align-center flex-grow-1">
+								<v-btn @click="toggleIsCombine(true)" icon>
+									<cpn-check-icon :checked="reqForm.isCombine" />
+								</v-btn>
+								<div>{{ text.req_full_cont }}</div>
+							</div>
+							<div class="d-flex flex-row align-center flex-grow-1">
+								<v-btn @click="toggleIsCombine(false)" icon>
+									<cpn-check-icon :checked="!reqForm.isCombine" />
+								</v-btn>
+								<div>{{ text.req_sep_cont }}</div>
+							</div>
+						</div>
+						<cpn-note-text class="my-3">{{ isReceipt ? text.label_req_recp_cont_info :
+							text.label_req_inv_cont_info }}</cpn-note-text>
+						<v-divider />
+						<div class="item-container my-5">
+							<div class="loading d-flex justify-center align-center" style="height: 160px;"
+								v-if="isLoading">
+								<cpn-loading />
+							</div>
+							<div v-else>
+								<!-- ------------------------- Receipt Form ----------------------------- -->
+								<div v-if="isReceipt">
+									<div v-for="(itm, idx) in receiptItems" :key="'request-receipt-itm-' + idx"
+										class="mt-7 mb-5">
+										<div class="request-year cpn-text-h5 font-weight-bold">
+											{{ displayYear(itm.year) }}
+										</div>
+										<div class="d-flex request-month-btn-container">
+											<div v-for="(mItm, mIdx) in itm.orderMonths"
+												:key="'request-month-' + mItm.id + '-' + mIdx"
+												class="request-month-btn mr-3">
+												<cpn-req-month-btn @click="toggleSelectedMonth(mItm)"
+													:selected="mItm.selected"
+													:date="getDateFromYearAndMonth(itm.year, mItm.id)" />
+											</div>
+										</div>
+										<!-- --------------- Receipt dropdown ------------- -->
+										<div class="mt-5 mb-10">
+											<!-- <div>{{ itm.months[0].receipts[0].invoices }}</div> -->
+											<div v-for="(mItm, mIdx) in itm.orderMonths"
+												:key="'request-receipt-itm-month' + mItm.id + '-' + mIdx "
+												class="request-month-item-container">
+												<v-expansion-panels class="my-2" v-if="mItm.selected" multiple>
+													<v-expansion-panel v-for="(receiptItm, recpIdx) in mItm.receipts"
+														:key="'receipt-itm' + recpIdx">
+														<v-expansion-panel-header>
+															<div class="d-flex">
+																<div class="cpn-text-body-1">
+																	<span class="font-weight-bold mr-2">{{
+																		text.label_recp_no }}:</span>
+																	<span>{{ receiptItm.documentNo }}</span>
+																</div>
+															</div>
+														</v-expansion-panel-header>
+														<v-divider class="mx-5" />
+														<v-expansion-panel-content>
+															<div v-for="(invItm, invIdx) in receiptItm.invoices"
+																:key="'inv-itm-' + invIdx">
+																<div class="cpn-content-subtitle1 mb-1">{{
+																	text.label_inv_no }}: {{ invItm.id }}</div>
+																<div v-if="invItm.paymentDetail">
+																	<div v-for="(paymentItm, pymIdx) in invItm.paymentDetail.paymentItems"
+																		:key="'payment-itm-' + invItm.id + pymIdx">
+																		<div class="d-flex">
+																			<div
+																				class="flex-grow-1 d-flex flex-column px-2">
+																				<span class="cpn-text-body-1">
+																					{{ paymentItm.name }}
+																				</span>
+																			</div>
+																			<div class="flex-shrink-0">
+																				<span>
+																					{{ displayPrice(paymentItm.price) }}
+																				</span>
+																				<span class="pl-2">{{ text.baht
+																					}}</span>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="my-4"
+																		style="width: 100%; height: 1px; background-color: #0000001f;" />
+																	<!-- discount -->
+																	<div class="d-flex" :key="'discount-' + idx"
+																		v-for="(discount, idx) in getInvoiceDiscounts(invItm)">
+																		<div
+																			class="flex-grow-1 d-flex flex-column px-2">
+																			<span class="cpn-text-body-1">
+																				{{ discount.name }}
+																			</span>
+																		</div>
+																		<div class="flex-shrink-0">
+																			<span>
+																				{{ discount.value }}
+																			</span>
+																			<span class="pl-2">{{ text.baht }}</span>
+																		</div>
+																	</div>
+
+																	<div class="invoice-detail-summary-container my-5">
+																		<!-- InvoiceVat -->
+																		<div class="d-flex mt-3"
+																			v-if="getTotalInvoiceVat(invItm)">
+																			<div
+																				class="flex-grow-1 d-flex flex-column px-2">
+																				<span class="cpn-text-body-1">{{
+																					text.vat }}</span>
+																			</div>
+																			<div class="flex-shrink-0">
+																				<span
+																					class="price cpn-text-h6 font-weight-regular">{{
+																					displayPrice(getTotalInvoiceVat(invItm))
+																					}}</span>
+																				<span
+																					class="pl-2 cpn-text-subtitle-2">{{
+																					text.baht }}</span>
+																			</div>
+																		</div>
+
+																		<div class="d-flex mt-3"
+																			v-if="getTotalInvoiceTax(invItm)">
+																			<div
+																				class="flex-grow-1 d-flex flex-column px-2">
+																				<span class="cpn-text-body-1">{{
+																					text.withholding_tax }}</span>
+																			</div>
+																			<div class="flex-shrink-0">
+																				<span
+																					class="price cpn-text-h6 font-weight-regular">{{
+																					displayPrice(getTotalInvoiceTax(invItm))
+																					}}</span>
+																				<span
+																					class="pl-2 cpn-text-subtitle-2">{{
+																					text.baht }}</span>
+																			</div>
+																		</div>
+
+																		<div class="d-flex mt-3"
+																			v-if="getTotalInvoiceVatDiscount(invItm)">
+																			<div
+																				class="flex-grow-1 d-flex flex-column px-2">
+																				<span class="cpn-text-body-1">{{
+																					text.vat_discount }}</span>
+																			</div>
+																			<div class="flex-shrink-0">
+																				<span
+																					class="price cpn-text-h6 font-weight-regular">{{
+																					displayPrice(getTotalInvoiceVatDiscount(invItm))
+																					}}</span>
+																				<span
+																					class="pl-2 cpn-text-subtitle-2">{{
+																					text.baht }}</span>
+																			</div>
+																		</div>
+
+																		<div class="d-flex mt-3"
+																			v-if="getTotalInvoiceTaxDiscount(invItm)">
+																			<div
+																				class="flex-grow-1 d-flex flex-column px-2">
+																				<span class="cpn-text-body-1">{{
+																					text.withholding_tax_discount
+																					}}</span>
+																			</div>
+																			<div class="flex-shrink-0">
+																				<span
+																					class="price cpn-text-h6 font-weight-regular">{{
+																					displayPrice(getTotalInvoiceTaxDiscount(invItm))
+																					}}</span>
+																				<span
+																					class="pl-2 cpn-text-subtitle-2">{{
+																					text.baht }}</span>
+																			</div>
+																		</div>
+																		<div
+																			class="total-amount-text d-flex flex-row mt-3 font-weight-bold">
+																			<div class="font-weight-bold">
+																				{{ text.total_payment }}
+																			</div>
+																			<span class="d-flex justify-end ml-auto">
+																				<span
+																					class="cpn-content-default align-self-end">
+																					{{
+																					displayTotalPrice(invItm.paymentDetail.paymentItems)
+																					}}
+																				</span>
+																				<span class="ml-1 align-self-end">
+																					{{ text.baht }}
+																				</span>
+																			</span>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</v-expansion-panel-content>
+													</v-expansion-panel>
+												</v-expansion-panels>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- ------------------------- Invoice Form ------------------------------ -->
+								<div v-else>
+									<div v-for="(itm, idx) in invoiceItems" :key="'request-itm-' + idx"
+										class="mt-7 mb-5">
+										<div class="request-year cpn-text-h5 font-weight-bold mb-3">
+											{{ displayYear(itm.year) }}
+										</div>
+										<div class="d-flex request-month-btn-container">
+											<div v-for="(mItm, mIdx) in itm.orderMonths"
+												:key="'request-month-' + mItm.id + '-' + mIdx"
+												class="request-month-btn mr-3">
+												<cpn-req-month-btn @click="toggleSelectedMonth(mItm)"
+													:selected="mItm.selected"
+													:date="getDateFromYearAndMonth(itm.year, mItm.id)" />
+											</div>
+										</div>
+										<div class="mt-5 mb-10">
+											<div v-for="(mItm, mIdx) in itm.orderMonths"
+												:key="'request-itm-month-' + mItm.id + '-' + mIdx"
+												class="request-month-item-container">
+												<v-expansion-panels class="my-2" v-if="mItm.selected" multiple>
+													<v-expansion-panel v-for="(invItm, invIdx) in mItm.invoices"
+														:key="'invoice-itm' + invIdx">
+														<v-expansion-panel-header>
+															<div class="d-flex">
+																<div class="cpn-text-body-1">
+																	<span class="font-weight-bold mr-2">
+																		{{ text.label_inv_no }}:
+																	</span>
+																	<span>{{ invItm.id }}</span>
+																</div>
+															</div>
+														</v-expansion-panel-header>
+														<v-divider class="mx-5" />
+														<v-expansion-panel-content>
+															<div v-for="(paymentItm, pymIdx) in invItm.paymentItems"
+																:key="'payment-itm' + pymIdx"
+																class="invoice-payment-itm">
+																<div class="invoice-system-cost my-3"
+																	v-if="paymentItm.selected">
+																	<div class="d-flex">
+																		<div
+																			class="flex-grow-1 d-flex flex-column px-2">
+																			<span class="cpn-text-body-1">
+																				{{ paymentItm.name }}
+																			</span>
+																		</div>
+																		<div class="flex-shrink-0">
+																			<span>
+																				{{ displayPrice(paymentItm.price) }}
+																			</span>
+																			<span class="pl-2">{{ text.baht }}</span>
+																		</div>
+																	</div>
+																</div>
+															</div>
+
+															<div class="my-4"
+																style="width: 100%; height: 1px; background-color: #0000001f;" />
+															<!-- discount -->
+															<div class="d-flex" :key="'discount-' + idx"
+																v-for="(discount, idx) in getInvoiceDiscounts(invItm)">
+																<div class="flex-grow-1 d-flex flex-column px-2">
+																	<span class="cpn-text-body-1">
+																		{{ discount.name }}
+																	</span>
+																</div>
+																<div class="flex-shrink-0">
+																	<span>
+																		{{ discount.value }}
+																	</span>
+																	<span class="pl-2">{{ text.baht }}</span>
+																</div>
+															</div>
+
+
+															<div class="invoice-detail-summary-container my-5">
+																<!-- InvoiceVat -->
+																<div class="d-flex mt-3"
+																	v-if="getTotalInvoiceVat(invItm)">
+																	<div class="flex-grow-1 d-flex flex-column px-2">
+																		<span class="cpn-text-body-1">{{ text.vat
+																			}}</span>
+																	</div>
+																	<div class="flex-shrink-0">
+																		<span
+																			class="price cpn-text-h6 font-weight-regular">{{
+																			displayPrice(getTotalInvoiceVat(invItm))
+																			}}</span>
+																		<span class="pl-2 cpn-text-subtitle-2">{{
+																			text.baht }}</span>
+																	</div>
+																</div>
+
+																<div class="d-flex mt-3"
+																	v-if="getTotalInvoiceTax(invItm)">
+																	<div class="flex-grow-1 d-flex flex-column px-2">
+																		<span class="cpn-text-body-1">{{
+																			text.withholding_tax }}</span>
+																	</div>
+																	<div class="flex-shrink-0">
+																		<span
+																			class="price cpn-text-h6 font-weight-regular">{{
+																			displayPrice(getTotalInvoiceTax(invItm))
+																			}}</span>
+																		<span class="pl-2 cpn-text-subtitle-2">{{
+																			text.baht }}</span>
+																	</div>
+																</div>
+
+																<div class="d-flex mt-3"
+																	v-if="getTotalInvoiceVatDiscount(invItm)">
+																	<div class="flex-grow-1 d-flex flex-column px-2">
+																		<span class="cpn-text-body-1">{{
+																			text.vat_discount }}</span>
+																	</div>
+																	<div class="flex-shrink-0">
+																		<span
+																			class="price cpn-text-h6 font-weight-regular">{{
+																			displayPrice(getTotalInvoiceVatDiscount(invItm))
+																			}}</span>
+																		<span class="pl-2 cpn-text-subtitle-2">{{
+																			text.baht }}</span>
+																	</div>
+																</div>
+
+																<div class="d-flex mt-3"
+																	v-if="getTotalInvoiceTaxDiscount(invItm)">
+																	<div class="flex-grow-1 d-flex flex-column px-2">
+																		<span class="cpn-text-body-1">{{
+																			text.withholding_tax_discount }}</span>
+																	</div>
+																	<div class="flex-shrink-0">
+																		<span
+																			class="price cpn-text-h6 font-weight-regular">{{
+																			displayPrice(getTotalInvoiceTaxDiscount(invItm))
+																			}}</span>
+																		<span class="pl-2 cpn-text-subtitle-2">{{
+																			text.baht }}</span>
+																	</div>
+																</div>
+
+																<div
+																	class="total-amount-text d-flex flex-row mt-3  font-weight-bold">
+																	<div class="font-weight-bold">{{ text.total_payment
+																		}}
+																	</div>
+																	<span class="d-flex justify-end ml-auto">
+																		<span
+																			class="cpn-content-default align-self-end">
+																			{{ displayTotalPrice(invItm.paymentItems) }}
+																		</span>
+																		<span class="ml-1 align-self-end">
+																			{{ text.baht }}
+																		</span>
+																	</span>
+																</div>
+															</div>
+														</v-expansion-panel-content>
+													</v-expansion-panel>
+												</v-expansion-panels>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<v-divider />
+						<div class="request-form-continue-btn-container my-4">
+							<v-btn @click="goToSummary" min-width="100%" rounded height="48" :loading="isUpdating"
+								:disabled="disabledContinueBtn" class="continue-btn">
+								<span class="text-white cpn-content-default">{{ text.continue }}</span>
+							</v-btn>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+    </cpn-dsb-page-content-container>
+</div>

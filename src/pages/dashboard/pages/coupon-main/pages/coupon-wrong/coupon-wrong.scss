@@ -1,0 +1,26 @@
+[name=contain-btn-bottom]{
+    position: absolute;
+    bottom: 50px;
+    width: 100%;
+    padding: 0px 20px 25px 20px;
+}
+
+.coupon-wrong-text{
+    padding: 20px;position: relative;height: 100%;
+}
+
+.coupon-wrong-detail{
+    position: absolute;top: 9%;width: 95%;padding: 10px;text-align: center;
+}
+
+.coupon-wrong-img{
+    text-align: center;padding-bottom: 20px;
+}
+
+[name=div-coupon-wrong-text]{
+    padding-top: 5px;justify-content: center;
+}
+
+[name=line-h]{
+    margin: 20px 0px 20px 3px;
+}

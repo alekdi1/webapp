@@ -1,0 +1,44 @@
+@import "../../.././../../../styles/vars.scss";
+
+#_repair-form-page {
+
+    .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #000000;
+        padding-left: 12px;
+        border-left: 4px solid $color-primary;
+    }
+
+    .image-form-list {
+        .img-item {
+            position: relative;
+            border: 2px dashed #d7d7d7;
+            width: 100%;
+            height: 108px;
+            border-radius: 40%;
+
+            .remove-img-btn {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+
+            .v-image {
+                border-radius: inherit !important;
+            }
+
+            label {
+                cursor: pointer;
+            }
+        }
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    .selected-time-btn {
+        color: $color-primary;
+    }
+}

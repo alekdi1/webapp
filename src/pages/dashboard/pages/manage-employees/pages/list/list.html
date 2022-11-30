@@ -1,0 +1,107 @@
+<div id="_emp-list-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container" >
+
+				<div class="d-flex flex-column" style="flex: 1;">
+					<div class="page-content-title mb-2">{{ text.title_emp_list }}</div>
+				
+					<!-- ============= search ============= -->
+					<div class="form-group" ref="search-form-group">
+						<div class="input-group">
+							<label class="form-prepend" for="search-emp-branch">
+								<fa-icon :size="18" name="search" type="far" color="primary-dark"/>
+							</label>
+							<input autocomplete="off" :disabled="loading" :readonly="loading" v-model="search" id="search-emp-branch" type="text" class="form-control borderless" :placeholder="text.search_branch">
+							<div class="form-apppend">
+								<v-btn :disabled="loading" @click="clearSearch" icon :size="20" v-if="search">
+									<v-icon>cancel</v-icon>
+								</v-btn>
+							</div>
+						</div>
+					</div>
+
+					<!-- ============= emp list ============= -->
+
+					<div v-if="loading" class="loading-container">
+						<cpn-loading />
+					</div>
+					<div v-else-if="employees.length === 0" class="no-data">
+						<div class="text-error">ไม่มีข้อมูล</div>
+					</div>
+					
+					<v-list class="employee-list mt-3" v-if="empList.length > 0">
+						<v-list-item v-for="(emp, idx) in empList" :key="'emp-' + idx" @click="viewDetail(emp)">
+							<v-list-item-avatar class="mt-0">
+								<cpn-user-avatar :user="emp" :color="idx % 2 === 0 ? 'error' : '#0e192c'"/>
+							</v-list-item-avatar>
+							<v-list-item-content>
+								<v-list-item-title>
+									<div class="emp-name cpn-text-subtitle-1 font-weight-bold">{{ emp.fullName }}</div>
+								</v-list-item-title>
+								<v-list-item-subtitle>
+									<div class="d-flex align-center">
+										<strong class="pr-2  font-weight-bold">{{ text.user_id }}:</strong>
+										<span class="cpn-text-subtitle-1">{{ emp.username || "-" }}</span>
+									</div>
+								</v-list-item-subtitle>
+								<v-list-item-subtitle class="font-weight-medium">
+									<span>{{ emp.displayRole }}</span>
+								</v-list-item-subtitle>
+
+								<!-- <v-list-item-subtitle>
+									{{ emp.displayBranchList }}
+								</v-list-item-subtitle> -->
+							</v-list-item-content>
+							<v-list-item-action>
+								<v-btn icon @click.stop="editEmp(emp)" v-if="user.id !=  emp.id">
+									<fa-icon name="edit" type="fal" color="primary" :size="18"/>
+								</v-btn>
+							</v-list-item-action>
+							<v-list-item-action>
+								<v-btn icon color="error" @click.stop="deleteEmp(emp)"  v-if="user.id !=  emp.id && permissionshop(emp)" >
+									<fa-icon name="trash-alt" type="fal" color="primary" :size="18"/>
+								</v-btn>
+							</v-list-item-action>
+						</v-list-item>
+					</v-list>
+
+				</div>
+
+				<div class="add-emp-btn-container">
+					<v-btn @click="addNewEmp" :disabled="loading" rounded block color="primary" :height="48">
+						<span class="text-uppercase">{{ text.add_new_emp }}</span>
+					</v-btn>
+				</div>
+			</v-container>
+
+			
+		</template>
+    </cpn-dsb-page-content-container>
+
+    <!-- ============= Delete dialog ============= -->
+    <div ref="delete-dialog-container">
+        <v-dialog persistent content-class="delete-emp-dialog" v-model="deleteDialog.show" max-width="480" :attach="$refs['delete-dialog-container']">
+            <v-card class="dialog-card">
+                <div class="d-flex flex-column align-center">
+                    <v-avatar :size="80" color="secondary">
+                        <fa-icon :size="36" class="rounded-0" name="trash-alt" type="fal" color="error" />
+                    </v-avatar>
+                </div>
+                <div class="d-flex flex-column align-center mt-6">
+                    <div class="cpn-text-body-1">{{ deleteDialog.content }}</div>
+                </div>
+
+                <div class="d-flex justify-center mt-8">
+                    <v-btn @click="deleteDialog.show = false" :height="48" :disabled="deleteDialog.loading" class="mx-2" :width="120" depressed rounded color="secondary">
+                        <span class="text-primary-dark text-uppercase">{{ $t("cancel") }}</span>
+                    </v-btn>
+
+                    <v-btn @click="confirmDeleteEmp" :height="48" :loading="deleteDialog.loading" :disabled="deleteDialog.loading" class="mx-2" :width="120" depressed rounded color="error">
+                        <span class="text-white text-uppercase">{{ $t("delete") }}</span>
+                    </v-btn>
+                </div>
+            </v-card>
+        </v-dialog>
+    </div>
+</div>

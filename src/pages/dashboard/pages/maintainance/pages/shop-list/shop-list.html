@@ -1,0 +1,97 @@
+<div id="_shop-list-page">
+
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+			<v-container class="cpm-dbs-content-container">
+				<div class="cpn-text-h6 mb-3">{{ text.title }}</div>
+				<div class="d-flex">
+					<div class="flex-grow-1">
+						<div class="form-group">
+							<div class="input-group">
+								<label class="form-prepend" for="search-branch">
+									<fa-icon :size="18" name="search" type="far" color="primary-dark" />
+								</label>
+								<input id="search-branch" type="text" class="form-control borderless"
+									:placeholder="text.search_branch" v-model="search" :disabled="isLoading"/>
+								<div class="form-apppend">
+									<v-btn :disabled="isLoading" @click="search = ''" icon :size="20" v-if="search">
+										<v-icon>cancel</v-icon>
+									</v-btn>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex sort-btn-container align-center pl-3">
+						<v-btn @click="showSortDialog" :disabled="isLoading || hasNoStore" color="primary" icon>
+							<fa-icon :size="20" name="sort-alt" type="fas" color="primary"/>
+						</v-btn>
+					</div>
+				</div>
+				<div class="loading d-flex justify-center align-center" style="height: 160px;" v-if="isLoading">
+					<cpn-loading />
+				</div>
+				<div class="maintainance-store-list-container mt-10 mx-2" v-else>
+					<template v-if="displayStoreList.length > 0">
+						<div v-for="(store, idx) in displayStoreList" :key="'maintainance-store-' + idx"
+							class="maintainance-store-container">
+							<v-card class="maintainance-store-card elevation-0 py-5" @click="goToMaintainanceStatus(store)" v-ripple>
+								<div class="maintainance-store-item d-flex flex-row align-center">
+									<div class="avatar-col pl-3">
+										<v-avatar :color="idx % 2 === 0 ? 'error' : '#0e192c'" size="56">
+											<span class="text-white headline">{{ storeChar(store.displayIdAsName) }}</span>
+										</v-avatar>
+									</div>
+									<div class="info-col">
+										<div>
+											<div class="cpn-content-title ml-3">{{ store.displayIdAsName }}</div>
+										</div>
+										<div>
+											<div class="cpn-content-subtitle ml-3">{{ store.brachNameMaster }}</div>
+										</div>
+										<div v-if="store.inCompleteMaintenances > 0">
+											<div class="cpn-content-subtitle ml-3">{{ displayInProgressMaintenance(store.inCompleteMaintenances) }}</div>
+										</div>
+									</div>
+								</div>
+							</v-card>
+						</div>
+					</template>
+        <div v-else class="d-flex justify-center align-center" style="height: 100px;">
+            <span>{{ text.data_not_found }}</span>
+        </div>
+</div>
+</v-container>
+</template>
+</cpn-dsb-page-content-container>
+
+<v-dialog v-model="sortDialog.show" content-class="maintainance-sort-dialog" ref="maintainance-sort-dialog" max-width="480" persistent>
+    <v-card flat class="py-10 px-6 dialog-card">
+        <div class="d-flex">
+            <div class="cpn-text-h6 flex-grow-1">{{ text.sort_by }}</div>
+        </div>
+
+        <section style="max-height: 480px;overflow-y: auto;margin-left: -8px;">
+            <v-list rounded>
+                <v-list-item-group color="primary">
+                    <v-list-item v-for="(item, i) in sortDialog.sortList" :key="i" :value="item.value" @click="sortItemClick(item.value)">
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                <span>{{ item.label }}</span>
+                            </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-icon v-if="sortDialog.sortBy === item.value">
+                            <fa-icon name="check" color="primary" type="far" />
+                        </v-list-item-icon>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </section>
+
+        <div class="d-flex justify-center mt-4">
+            <v-btn :height="48" color="primary" @click="sortDialog.show = false" rounded>
+                <span class="text-uppercase text-white px-6">{{ $t("close") }}</span>
+            </v-btn>
+        </div>
+    </v-card>
+</v-dialog>
+</div>

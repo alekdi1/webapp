@@ -1,0 +1,76 @@
+<div id="_coupon-confirm-page">
+    <cpn-dsb-page-content-container>
+        <template v-slot:column-left>
+            <div id="coupon-confirm">
+                <v-container class="cpm-dbs-content-container">
+                    <div class="cpn-text-h6 mb-3">{{ text.label_coupon_text }}</div>
+                    <div>
+                        <hr>
+                        <div style=" padding-top: 15px;">
+                            <div class="cpn-content-title">McDonald's</div>
+                            <div class="flex-grow-1 d-flex flex-row align-center" style="padding: 15px 0px 15px 0px;">
+                                <!-- <v-icon class="mr-2">calendar_view_month</v-icon> -->
+                                <span class="cpn-content-subtitle">พระราม 9</span>
+                            </div>
+                            <div class="cpn-content-subtitle" style="padding-bottom: 15px;">
+                                <v-icon class="mr-2">calendar_view_month</v-icon>
+                                <span class="cpn-content-subtitle">วันที่ทำการ 15 ต.ค. 64 เวลา 13.35</span>
+                            </div>
+                        </div>
+                        <div style="padding-top: 15px;">
+                            <div class="section-title">
+                                <div style="padding-bottom: 5px;">{{ text.labelcoupon }}</div>
+                            </div>
+                            <div class="section-title-detail">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control borderless"
+                                            :placeholder="text.placeholder_coupon_code" v-model="form.coupon_code"
+                                            style="background: #ebebeb;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div style="padding-top: 15px;">
+                            <div class="section-title">
+                                <div style="padding-bottom: 5px;">{{ text.labelreceipt }}</div>
+                            </div>
+                            <div class="section-title-detail">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control borderless"
+                                            :placeholder="text.placeholder_receipt" v-model="form.receipt_no"
+                                            style="background: #ebebeb;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div style="padding-top: 15px;">
+                            <div class="section-title">
+                                <div style="padding-bottom: 5px;">{{ text.labeltotalamount }}</div>
+                            </div>
+                            <div class="section-title-detail">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control borderless"
+                                            :placeholder="text.placeholder_totalamount" v-model="form.total_amount"
+                                            style="background: #ebebeb;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </v-container>
+                <v-container class="cpm-dbs-content-container" style="position: absolute;bottom: 50px;">
+                    <div class="confirm-btn-container">
+                        <v-btn @click="submitConfirmAoupon()" class="confirm-btn" :height="48" color="primary"
+                            elevation="0" block rounded>
+                            <div class="text-uppercase cpn-content-subtitle text-white">{{ text.confirm_user_thecoupon
+                                }}</div>
+                        </v-btn>
+                    </div>
+                </v-container>
+            </div>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

@@ -1,0 +1,146 @@
+<div id="_rewards-earn-redeem-form-page">
+	<cpn-dsb-page-content-container >
+		<template v-slot:column-left>
+            <div v-if="showTopAlert" class="rewards-form-top-alert">
+                <table class="w100 member-table">
+                    <tbody>
+                        <tr>
+                            <td class="col-member-image">
+                                <v-icon color="#CB6067" :size="20">error</v-icon>
+                            </td>
+                            <td class="col-member-data">
+                                <div class="text-15">{{ topAlertMessage }}</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+			<v-container class="cpm-dbs-content-container">
+				<div class="text-18 font-weight-bold mb-10">{{ text.title }}</div>
+                <!-- Member -->
+                <section v-if="member" class="mb-6">
+                    <table class="w100 member-table">
+                        <tbody>
+                            <tr>
+                                <td class="col-member-image">
+                                    <v-img :src="require('@/assets/images/icons/user.svg')" width="26" height="34"/>
+                                </td>
+                                <td class="col-member-data">
+                                    <div class="text-15 font-weight-bold mb-1">{{ member.displayName }}</div>
+                                    <div class="text-12 mb-1">{{ text.the_1 }}: <b>{{ member.cardNo }}</b></div>
+                                    <div class="text-12">{{ text.the_1_point }}: <b>{{ displayPointBalance }}</b></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <v-divider class="mb-6"/>
+                <!-- Total Amount -->
+                <section class="mb-6">
+                    <div class="text-15 font-weight-bold mb-6">{{ text.total_amount_title }}</div>
+                    <div class="form-group">
+                        <input ref="totalAmount" :disabled="loading" v-model="totalAmountText" @input="totalAmountTextChanged($event)" @focus="focusTotalAmount()" @blur="blurTotalAmount()" placeholder='0.00' type="text" class="form-control total-amount-input text-36 text-right">
+                    </div>
+                </section>
+                <v-divider v-if="canRedeem" class="mb-4"/>
+                <!-- Redeem -->
+                <section v-if="canRedeem" class="mb-6">
+                    <label for="">
+                        <div class="d-flex align-center">
+                            <span class="text-15 font-weight-bold">{{ text.redeem_title_1 }}</span>
+                            <img :src="require('@/assets/images/t1c-logo.png')" alt="" style="width: 24px; height:25px; margin-left: 8px; margin-right: 8px; margin-bottom: 12px;" />
+                            <span class="text-15 font-weight-bold">{{ text.redeem_title_2 }}</span>
+                        </div>
+                    </label>
+                    <div class="text-15 mb-6">{{ text.redeem_subtitle }}</div>
+                    <div class="redeem-input-box mb-6"
+                        :class="{'box-error': !isEnoughPoint || !isMoreThanMinPointRedeem}">
+                        <v-row @click="redeemWithDiscount">
+                            <v-col :class="['col-redeem-input-discount-title', (isRedeemWithDiscount ? 'enabled' : 'disabled'), (isRedeemWithDiscount ? 'col-4' : '')]">
+                                <div class="text-18 font-weight-bold">{{ text.discount }} ({{ text.baht }})</div>
+                            </v-col>
+                            <v-col :class="['col-redeem-input-discount-input', (isRedeemWithDiscount ? 'enabled' : 'disabled'), (isRedeemWithDiscount ? 'col-8' : '')]">
+                                <input v-if="isRedeemWithDiscount" :disabled="loading" v-model="redeemDiscount" @input="redeemDiscountChanged(redeemDiscount)" @blur="blurDiscount()" step='0.01' placeholder='0.00' type="number" class="text-36 text-color-dark-gray text-right" style="width: 100%;">
+                                <div v-else :class="['font-weight-bold', 'text-right', (isEnoughPoint && isMoreThanMinPointRedeem ? 'text-27' : 'text-18'), (isEnoughPoint && isMoreThanMinPointRedeem ? 'text-black' : 'text-red')]">
+                                    {{ displayRedeemDiscount }}
+                                </div>
+                            </v-col>
+                        </v-row>
+                        <v-row @click="redeemWithPoint">
+                            <v-col :class="['col-redeem-input-point-title', (isRedeemWithPoint ? 'enabled' : 'disabled'), (isRedeemWithPoint ? 'col-4' : '')]">
+                                <div class="text-18 font-weight-bold">{{ text.redeem_use_point }}</div>
+                            </v-col>
+                            <v-col :class="['col-redeem-input-point-input', (isRedeemWithPoint ? 'enabled' : 'disabled'), (isRedeemWithPoint ? 'col-8' : '')]">
+                                <input v-if="isRedeemWithPoint" :disabled="loading" v-model="redeemPoint" @input="redeemPointChanged(redeemPoint)" @blur="blurPoint()" placeholder='0' type="number" class="text-36 text-color-dark-gray text-right" style="width: 100%;">
+                                <div v-else :class="['font-weight-bold', 'text-right', (isEnoughPoint && isMoreThanMinPointRedeem ? 'text-27' : 'text-18'), (isEnoughPoint && isMoreThanMinPointRedeem ? 'text-black' : 'text-red')]">
+                                    {{ displayRedeemPoint }}
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </div>
+                    <div class="text-12 text-color-gray mb-3">{{ text.ex_redeem_rate }}</div>
+                    <table class="w100 redeem-ex-table">
+                        <tbody>
+                            <tr>
+                                <td class="col-redeem-ex-data">
+                                    <div class="text-12 text-color-gray">{{ redeemDiscountEXText(1) }}</div>
+                                    <div class="text-12 text-color-gray">{{ redeemDiscountEXText(3) }}</div>
+                                </td>
+                                <td class="col-redeem-ex-vertical-separater-line"></td>
+                                <td class="col-redeem-ex-data pl-6">
+                                    <div class="text-12 text-color-gray">{{ redeemDiscountEXText(2) }}</div>
+                                    <div class="text-12 text-color-gray">{{ redeemDiscountEXText(4) }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <v-divider class="mb-6"/>
+                <!-- Total Amount -->
+                <section class="mb-6">
+                    <table class="w100 earn-table mb-3">
+                        <tbody>
+                            <tr>
+                                <td class="col-earn-title">
+                                    <div class="text-15 font-weight-bold">{{ text.earn_title }}</div>
+                                </td>
+                                <td class="col-earn-total-amount text-right">
+                                    <div class="text-15">{{ displayTotalAmount }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div v-if="displayTotalDiscount" class="text-15 text-right">{{ displayTotalDiscount }}</div>
+                    <div class="text-36 font-weight-bold text-right mt-6 mb-6">{{ displayTotalAmountWithDiscount }}</div>
+                    <table class="w100 earn-point-table mb-6">
+                        <tbody>
+                            <tr>
+                                <td class="col-earn-point-title">
+                                    <div class="text-15">{{ text.earn_point }}</div>
+                                </td>
+                                <td class="col-earn-point text-right">
+                                    <div class="text-18 font-weight-bold">{{ displayEarnPoint }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <v-divider class="mb-6"/>
+                <!-- Note -->
+                <section class="mb-12">
+                    <div class="text-15 font-weight-bold mb-3">{{ text.note_title }}</div>
+                    <div class="text-12 text-color-gray text-right mb-1">{{ noteCounter }}</div>
+                    <div class="form-group">
+                        <input :disabled="loading" v-model="note" type="text" :maxlength="noteLimit" class="form-control">
+                    </div>
+                </section>
+                <!-- Next -->
+                <section class="mt-6 mb-6">
+                    <v-btn :disabled="submitDisabled || loading" :loading="loading" @click="submitEarnRedeemForm" block :height="48" rounded :outlined="submitDisabled || loading" color="primary">
+                        <span class="text-uppercase">{{ text.next }}</span>
+                    </v-btn>
+                </section>
+			</v-container>
+        </template>
+    </cpn-dsb-page-content-container>
+</div>

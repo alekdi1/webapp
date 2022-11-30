@@ -1,0 +1,96 @@
+<div id="payment-invoice-history-detail">
+	<v-card class="rounded-xl">
+		<div class="invoice-history-detail-container px-5 py-6">
+			<div class="detail-title pb-3" style="display: flex;">
+				<div class="span cpn-content-title" style="width: 100%;padding-top: 18px;">{{ displayBPName }}</div>
+				<v-btn text :disabled="downloading" :loading="downloading" class="mt-3 download-slip-btn"
+					@click="downloadSlip" v-if="selectedInvoiceDetail.refKey">
+					<span class="text-uppercase btn-text">{{ text.download}}</span>
+				</v-btn>
+			</div>
+			<div v-for="(invoice, index) in invoices" :key="'invoice-detail-' + index"
+				class="invoice-common-info-container">
+				<v-divider />
+				<div class="cpn-content-title text-primary mt-2">
+					<div class="span">{{ displayShop(invoice.shop) }}</div>
+				</div>
+				<div class="shop-branch">
+					<div class="span">{{ displayMasterBranch(invoice.branch.id) }}</div>
+				</div>
+				<div class="invoice-due-date-container mb-3">
+					<v-img class="due-date-icon mr-3" :src="require('@/assets/images/dashboard-calendar-outline.svg')"
+						contain></v-img>
+					<span>{{ text.duedate }}</span>
+					<div class="span my-3">{{ displayDate(invoice.endDate) }}</div>
+				</div>
+				<div class="invoice-payment-method-container my-3">
+					<v-img class="payment-method-icon mr-3" :src="getPaymentMethodIcon" contain></v-img>
+					<span>{{ getPaymentMethodText }}</span>
+				</div>
+				<!-- <v-divider /> -->
+
+				<!-- <v-btn text :disabled="downloading" :loading="downloading" class="mt-3 download-slip-btn" @click="downloadSlip">
+					<span class="text-uppercase btn-text">{{ text.download }}</span>
+				</v-btn> -->
+
+				<!-- <div class="invoice-no-container my-4">
+					<div class="page-content-title">{{ text.invoice_no }}</div>
+					<span>{{ invoice.invoiceId }}</span>
+				</div>
+				<div v-for="(detail, detailIndex) in invoice.paymentDetail.paymentItems" :key="'paymnet-detail' + detailIndex" class="invoice-detail-container">
+					<div class="payment-item-detail-container mt-3">
+						<div class="d-flex flex-row">
+							<div>{{ detail.name }}</div>
+							<span class="d-flex justify-end ml-auto">
+								{{ displayAmount(detail.value) }} {{ text.baht }}
+							</span>
+						</div>
+					</div>
+					<div v-if="hasDiscount(detail.discounts)" class="d-flex flex-column">
+						<div v-for="(discount, discountIndex) in detail.discounts" :key="'payment-detail-discount' + discountIndex">
+							<div class="d-flex flex-row">
+								<div class="d-flex flex-shrink-1">{{ discount.name }}</div>
+								<span class="d-flex flex-shrink-0">
+									{{ displayAmount(discount.value) }} {{ text.baht }}
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<v-divider class="mt-3"/>
+				<div class="invoice-detail-summary-container my-5">
+					<div class="d-flex flex-row my-3">
+						<div>{{ text.vat }}</div>
+						<span class="d-flex justify-end ml-auto">
+							{{ displayAmount(invoice.paymentDetail.vat) }} {{ text.baht }}
+						</span>
+					</div>
+					<div class="d-flex flex-row my-3">
+						<div>{{ text.withholding_tax }}</div>
+						<span class="d-flex justify-end ml-auto">
+							{{ displayAmount(invoice.paymentDetail.tax) }} {{ text.baht }}
+						</span>
+					</div>
+					<div class="d-flex flex-row my-3">
+						<div>{{ text.vat_discount }}</div>
+						<span class="d-flex justify-end ml-auto">
+							{{ displayVatDiscount(invoice.paymentDetail.paymentItems) }} {{ text.baht }}
+						</span>
+					</div>
+					<div class="d-flex flex-row my-3">
+						<div>{{ text.withholding_tax_discount }}</div>
+						<span class="d-flex justify-end ml-auto">
+							{{ displayTaxDiscount(invoice.paymentDetail.paymentItems) }} {{ text.baht }}
+						</span>
+					</div>
+					<div class="page-content-title d-flex flex-row my-3">
+						<div>{{ text.total_payment }}</div>
+						<span class="d-flex justify-end ml-auto">
+							{{ displayTotalPrice(invoice.paymentDetail) }} {{ text.baht }}
+						</span>
+					</div>
+				</div> -->
+			</div>
+		</div>
+	</v-card>
+</div>

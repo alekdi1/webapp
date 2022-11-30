@@ -1,0 +1,22 @@
+<div id="not-found-info-component">
+	<v-overlay>
+        <div>
+            <v-card :width=400 :height=320 class="d-flex flex-column justify-center align-center rounded-xl pa-10" color="white">
+                <div class="cpn-text-h5 font-weight-bold text-primary-dark mb-3">
+                    ไม่พบข้อมูลที่ค้นหา
+                </div>
+                <div class="cpn-content-default text-center">
+                    เนื่องจากไม่พบข้อมูลที่ต้องการหา<br>
+                    คุณสามารถติดต่อเจ้าหน้าที่<br>
+                    เพื่อขอข้อมูลเพิ่มเติมได้<br>
+                    CPN call center 02-0219999
+                </div>
+                <div class="close-modal-btn-container">
+                    <v-btn @click="closeModal(false)" color="dark" elevation="0" fab>
+                        <v-icon>clear</v-icon>
+                    </v-btn>
+                </div>
+            </v-card>
+        </div>
+    </v-overlay>
+</div>
